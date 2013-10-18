@@ -90,9 +90,12 @@ ftp>
 
 ## Contributors
 
-- Thomas Loruenser, AIT <thomas.loruenster@ait.ac.at>
 - Andreas Happe, AIT <andreashappe@snikt.net>
-- ..
+- Christian Hanser, TU Graz
+- Daniel Slamanig, TU Graz
+- Konrad Lanz, TU Graz
+- Peter Lipp, TU Graz
+- Thomas Loruenser, AIT <thomas.loruenster@ait.ac.at>
 
 ## License
 
