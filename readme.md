@@ -83,6 +83,7 @@ ftp>
 
 ## Developing archistar
 
+0. [read the documentation](docs/overview.md)
 1. fork it
 2. work on your new feature
 3. run the testcases with `mvn test`
