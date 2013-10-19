@@ -1,4 +1,4 @@
-# Archistar
+# Archistar [![Build Status](https://travis-ci.org/Archistar/archistar-core.png?branch=master)](https://travis-ci.org/Archistar/archistar-core)
 
 _"hackable secure multi-cloud solution (or at least a prototype)"_
 
