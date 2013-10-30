@@ -10,10 +10,12 @@ import java.util.HashSet;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import at.ac.ait.archistar.data.fragments.Fragment;
-import at.ac.ait.archistar.distributor.Distributor;
-import at.ac.ait.archistar.distributor.ServerConfiguration;
-import at.ac.ait.archistar.storage.StorageServer;
+import at.ac.ait.archistar.backendserver.fragments.Fragment;
+import at.ac.ait.archistar.backendserver.storageinterface.StorageServer;
+import at.ac.ait.archistar.middleware.distributor.Distributor;
+import at.ac.ait.archistar.middleware.distributor.ServerConfiguration;
+import at.ac.ait.archistar.middleware.metadata.MetadataService;
+import at.ac.ait.archistar.middleware.metadata.SimpleMetadataService;
 
 public class SimpleDirectoryServiceTest {
 	

@@ -5,17 +5,17 @@ import java.util.HashSet;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
-import at.ac.ait.archistar.TestEngine;
-import at.ac.ait.archistar.distributor.TestServerConfiguration;
-import at.ac.ait.archistar.cryptoengine.CryptoEngine;
-import at.ac.ait.archistar.cryptoengine.PseudoMirrorCryptoEngine;
-import at.ac.ait.archistar.data.CustomSerializer;
-import at.ac.ait.archistar.distributor.BFTDistributor;
-import at.ac.ait.archistar.distributor.Distributor;
-import at.ac.ait.archistar.metadata.MetadataService;
-import at.ac.ait.archistar.metadata.SimpleMetadataService;
-import at.ac.ait.archistar.storage.MemoryStorage;
-import at.ac.ait.archistar.storage.StorageServer;
+import at.ac.ait.archistar.backendserver.storageinterface.MemoryStorage;
+import at.ac.ait.archistar.backendserver.storageinterface.StorageServer;
+import at.ac.ait.archistar.middleware.CustomSerializer;
+import at.ac.ait.archistar.middleware.TestEngine;
+import at.ac.ait.archistar.middleware.crypto.CryptoEngine;
+import at.ac.ait.archistar.middleware.crypto.PseudoMirrorCryptoEngine;
+import at.ac.ait.archistar.middleware.distributor.BFTDistributor;
+import at.ac.ait.archistar.middleware.distributor.Distributor;
+import at.ac.ait.archistar.middleware.distributor.TestServerConfiguration;
+import at.ac.ait.archistar.middleware.metadata.MetadataService;
+import at.ac.ait.archistar.middleware.metadata.SimpleMetadataService;
 
 public class BftTest extends AbstractIntegrationTest {
 	

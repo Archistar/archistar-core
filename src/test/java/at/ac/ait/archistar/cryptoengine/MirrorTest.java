@@ -9,10 +9,13 @@ import java.util.Set;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import at.ac.ait.archistar.data.CustomSerializer;
-import at.ac.ait.archistar.data.fragments.Fragment;
-import at.ac.ait.archistar.data.user.FSObject;
-import at.ac.ait.archistar.storage.StorageServer;
+import at.ac.ait.archistar.backendserver.fragments.Fragment;
+import at.ac.ait.archistar.backendserver.storageinterface.StorageServer;
+import at.ac.ait.archistar.middleware.CustomSerializer;
+import at.ac.ait.archistar.middleware.crypto.CryptoEngine;
+import at.ac.ait.archistar.middleware.crypto.DecryptionException;
+import at.ac.ait.archistar.middleware.crypto.PseudoMirrorCryptoEngine;
+import at.ac.ait.archistar.middleware.frontend.FSObject;
 
 public class MirrorTest {
 	
