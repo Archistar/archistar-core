@@ -5,19 +5,20 @@ import java.util.Map;
 import java.util.UUID;
 
 import static org.fest.assertions.api.Assertions.*;
+
 import org.junit.Test;
 
-import at.ac.ait.archistar.TestEngine;
-import at.ac.ait.archistar.cryptoengine.DecryptionException;
-import at.ac.ait.archistar.data.user.FSObject;
-import at.ac.ait.archistar.data.user.SimpleFile;
-import at.ac.ait.archistar.distributor.TestServerConfiguration;
-import at.ac.ait.archistar.storage.DisconnectedException;
-import at.ac.ait.archistar.storage.StorageServer;
+import at.ac.ait.archistar.backendserver.storageinterface.DisconnectedException;
+import at.ac.ait.archistar.backendserver.storageinterface.StorageServer;
+import at.ac.ait.archistar.middleware.TestEngine;
+import at.ac.ait.archistar.middleware.crypto.DecryptionException;
+import at.ac.ait.archistar.middleware.distributor.TestServerConfiguration;
+import at.ac.ait.archistar.middleware.frontend.FSObject;
+import at.ac.ait.archistar.middleware.frontend.SimpleFile;
 
 public abstract class AbstractIntegrationTest {
 	
-	protected final static byte[] testData = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+	protected final static byte[] testData = {65, 66, 67, 68, 69, 70, 71, 72, 73, 74};
 	
 	protected Map<String, StorageServer> servers;
 	

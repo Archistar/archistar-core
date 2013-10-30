@@ -7,6 +7,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Before;
 
+import at.ac.ait.archistar.backendserver.storageinterface.FilesystemStorage;
 import at.ac.ait.archistar.cryptoengine.MirrorTest;
 
 public class FileSystemStorageTest extends AbstractStorageTest {

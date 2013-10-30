@@ -7,6 +7,12 @@
   <version>1.0-SNAPSHOT</version>
   <name>archistar</name>
   <url>http://maven.apache.org</url>
+  <repositories>
+    <repository>
+      <id>internal</id>
+      <url>http://sqt.ait.ac.at/archistar/repository</url>
+    </repository>
+  </repositories>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
@@ -64,7 +70,19 @@
   		<groupId>io.netty</groupId>
   		<artifactId>netty-all</artifactId>
   		<version>4.0.0.CR9</version>
-  	</dependency>
+    </dependency>
+    <!-- library for secret-sharing -->
+    <dependency>
+      <groupId>at.ac.ait.archistar</groupId>
+      <artifactId>archistar-secret-sharing</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <!-- math library: as soona s we export archistar via pom this should not be needed anymore -->
+    <dependency>
+      <groupId>de.flexiprovider</groupId>
+      <artifactId>flexiprovider-core</artifactId>
+      <version>1.7p6</version>
+    </dependency>
   </dependencies>
    <build>
      <plugins>
