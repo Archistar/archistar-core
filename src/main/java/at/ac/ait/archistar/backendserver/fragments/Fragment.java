@@ -54,10 +54,6 @@ public interface Fragment {
 	 */
 	String setFragmentId(String string);
 
-	void setMetaData(String string, int xValue);
-
-	int getMetaData(String string);
-	
 	EncryptionScheme getEncryptionScheme();
 	
 	void setEncryptionScheme(EncryptionScheme scheme);

@@ -11,6 +11,9 @@ import org.junit.Test;
 
 import at.ac.ait.archistar.backendserver.fragments.Fragment;
 import at.ac.ait.archistar.backendserver.fragments.RemoteFragment;
+import at.ac.ait.archistar.crypto.SecretSharing;
+import at.ac.ait.archistar.crypto.ShamirPSS;
+import at.ac.ait.archistar.crypto.random.FakeRandomSource;
 import at.ac.ait.archistar.middleware.CustomSerializer;
 import at.ac.ait.archistar.middleware.crypto.CryptoEngine;
 import at.ac.ait.archistar.middleware.crypto.DecryptionException;
@@ -29,8 +32,9 @@ public class TestSecretSharingCryptoEngine {
 		testData = mock(FSObject.class);
 		CustomSerializer serializer = mock(CustomSerializer.class);
 		when(serializer.serialize(testData)).thenReturn(mockSerializedData);
-		when(serializer.deserialize(mockSerializedData)).thenReturn(testData);		
-		cryptoEngine = new SecretSharingCryptoEngine(serializer);
+		when(serializer.deserialize(mockSerializedData)).thenReturn(testData);
+		SecretSharing alg = new ShamirPSS(4, 3, new FakeRandomSource());
+		cryptoEngine = new SecretSharingCryptoEngine(serializer, alg);
 	}
 	
 	@Test
@@ -49,7 +53,6 @@ public class TestSecretSharingCryptoEngine {
 		for(Fragment f : encrypted) {
 			assertThat(f.getData()).isNotNull();
 			assertThat(f.getData()).isNotEmpty();
-			assertThat(f.getMetaData("xValue")).isGreaterThanOrEqualTo(0).isLessThanOrEqualTo(distribution.size());
 		}
 		
 		FSObject result = null;

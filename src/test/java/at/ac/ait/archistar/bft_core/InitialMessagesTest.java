@@ -7,7 +7,6 @@ import at.ac.ait.archistar.bft.BftEngine;
 import at.ac.ait.archistar.bft.BftEngineCallbacks;
 import at.ac.ait.archistar.bft.commands.ClientCommand;
 import at.ac.ait.archistar.bft.commands.IntraReplicaCommand;
-import at.ac.ait.archistar.bft.commands.PrepareCommand;
 import at.ac.ait.archistar.bft.commands.PreprepareCommand;
 import at.ac.ait.archistar.middleware.commands.WriteCommand;
 
