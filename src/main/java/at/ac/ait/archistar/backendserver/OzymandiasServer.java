@@ -1,5 +1,6 @@
 package at.ac.ait.archistar.backendserver;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.net.ssl.SSLEngine;
@@ -12,10 +13,12 @@ import at.ac.ait.archistar.bft.commands.AbstractCommand;
 import at.ac.ait.archistar.bft.commands.ClientCommand;
 import at.ac.ait.archistar.bft.commands.IntraReplicaCommand;
 import at.ac.ait.archistar.middleware.commands.ReadCommand;
+import at.ac.ait.archistar.middleware.commands.TransactionResult;
 import at.ac.ait.archistar.middleware.commands.WriteCommand;
 import at.ac.ait.archistar.trustmanager.SSLContextFactory;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
@@ -37,6 +40,8 @@ public class OzymandiasServer implements Runnable, BftEngineCallbacks {
 	private final int serverId;
 	private final Map<Integer, Integer> serverList;
     private final int port;
+    
+    private Map<Integer, ChannelHandlerContext> clientMap = new HashMap<Integer, ChannelHandlerContext>();
     
     /** used for server-to-server communication */
     private ServerServerCommunication servers;
@@ -175,5 +180,17 @@ public class OzymandiasServer implements Runnable, BftEngineCallbacks {
 	@Override
 	public void invalidCheckpointMessage(CheckpointMessage msg) {
 		this.secMonitor.invalidCheckpointMessage(msg);
+	}
+
+	@Override
+	public void answerClient(TransactionResult transactionResult) {
+		ChannelHandlerContext ctx = this.clientMap.get(transactionResult.getClientId());
+		ctx.write(transactionResult);
+	}
+
+	public void setClientSession(int clientId, ChannelHandlerContext ctx) {
+		if (!this.clientMap.containsKey(clientId)) {
+			this.clientMap.put(clientId, ctx);
+		}
 	}
 }

@@ -38,11 +38,10 @@ public class OzymandiasCommandHandler extends SimpleChannelInboundHandler<Abstra
     	
     	logger.debug("server {} received {}", parentSystem.getReplicaId(), msg);
     	
-    	msg.setContext(ctx);
-
     	if(msg instanceof IntraReplicaCommand) {
     		this.engine.processIntraReplicaCommand((IntraReplicaCommand)msg);
     	} else if (msg instanceof ClientCommand) {
+    		this.parentSystem.setClientSession(((ClientCommand) msg).getClientId(), ctx);
     		this.engine.processClientCommand((ClientCommand)msg);
     	} else {
     		assert(false);
