@@ -1,10 +1,19 @@
-# Components/Interfaces
-
 ![High-Level Component Diagram](https://raw.github.com/archistar/archistar-core/master/docs/architecture/components_rough.png "High-Level Component Diagram")
+
+The components can be structured in three big parts: frontend, middleware and backend.
+
+# Frontend
+
+This package provides a user-interface to client programs. It utilizes a (middleware) Engine instance for communicating with the network. Current client frontends include a FTP server and a disk-based sync utility.
+
+# Middleware
+
+The middleware is responsible for receiving messages from the frondend (via the SimpleUserInterface), splits and encrypts those messages and forwards them to the different backend servers.
 
 ## SimpleUserInterface
 
 This is the application interface to the Archistar system. It should provide an easy interface for application developers, thus it provides rather standard get/put/delete/list methods.
+
 
 ## MetadataService
 
@@ -28,10 +37,6 @@ The distributor is responsible for distributing the encrypted data fragments to 
 
 Distributor uses a BFT network for sending operations to servers. The servers in turn contain a storage backend (StorageServer) which will be used to persist and query data. The ExecutionHandler interface is an callback interface which forwards requests from the BFT server to the storage system. To minimize requirements on the storage system currenlty only read and write operations are performed. The API was inspired by Key-Value-Stores.
 
-## StorageServer
-
-The StorageServer interface represents a storage system where encrypted fragments (BLOBs acutally) will be stored. Currently implementations include Memory, Filesystem or S3-based storage engines.
-
 ## Serializer
 
 The Serializer converts a end-user FileObject (as provided by the SimpleFile interface) and converts it into a byte array. The deserialize routine performs this vice-versa.
@@ -45,3 +50,21 @@ If later versions support dynamic server configurations most of its imlpementati
 ## SecurityMonitor
 
 This is a centralized singleton component where all (assumed) security breaches are reported. It in turn is reponsible for policing and (potentially) escalating a security notification into a system shutdown.
+
+# Backend
+
+The backend package ipmlements active backend servers. They accept commands from the middleware (via the bft network) and forward the ordered requests to the included StorageServer.
+
+## StorageServer
+
+The StorageServer interface represents a storage system where encrypted fragments (BLOBs acutally) will be stored. Currently implementations include Memory, Filesystem or S3-based storage engines.
+
+# Bft
+
+This includes the abstract bft state machine which will be executed within each backend server.
+
+Future releases might move the bft package either into the backend package or into a library of it's own.
+
+# TrustManager
+
+Global trust manager that manages the certificates needed for establishing secure connections between replicas. Future releases might merge the ServerConfiguration object and the TrustManager.

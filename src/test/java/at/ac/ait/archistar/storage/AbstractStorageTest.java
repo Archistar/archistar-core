@@ -1,9 +1,12 @@
 package at.ac.ait.archistar.storage;
 
 import static org.fest.assertions.api.Assertions.*;
+
 import org.junit.Test;
 
-import at.ac.ait.archistar.storage.StorageServer;
+import at.ac.ait.archistar.backendserver.storageinterface.DisconnectedException;
+import at.ac.ait.archistar.backendserver.storageinterface.InvalidFragmentNameException;
+import at.ac.ait.archistar.backendserver.storageinterface.StorageServer;
 
 public abstract class AbstractStorageTest {
 	
