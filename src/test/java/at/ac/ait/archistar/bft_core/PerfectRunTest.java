@@ -2,7 +2,6 @@ package at.ac.ait.archistar.bft_core;
 
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.ArgumentMatcher;
 
 import static org.fest.assertions.api.Assertions.*;
 import static org.mockito.Mockito.*;

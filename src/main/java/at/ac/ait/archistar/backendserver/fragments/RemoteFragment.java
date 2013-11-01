@@ -1,8 +1,6 @@
 package at.ac.ait.archistar.backendserver.fragments;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
 
 import at.ac.ait.archistar.backendserver.storageinterface.StorageServer;
 
@@ -20,8 +18,6 @@ public class RemoteFragment implements Fragment, Serializable {
 	
 	private byte[] data;
 	
-	private Map<String, Integer> metadata;
-	
 	private boolean syncedToServer;
 	
 	private StorageServer server;
@@ -31,7 +27,6 @@ public class RemoteFragment implements Fragment, Serializable {
 	public RemoteFragment(String fragmentId) {
 		this.fragmentId = fragmentId;
 		this.syncedToServer = false;
-		this.metadata = new HashMap<String, Integer>();
 		this.scheme = EncryptionScheme.NONE;
 	}
 	
@@ -39,7 +34,6 @@ public class RemoteFragment implements Fragment, Serializable {
 		this.fragmentId = fragmentId;
 		this.server = server;
 		this.syncedToServer = false;
-		this.metadata = new HashMap<String, Integer>();
 		this.scheme = EncryptionScheme.NONE;
 	}
 
@@ -71,23 +65,6 @@ public class RemoteFragment implements Fragment, Serializable {
 
 	public String setFragmentId(String fragmentId) {
 		return this.fragmentId = fragmentId;
-	}
-
-	@Override
-	public void setMetaData(String key, int value) {
-		assert(this.metadata != null);
-		this.metadata.put(key, value);
-	}
-
-	@Override
-	public int getMetaData(String key) {
-		assert(this.metadata != null);
-		
-		if (this.metadata.containsKey(key)) {
-			return this.metadata.get(key);
-		} else {
-			return -1;
-		}
 	}
 
 	@Override

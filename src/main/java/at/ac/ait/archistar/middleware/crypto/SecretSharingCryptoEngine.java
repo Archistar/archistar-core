@@ -7,11 +7,9 @@ import static org.fest.assertions.api.Assertions.*;
 import at.ac.ait.archistar.backendserver.fragments.Fragment;
 import at.ac.ait.archistar.backendserver.fragments.Fragment.EncryptionScheme;
 import at.ac.ait.archistar.crypto.SecretSharing;
-import at.ac.ait.archistar.crypto.ShamirPSS;
 import at.ac.ait.archistar.crypto.WeakSecurityException;
 import at.ac.ait.archistar.crypto.data.Share;
-import at.ac.ait.archistar.crypto.random.FakeRandomSource;
-import at.ac.ait.archistar.crypto.random.RandomSource;
+import at.ac.ait.archistar.helper.ShareSerializer;
 import at.ac.ait.archistar.middleware.CustomSerializer;
 import at.ac.ait.archistar.middleware.crypto.CryptoEngine;
 import at.ac.ait.archistar.middleware.frontend.FSObject;
@@ -20,38 +18,20 @@ public class SecretSharingCryptoEngine implements CryptoEngine {
 	
 	private final CustomSerializer serializer;
 	
-	private final int n = 4;
-	
-	private final int k = 3;
-	
-	private final RandomSource rng = new FakeRandomSource();
-	
 	private final SecretSharing sharingAlgorithm;
 	
-	public SecretSharingCryptoEngine(CustomSerializer serializer) {
+	public SecretSharingCryptoEngine(CustomSerializer serializer, SecretSharing sharingAlgorithm) {
 		this.serializer = serializer;
-		this.sharingAlgorithm =  new ShamirPSS(n, k, rng);
+		this.sharingAlgorithm = sharingAlgorithm; 
 	}
 
 	public FSObject decrypt(Set<Fragment> input) throws DecryptionException {
 		
+		Share[] shares = new Share[input.size()];
+		
+		int i = 0;
 		for(Fragment f: input) {
-			assertThat(f.getEncryptionScheme()).isEqualTo(EncryptionScheme.SHAMIR);
-			assertThat(f.getData() != null && f.getData().length != 0);
-			assertThat(f.getMetaData("xValue")).isGreaterThanOrEqualTo(0);
-			assertThat(f.getMetaData("xValue")).isLessThanOrEqualTo(4);
-		}
-		assertThat(input.size() == 4);
-		
-		Share[] shares = new Share[4];
-		Fragment[] f = input.toArray(new Fragment[0]);
-		
-		assert(shares.length == f.length);
-		
-		for(int i=0; i < shares.length; i++) {
-			/* create share */
-			byte[] shareContent = f[i].getData();
-			shares[i] = new Share(f[i].getMetaData("xValue"), shareContent, null, f[i].getMetaData("ContentLength"), Share.Type.SHAMIR);
+			shares[i++] = ShareSerializer.deserializeSahre(f.getData());
 		}
 		
 		byte[] combined = null;
@@ -79,12 +59,11 @@ public class SecretSharingCryptoEngine implements CryptoEngine {
 				
 				Fragment f = fs[i];
 				
-				byte[] binData = shares[i].yValues;
+				byte[] binData = ShareSerializer.serializeShare(shares[i]);
 				assert(binData != null);
 				assert(binData.length != 0);
+				
 				f.setData(binData);
-				f.setMetaData("xValue", shares[i].xValue);
-				f.setMetaData("ContentLength", shares[i].contentLength);
 				f.setEncryptionScheme(EncryptionScheme.SHAMIR);
 			}
 		} catch (WeakSecurityException e) {
@@ -94,14 +73,6 @@ public class SecretSharingCryptoEngine implements CryptoEngine {
 			e.printStackTrace();
 			assert(false);
 		}
-		
-		assert(fragments.size() > 0);
-		for(Fragment f : fragments) {
-			assert(f.getData() != null);
-			assert(f.getData().length != 0);
-		}
-		
 		return fragments;
 	}
-
 }
