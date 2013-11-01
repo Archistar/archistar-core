@@ -1,7 +1,5 @@
 package at.ac.ait.archistar.bft;
 
-import io.netty.channel.ChannelHandlerContext;
-
 import java.util.Iterator;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -56,10 +54,8 @@ public class BftEngine {
 	}
 	
 	public void processClientCommand(ClientCommand cmd) {
-    	Transaction t = getTransaction(cmd, cmd.getContext());
-    	
+    	Transaction t = getTransaction(cmd);
     	handleMessage(t, cmd);
-    	
     	t.unlock();
     	cleanupTransactions(t);
 	}
@@ -74,10 +70,8 @@ public class BftEngine {
     			advanceToEra(((AdvanceEraCommand)cmd).getNewEra());
     		} else {
     			/* this locks t */
-    			Transaction t = getTransaction(cmd, cmd.getContext());
-    	
+    			Transaction t = getTransaction(cmd);
     			handleMessage(t, cmd);
-    	
     			t.unlock();
     			cleanupTransactions(t);
     		}
@@ -119,7 +113,7 @@ public class BftEngine {
 		}
 	}
     
-	private Transaction getTransaction(AbstractCommand msg, ChannelHandlerContext ctx) {
+	private Transaction getTransaction(AbstractCommand msg) {
 		
 		lockCollections.lock();
 		Transaction result = null;
@@ -137,7 +131,7 @@ public class BftEngine {
 				collClientId.put(c.getClientOperationId(), result);
 			}
 			
-			result.addClientCommand(c, ctx);
+			result.addClientCommand(c);
 			
 			if (isPrimary()) {
 				result.setDataFromPreprepareCommand(maxSequence++, getPriorSequenceNumber(c.getFragmentId()));
@@ -321,5 +315,11 @@ public class BftEngine {
 			lifetime += t.getLifetime();
 		}
     	t.tryMarkDelete();
+	}
+
+	public void outputStates() {
+		for(Transaction t : this.collSequence.values()) {
+			t.outputState();
+		}
 	}
 }

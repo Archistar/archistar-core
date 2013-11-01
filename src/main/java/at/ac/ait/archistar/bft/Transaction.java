@@ -1,7 +1,5 @@
 package at.ac.ait.archistar.bft;
 
-import io.netty.channel.ChannelHandlerContext;
-
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.locks.ReentrantLock;
@@ -33,9 +31,6 @@ public class Transaction implements Comparable<Transaction> {
 	public enum State {INCOMING, PREPREPARED, PREPARED, COMMITED};
 	
 	private State state = State.INCOMING;
-	
-	/** where to send the operation's result to? */
-	private ChannelHandlerContext ctx = null;
 	
 	/** all exchanged precommit commands, should be replicaCount */
 	private Set<PrepareCommand> preparedCmds = new HashSet<PrepareCommand>();
@@ -145,6 +140,10 @@ public class Transaction implements Comparable<Transaction> {
 		return false;
 	}
 	
+	public void outputState() {
+		logger.warn("{}: {} - {}/{} - {}/{} - {}", readableId(), state, preparedCmds.size(), commitedCmds.size(), clientCmd != null, primaryReceived, priorSequenceNr);
+	}
+	
 	/** execute operation and return result */
 	private byte[] execute() {
 		
@@ -226,10 +225,8 @@ public class Transaction implements Comparable<Transaction> {
 		this.commitedCmds.add(cmd);
 	}
 	
-	public void addClientCommand(ClientCommand cmd, ChannelHandlerContext ctx) {
+	public void addClientCommand(ClientCommand cmd) {
 		this.clientCmd = cmd;
-		this.ctx = ctx;
-		
 		if (cmd instanceof ClientFragmentCommand) {
 			this.fragmentid = ((ClientFragmentCommand) cmd).getFragmentId();
 		}
@@ -249,10 +246,6 @@ public class Transaction implements Comparable<Transaction> {
 
 	public String getClientOperationId() {
 		return this.clientOperationId;
-	}
-
-	public void respondToClient(byte[] result) {
-		this.ctx.write(new TransactionResult(this.clientCmd, this.replica, result));
 	}
 
 	public void tryAdvanceToPreprepared(boolean primary) {
@@ -291,12 +284,9 @@ public class Transaction implements Comparable<Transaction> {
 
 	public boolean tryAdvanceToCommited() {
     	if (canAdvanceToCommited()) {
-    		
     		logger.debug("{} advance precommited -> commited", readableId());
     		result = execute();
-
-    		/* send the result back to the client */
-    		respondToClient(result);
+    		this.callbacks.answerClient(new TransactionResult(this.clientCmd, this.replica, result));
 			return true;
     	} else {
     		return false;
