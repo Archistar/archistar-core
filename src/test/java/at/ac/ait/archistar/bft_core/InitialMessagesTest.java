@@ -8,6 +8,7 @@ import at.ac.ait.archistar.bft.BftEngineCallbacks;
 import at.ac.ait.archistar.bft.commands.ClientCommand;
 import at.ac.ait.archistar.bft.commands.IntraReplicaCommand;
 import at.ac.ait.archistar.bft.commands.PrepareCommand;
+import at.ac.ait.archistar.bft.commands.PreprepareCommand;
 import at.ac.ait.archistar.middleware.commands.WriteCommand;
 
 public class InitialMessagesTest {
@@ -30,7 +31,7 @@ public class InitialMessagesTest {
 		primary.processClientCommand(cmd);
 		
 		/* If message was called, expect that a new PreprepareCommand is sent to all other replicas */
-		verify(callbacks).sendToReplicas(any(PrepareCommand.class));
+		verify(callbacks).sendToReplicas(isA(PreprepareCommand.class));
 	}
 	
 	@Test
