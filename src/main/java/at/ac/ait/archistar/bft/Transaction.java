@@ -140,6 +140,10 @@ public class Transaction implements Comparable<Transaction> {
 		return false;
 	}
 	
+	public void outputState() {
+		logger.warn("{}: {} - {}/{} - {}/{} - {}", readableId(), state, preparedCmds.size(), commitedCmds.size(), clientCmd != null, primaryReceived, priorSequenceNr);
+	}
+	
 	/** execute operation and return result */
 	private byte[] execute() {
 		
@@ -280,7 +284,6 @@ public class Transaction implements Comparable<Transaction> {
 
 	public boolean tryAdvanceToCommited() {
     	if (canAdvanceToCommited()) {
-    		
     		logger.debug("{} advance precommited -> commited", readableId());
     		result = execute();
     		this.callbacks.answerClient(new TransactionResult(this.clientCmd, this.replica, result));

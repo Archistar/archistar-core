@@ -316,4 +316,10 @@ public class BftEngine {
 		}
     	t.tryMarkDelete();
 	}
+
+	public void outputStates() {
+		for(Transaction t : this.collSequence.values()) {
+			t.outputState();
+		}
+	}
 }
