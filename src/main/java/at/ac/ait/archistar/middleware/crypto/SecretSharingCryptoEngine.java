@@ -6,10 +6,10 @@ import java.util.Set;
 import static org.fest.assertions.api.Assertions.*;
 import at.ac.ait.archistar.backendserver.fragments.Fragment;
 import at.ac.ait.archistar.backendserver.fragments.Fragment.EncryptionScheme;
-import at.ac.ait.archistar.crypto.SecretSharing;
-import at.ac.ait.archistar.crypto.WeakSecurityException;
-import at.ac.ait.archistar.crypto.data.Share;
-import at.ac.ait.archistar.helper.ShareSerializer;
+import at.archistar.crypto.SecretSharing;
+import at.archistar.crypto.WeakSecurityException;
+import at.archistar.crypto.data.Share;
+import at.archistar.helper.ShareSerializer;
 import at.ac.ait.archistar.middleware.CustomSerializer;
 import at.ac.ait.archistar.middleware.crypto.CryptoEngine;
 import at.ac.ait.archistar.middleware.frontend.FSObject;
@@ -31,7 +31,7 @@ public class SecretSharingCryptoEngine implements CryptoEngine {
 		
 		int i = 0;
 		for(Fragment f: input) {
-			shares[i++] = ShareSerializer.deserializeSahre(f.getData());
+			shares[i++] = ShareSerializer.deserializeShare(f.getData());
 		}
 		
 		byte[] combined = null;

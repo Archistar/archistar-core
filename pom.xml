@@ -4,7 +4,7 @@
   <groupId>at.ac.ait.archistar</groupId>
   <artifactId>archistar</artifactId>
   <packaging>jar</packaging>
-  <version>1.0-SNAPSHOT</version>
+  <version>0.0.1</version>
   <name>archistar</name>
   <url>http://maven.apache.org</url>
   <repositories>
@@ -73,15 +73,9 @@
     </dependency>
     <!-- library for secret-sharing -->
     <dependency>
-      <groupId>at.ac.ait.archistar</groupId>
-      <artifactId>archistar-secret-sharing</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-    </dependency>
-    <!-- math library: as soona s we export archistar via pom this should not be needed anymore -->
-    <dependency>
-      <groupId>de.flexiprovider</groupId>
-      <artifactId>flexiprovider-core</artifactId>
-      <version>1.7p6</version>
+      <groupId>at.archistar</groupId>
+      <artifactId>archistar-smc</artifactId>
+      <version>0.0.2-snapshot</version>
     </dependency>
   </dependencies>
    <build>

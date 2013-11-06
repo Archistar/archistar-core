@@ -11,9 +11,9 @@ import org.junit.Test;
 
 import at.ac.ait.archistar.backendserver.fragments.Fragment;
 import at.ac.ait.archistar.backendserver.fragments.RemoteFragment;
-import at.ac.ait.archistar.crypto.SecretSharing;
-import at.ac.ait.archistar.crypto.ShamirPSS;
-import at.ac.ait.archistar.crypto.random.FakeRandomSource;
+import at.archistar.crypto.SecretSharing;
+import at.archistar.crypto.ShamirPSS;
+import at.archistar.crypto.random.FakeRandomSource;
 import at.ac.ait.archistar.middleware.CustomSerializer;
 import at.ac.ait.archistar.middleware.crypto.CryptoEngine;
 import at.ac.ait.archistar.middleware.crypto.DecryptionException;
