@@ -3,7 +3,6 @@ package at.ac.ait.archistar.middleware.crypto;
 import java.util.Set;
 
 import at.ac.ait.archistar.backendserver.fragments.Fragment;
-import at.ac.ait.archistar.middleware.frontend.FSObject;
 
 /**
  * this is the base interface for all encryption/decryption-related
@@ -17,9 +16,9 @@ import at.ac.ait.archistar.middleware.frontend.FSObject;
 public interface CryptoEngine {
 
   /** encrypt data+metadata into the fragments */
-  Set<Fragment> encrypt(FSObject data, Set<Fragment> fragments);
+  Set<Fragment> encrypt(byte[] data, Set<Fragment> fragments);
 
   /** decrypt collection of fragments into an Object
    */
-  FSObject decrypt(Set<Fragment> input) throws DecryptionException;
+  byte[] decrypt(Set<Fragment> input) throws DecryptionException;
 }

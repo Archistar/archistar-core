@@ -12,7 +12,6 @@ import at.ac.ait.archistar.backendserver.storageinterface.FilesystemStorage;
 import at.ac.ait.archistar.backendserver.storageinterface.StorageServer;
 import at.archistar.crypto.ShamirPSS;
 import at.archistar.crypto.random.FakeRandomSource;
-import at.ac.ait.archistar.middleware.CustomSerializer;
 import at.ac.ait.archistar.middleware.TestEngine;
 import at.ac.ait.archistar.middleware.crypto.CryptoEngine;
 import at.ac.ait.archistar.middleware.crypto.SecretSharingCryptoEngine;
@@ -50,9 +49,9 @@ public class EncryptedFileSystemTest extends AbstractIntegrationTest {
 		serverConfig = new TestServerConfiguration(createNewServers());
 		serverConfig.setupTestServer(1);
 	
-		CryptoEngine crypto = new SecretSharingCryptoEngine(new CustomSerializer(), new ShamirPSS(4, 3, new FakeRandomSource()));
+		CryptoEngine crypto = new SecretSharingCryptoEngine(new ShamirPSS(4, 3, new FakeRandomSource()));
 		Distributor distributor = new BFTDistributor(serverConfig);
-		MetadataService metadata = new SimpleMetadataService(serverConfig, distributor);
+		MetadataService metadata = new SimpleMetadataService(serverConfig, distributor, crypto);
 		engine = new TestEngine(serverConfig, metadata, distributor, crypto);
 	}
 	

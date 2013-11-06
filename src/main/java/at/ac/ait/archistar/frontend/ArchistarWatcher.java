@@ -21,7 +21,6 @@ import org.slf4j.LoggerFactory;
 
 import at.ac.ait.archistar.backendserver.storageinterface.FilesystemStorage;
 import at.ac.ait.archistar.backendserver.storageinterface.StorageServer;
-import at.ac.ait.archistar.middleware.CustomSerializer;
 import at.ac.ait.archistar.middleware.Engine;
 import at.ac.ait.archistar.middleware.crypto.CryptoEngine;
 import at.ac.ait.archistar.middleware.crypto.PseudoMirrorCryptoEngine;
@@ -67,9 +66,9 @@ public class ArchistarWatcher {
 		TestServerConfiguration serverConfig = new TestServerConfiguration(createNewServers());
 		serverConfig.setupTestServer(1);
 	
-		CryptoEngine crypto = new PseudoMirrorCryptoEngine(new CustomSerializer());
+		CryptoEngine crypto = new PseudoMirrorCryptoEngine();
 		Distributor distributor = new BFTDistributor(serverConfig);
-		MetadataService metadata = new SimpleMetadataService(serverConfig, distributor);
+		MetadataService metadata = new SimpleMetadataService(serverConfig, distributor, crypto);
 		return new Engine(serverConfig, metadata, distributor, crypto);
 	}
 	

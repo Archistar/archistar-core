@@ -15,7 +15,6 @@ import org.slf4j.LoggerFactory;
 import static org.fest.assertions.api.Assertions.*;
 import at.ac.ait.archistar.backendserver.storageinterface.FilesystemStorage;
 import at.ac.ait.archistar.backendserver.storageinterface.StorageServer;
-import at.ac.ait.archistar.middleware.CustomSerializer;
 import at.ac.ait.archistar.middleware.TestEngine;
 import at.ac.ait.archistar.middleware.crypto.CryptoEngine;
 import at.ac.ait.archistar.middleware.crypto.DecryptionException;
@@ -58,9 +57,9 @@ public class FileSystemTest extends AbstractIntegrationTest {
 		serverConfig = new TestServerConfiguration(createNewServers());
 		serverConfig.setupTestServer(1);
 	
-		CryptoEngine crypto = new PseudoMirrorCryptoEngine(new CustomSerializer());
+		CryptoEngine crypto = new PseudoMirrorCryptoEngine();
 		Distributor distributor = new BFTDistributor(serverConfig);
-		MetadataService metadata = new SimpleMetadataService(serverConfig, distributor);
+		MetadataService metadata = new SimpleMetadataService(serverConfig, distributor, crypto);
 		engine = new TestEngine(serverConfig, metadata, distributor, crypto);
 	}
 	

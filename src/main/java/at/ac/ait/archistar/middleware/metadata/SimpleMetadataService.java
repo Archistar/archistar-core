@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import at.ac.ait.archistar.backendserver.fragments.Fragment;
 import at.ac.ait.archistar.backendserver.fragments.RemoteFragment;
 import at.ac.ait.archistar.backendserver.storageinterface.StorageServer;
+import at.ac.ait.archistar.middleware.crypto.CryptoEngine;
 import at.ac.ait.archistar.middleware.distributor.Distributor;
 import at.ac.ait.archistar.middleware.distributor.ServerConfiguration;
 import at.ac.ait.archistar.middleware.frontend.FSObject;
@@ -27,9 +28,6 @@ import at.ac.ait.archistar.middleware.frontend.FSObject;
  * The metadata  service is responsible for storing all meta-information
  * aber filesystem layout, versions, etc.
  * 
- * TODO: start with thinking about serialized naming system (for usage
- *       in combination with a persistent storage unit)
- *       
  * TODO: think about when to remove a mapping from the database
  * TODO: remove direct distributor access
  * 
@@ -43,11 +41,14 @@ public class SimpleMetadataService implements MetadataService {
 	
 	private final ServerConfiguration servers;
 	
-	private Logger logger = LoggerFactory.getLogger(SimpleMetadataService.class);
+	private final Logger logger = LoggerFactory.getLogger(SimpleMetadataService.class);
 	
-	public SimpleMetadataService(ServerConfiguration servers, Distributor distributor) {
+	private final CryptoEngine crypto;
+	
+	public SimpleMetadataService(ServerConfiguration servers, Distributor distributor, CryptoEngine crypto) {
 		this.distributor = distributor;
 		this.servers = servers;
+		this.crypto = crypto;
 	}
 	
 	private Set<Fragment> getNewDistributionSet() {

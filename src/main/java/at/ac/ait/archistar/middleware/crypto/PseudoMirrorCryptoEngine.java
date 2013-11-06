@@ -1,48 +1,52 @@
 package at.ac.ait.archistar.middleware.crypto;
 
+import java.util.Arrays;
 import java.util.Set;
 
 import at.ac.ait.archistar.backendserver.fragments.Fragment;
-import at.ac.ait.archistar.middleware.CustomSerializer;
-import at.ac.ait.archistar.middleware.frontend.FSObject;
 
 /**
  * This just takes a user-supplied FSObject, serializes it
  * (using CustomSerializer) and fills in duplicates of the serialized
  * data into all fragments.
  * 
- * @author andy
+ * @author Andreas Happe <andreashappe@snikt.net>
  *
  */
 public class PseudoMirrorCryptoEngine implements CryptoEngine {
 	
-	private CustomSerializer serializer;
-	
-	public PseudoMirrorCryptoEngine(CustomSerializer serializer) {
-		this.serializer = serializer;
-	}
-
-	public FSObject decrypt(Set<Fragment> input) throws DecryptionException {
+	/**
+	 * checks if data within all fragments is the same and returns the
+	 * encapsulated data
+	 */
+	public byte[] decrypt(Set<Fragment> input) throws DecryptionException {
+		
+		byte[] reference = null;
+		boolean first = true;
 		
 		for(Fragment f : input) {
-			// TODO: test against the data of other fragments
-			// TODO: do real encryption
-			
 			if (f.isSynchronized()) {
-				FSObject result = serializer.deserialize(f.getData());
-				return result;
+				if (first) {
+					/* initialize on first access */
+					reference = f.getData();
+				} else {
+					if (!Arrays.equals(reference, f.getData())) {
+						throw new DecryptionException();
+					}
+				}
 			}
 		}
 		
-		throw new DecryptionException();
+		return reference;
 	}
 
-	public Set<Fragment> encrypt(FSObject data, Set<Fragment> fragments) {
-		
+	/**
+	 * this sets data for each fragment -- no encryption whatsoever, pure duplication
+	 */
+	public Set<Fragment> encrypt(byte[] data, Set<Fragment> fragments) {
         for(Fragment f : fragments) {
-        	f.setData(serializer.serialize(data));
+        	f.setData(data);
         }
 		return fragments;
 	}
-
 }

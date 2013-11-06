@@ -1,6 +1,5 @@
 package at.ac.ait.archistar.cryptoengine;
 
-import static org.mockito.Mockito.*;
 import static org.fest.assertions.api.Assertions.*;
 
 import java.util.HashSet;
@@ -14,27 +13,22 @@ import at.ac.ait.archistar.backendserver.fragments.RemoteFragment;
 import at.archistar.crypto.SecretSharing;
 import at.archistar.crypto.ShamirPSS;
 import at.archistar.crypto.random.FakeRandomSource;
-import at.ac.ait.archistar.middleware.CustomSerializer;
 import at.ac.ait.archistar.middleware.crypto.CryptoEngine;
 import at.ac.ait.archistar.middleware.crypto.DecryptionException;
 import at.ac.ait.archistar.middleware.crypto.SecretSharingCryptoEngine;
-import at.ac.ait.archistar.middleware.frontend.FSObject;
 
 public class TestSecretSharingCryptoEngine {
 	
-	private static FSObject testData;
 	private static CryptoEngine cryptoEngine;
 	private final static byte[] mockSerializedData = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
 	
 	@BeforeClass
 	public static void onceSetup() {
+		
+		SecretSharing alg = new ShamirPSS(5, 3, new FakeRandomSource());
+		
 		// GIVEN some test data
-		testData = mock(FSObject.class);
-		CustomSerializer serializer = mock(CustomSerializer.class);
-		when(serializer.serialize(testData)).thenReturn(mockSerializedData);
-		when(serializer.deserialize(mockSerializedData)).thenReturn(testData);
-		SecretSharing alg = new ShamirPSS(4, 3, new FakeRandomSource());
-		cryptoEngine = new SecretSharingCryptoEngine(serializer, alg);
+		cryptoEngine = new SecretSharingCryptoEngine(alg);
 	}
 	
 	@Test
@@ -46,7 +40,7 @@ public class TestSecretSharingCryptoEngine {
 		distribution.add(new RemoteFragment("frag-3"));
 		distribution.add(new RemoteFragment("frag-4"));
 		
-		Set<Fragment> encrypted = cryptoEngine.encrypt(testData, distribution);
+		Set<Fragment> encrypted = cryptoEngine.encrypt(mockSerializedData, distribution);
 		
 		assertThat(encrypted.size()).isEqualTo(4);
 		
@@ -55,13 +49,13 @@ public class TestSecretSharingCryptoEngine {
 			assertThat(f.getData()).isNotEmpty();
 		}
 		
-		FSObject result = null;
+		byte[] result = null;
 		try {
 			result = cryptoEngine.decrypt(encrypted);
 		} catch (DecryptionException e) {
 			fail("error while decryption", e);
 		}
-		assertThat(result).isNotNull().isEqualTo(testData);
+		assertThat(result).isNotNull().isEqualTo(mockSerializedData);
 	}
 
 }
