@@ -6,11 +6,11 @@ import java.security.GeneralSecurityException;
 
 import org.junit.Test;
 
-import at.ac.ait.archistar.crypto.SecretSharing;
-import at.ac.ait.archistar.crypto.ShamirPSS;
-import at.ac.ait.archistar.crypto.WeakSecurityException;
-import at.ac.ait.archistar.crypto.data.Share;
-import at.ac.ait.archistar.crypto.random.FakeRandomSource;
+import at.archistar.crypto.SecretSharing;
+import at.archistar.crypto.ShamirPSS;
+import at.archistar.crypto.WeakSecurityException;
+import at.archistar.crypto.data.Share;
+import at.archistar.crypto.random.FakeRandomSource;
 
 
 public class TestSecretSharingIntegeration {

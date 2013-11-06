@@ -10,8 +10,8 @@ import org.junit.BeforeClass;
 
 import at.ac.ait.archistar.backendserver.storageinterface.FilesystemStorage;
 import at.ac.ait.archistar.backendserver.storageinterface.StorageServer;
-import at.ac.ait.archistar.crypto.ShamirPSS;
-import at.ac.ait.archistar.crypto.random.FakeRandomSource;
+import at.archistar.crypto.ShamirPSS;
+import at.archistar.crypto.random.FakeRandomSource;
 import at.ac.ait.archistar.middleware.CustomSerializer;
 import at.ac.ait.archistar.middleware.TestEngine;
 import at.ac.ait.archistar.middleware.crypto.CryptoEngine;
