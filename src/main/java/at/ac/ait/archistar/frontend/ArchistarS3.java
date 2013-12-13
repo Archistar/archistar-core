@@ -18,11 +18,14 @@ import at.ac.ait.archistar.frontend.s3.FakeRoot;
 import at.ac.ait.archistar.middleware.Engine;
 import at.ac.ait.archistar.middleware.crypto.CryptoEngine;
 import at.ac.ait.archistar.middleware.crypto.PseudoMirrorCryptoEngine;
+import at.ac.ait.archistar.middleware.crypto.SecretSharingCryptoEngine;
 import at.ac.ait.archistar.middleware.distributor.BFTDistributor;
 import at.ac.ait.archistar.middleware.distributor.Distributor;
 import at.ac.ait.archistar.middleware.distributor.TestServerConfiguration;
 import at.ac.ait.archistar.middleware.metadata.MetadataService;
 import at.ac.ait.archistar.middleware.metadata.SimpleMetadataService;
+import at.archistar.crypto.ShamirPSS;
+import at.archistar.crypto.random.FakeRandomSource;
 
 public class ArchistarS3 {	
 	/**
@@ -76,7 +79,7 @@ public class ArchistarS3 {
 		TestServerConfiguration serverConfig = new TestServerConfiguration(createNewServers());
 		
 		serverConfig.setupTestServer(1);
-		CryptoEngine crypto = new PseudoMirrorCryptoEngine();
+		CryptoEngine crypto = new SecretSharingCryptoEngine(new ShamirPSS(4, 3, new FakeRandomSource()));
 		Distributor distributor = new BFTDistributor(serverConfig);
 		MetadataService metadata = new SimpleMetadataService(serverConfig, distributor, crypto);
 		return new Engine(serverConfig, metadata, distributor, crypto);
