@@ -17,7 +17,6 @@ import at.ac.ait.archistar.frontend.s3.FakeBucket;
 import at.ac.ait.archistar.frontend.s3.FakeRoot;
 import at.ac.ait.archistar.middleware.Engine;
 import at.ac.ait.archistar.middleware.crypto.CryptoEngine;
-import at.ac.ait.archistar.middleware.crypto.PseudoMirrorCryptoEngine;
 import at.ac.ait.archistar.middleware.crypto.SecretSharingCryptoEngine;
 import at.ac.ait.archistar.middleware.distributor.BFTDistributor;
 import at.ac.ait.archistar.middleware.distributor.Distributor;
@@ -55,7 +54,7 @@ public class ArchistarS3 {
 	}
 	
 	private static Set<StorageServer> createNewServers() {		
-		File baseDir = new File("/tmp/test-ftp-filesystem/");
+		File baseDir = new File("/var/spool/archistar/test-s3/");
 		baseDir.mkdirs();
 			
 		File dir1 = new File(baseDir, "1");

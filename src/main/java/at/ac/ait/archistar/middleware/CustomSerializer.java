@@ -31,6 +31,13 @@ public class CustomSerializer implements Serializer {
 	}
 	
 	public FSObject deserialize(byte[] data) {
+		
+		System.err.println("custom serializer on: " + data);
+		
+		if (data == null) {
+			return null;
+		}
+		
 		try{
 			ByteArrayInputStream door = new ByteArrayInputStream(data);
 			ObjectInputStream reader = new ObjectInputStream(door);

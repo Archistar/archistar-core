@@ -94,7 +94,7 @@ public class FakeBucket {
 	 */
 	@GET
 	@Produces("text/plain")
-	public String getAll() {
+	public String getAll() throws DecryptionException, NoSuchAlgorithmException {
 				
 		Document doc = this.docBuilder.newDocument();
 		doc.setXmlVersion("1.0");
@@ -117,13 +117,26 @@ public class FakeBucket {
 		isTruncated.setTextContent("false");
 		rootElement.appendChild(isTruncated);		
 		
-		for(String key : this.engine.listObjects("/")) {
+		for(String key : this.engine.listObjects(null)) {
 			Element contents = doc.createElement("Contents");
 			
+			FSObject obj = engine.getObject(key);
+			
+			SimpleFile file = null;
+			if (obj instanceof SimpleFile) {
+				file = (SimpleFile) obj;
+			}
+			
+			MessageDigest md = MessageDigest.getInstance("MD5");
+			byte[] thedigest = md.digest(file.getData());
+			String etag= new String(Hex.encodeHex(thedigest));
+
+
+			
 			contents.appendChild(createElement(doc, "Key", key));
-			contents.appendChild(createElement(doc, "Size", "42"));
+			contents.appendChild(createElement(doc, "Size", "" + file.getData().length));
 			contents.appendChild(createElement(doc, "LastModified", "2006-02-03T16:41:58.000Z"));
-			contents.appendChild(createElement(doc, "ETag", "42"));
+			contents.appendChild(createElement(doc, "ETag", etag));
 			
 			rootElement.appendChild(contents);
 		}
@@ -140,6 +153,9 @@ public class FakeBucket {
 	@Path( "{id:.+}")
 	@Produces ("text/plain")
 	public Response getById(@PathParam("id") String id) throws DecryptionException, NoSuchAlgorithmException {
+		
+		System.err.println("get within bucket upon " + id);
+		
 		FSObject obj = engine.getObject(id);
 		byte[] result = null;
 		

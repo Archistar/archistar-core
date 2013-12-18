@@ -1,6 +1,7 @@
 package at.ac.ait.archistar.middleware;
 
 import java.util.Dictionary;
+import java.util.Map;
 import java.util.Set;
 
 import static org.fest.assertions.api.Assertions.*;
@@ -93,7 +94,7 @@ public class Engine implements SimpleFileInterface {
 	}
 
 	@Override
-	public Dictionary<String, String> statObject(String path) {
+	public Map<String, String> statObject(String path) {
 		return metadataService.stat(path);
 	}
 

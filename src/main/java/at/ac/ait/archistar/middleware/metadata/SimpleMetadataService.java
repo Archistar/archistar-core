@@ -5,9 +5,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -201,17 +202,32 @@ public class SimpleMetadataService implements MetadataService {
 	}
 
 	@Override
-	public Dictionary<String, String> stat(String path) {
+	public Map<String, String> stat(String path) {
 		
-		if (path.equalsIgnoreCase("/")) {
-			
+		if (this.database.containsKey(path)) {
+			return new HashMap<String, String>();
+		} else {
+			return null;
 		}
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override
 	public Set<String> list(String path) {
-		return this.database.keySet();
+		Set<String> initialResult =  this.database.keySet();
+		
+		Set<String> result  = new HashSet<String>();
+		for(String key : initialResult) {
+			
+			System.err.println("str cmp: " + key + " vs " + path);
+			
+			if (path != null) {
+				if(key.startsWith(path)) {
+					result.add(key);
+				}
+			} else {
+				result.add(key);
+			}
+		}
+		return result;
 	}
 }
