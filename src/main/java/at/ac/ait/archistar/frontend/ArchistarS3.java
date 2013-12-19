@@ -45,8 +45,9 @@ public class ArchistarS3 {
 		ResteasyDeployment deployment = new ResteasyDeployment();
 		
 		List<Object> resources = new LinkedList<Object>();
-		resources.add(new FakeBucket(engine));
-		resources.add(new FakeRoot(engine));
+		FakeBucket bucket = new FakeBucket(engine);
+		resources.add(bucket);
+		resources.add(new FakeRoot(bucket));
 		deployment.setResources(resources);
 		
 		netty = createServer(deployment);
