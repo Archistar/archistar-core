@@ -27,7 +27,7 @@ First start the fake-FTP server frontend:
 ```bash
 $ mvn compile
    ...
-$ mvn exec:java -Dexec.mainClass="at.ac.ait.archistar.bin.ArchistarFTP"
+$ mvn exec:java -Dexec.mainClass="at.ac.ait.archistar.bin.ArchistarS3"
 
 [INFO] Scanning for projects...
 [INFO]                                                                         
