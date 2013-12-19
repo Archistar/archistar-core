@@ -21,12 +21,6 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
   <dependencies>
-    <!-- ftp stuff -->
-    <dependency>
-      <groupId>org.mockftpserver</groupId>
-      <artifactId>MockFtpServer</artifactId>
-      <version>2.4</version>
-    </dependency>
     <!-- used for unit testing -->
     <dependency>
       <groupId>junit</groupId>

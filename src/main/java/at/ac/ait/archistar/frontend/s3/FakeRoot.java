@@ -1,10 +1,9 @@
 package at.ac.ait.archistar.frontend.s3;
 
-import java.io.StringWriter;
-import java.io.Writer;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 import javax.ws.rs.DELETE;
@@ -18,18 +17,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.jboss.resteasy.util.Hex;
-import org.w3c.dom.DOMImplementation;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.ls.DOMImplementationLS;
-import org.w3c.dom.ls.LSOutput;
-import org.w3c.dom.ls.LSSerializer;
 
 import at.ac.ait.archistar.middleware.Engine;
 import at.ac.ait.archistar.middleware.crypto.DecryptionException;
@@ -40,85 +30,16 @@ import at.ac.ait.archistar.middleware.frontend.SimpleFile;
 public class FakeRoot {
 	
 	private Engine engine;
-	private DocumentBuilderFactory docFactory;
-	private DocumentBuilder docBuilder;
+	
+	private XmlDocumentBuilder builder;
 
 	public FakeRoot(Engine engine) throws ParserConfigurationException {
 		this.engine = engine;
-		this.docFactory = DocumentBuilderFactory.newInstance();
-		this.docBuilder = docFactory.newDocumentBuilder();
+		this.builder = new XmlDocumentBuilder();
 	}
-	
-	private String stringFromDoc(Document doc) {
-		DOMImplementation impl = doc.getImplementation();
-		DOMImplementationLS implLS = (DOMImplementationLS) impl.getFeature("LS", "3.0");
-		LSSerializer lsSerializer = implLS.createLSSerializer();
-		lsSerializer.getDomConfig().setParameter("format-pretty-print", true);
-		 
-		LSOutput lsOutput = implLS.createLSOutput();
-		lsOutput.setEncoding("UTF-8");
-		Writer stringWriter = new StringWriter();
-		lsOutput.setCharacterStream(stringWriter);
-		lsSerializer.write(doc, lsOutput);
 		
-		return stringWriter.toString();
-	}
-	
-	/*
-	 * Example output:
-	
-	<?xml version="1.0" encoding="UTF-8"?>
-	<ListAllMyBucketsResult xmlns="http://doc.s3.amazonaws.com/2006-03-01">
-	  <Owner>
-	    <ID>bcaf1ffd86f461ca5fb16fd081034f</ID>
-	    <DisplayName>webfile</DisplayName>
-	  </Owner>
-	  <Buckets>
-	    <Bucket>
-	      <Name>quotes</Name>
-	      <CreationDate>2006-02-03T16:45:09.000Z</CreationDate>
-	    </Bucket>
-	    <Bucket>
-	      <Name>samples</Name>
-	      <CreationDate>2006-02-03T16:41:58.000Z</CreationDate>
-	    </Bucket>
-	  </Buckets>
-	</ListAllMyBucketsResult>
-	*/
-	
 	public String listBuckets() {
-		
-		Document doc = this.docBuilder.newDocument();
-		doc.setXmlVersion("1.0");
-		
-		Element rootElement = doc.createElement("ListAllMyBucketsResult");
-		rootElement.setAttribute("xmlns", "http://doc.s3.amazonaws.com/2006-03-01");
-		doc.appendChild(rootElement);
-		
-		Element owner = doc.createElement("Owner");
-		Element id = doc.createElement("ID");
-		id.setTextContent("deadbeef");
-		Element name = doc.createElement("DisplayName");
-		name.setTextContent("Andreas Happe");
-
-		owner.appendChild(id);
-		owner.appendChild(name);
-		rootElement.appendChild(owner);
-		
-		Element buckets = doc.createElement("Buckets");
-		Element bucket = doc.createElement("Bucket");
-		Element bucketName = doc.createElement("Name");
-		bucketName.setTextContent("fake_bucket");
-		
-		Element creationDate = doc.createElement("CreationDate");
-		creationDate.setTextContent("2006-02-03T16:41:58.000Z");
-		
-		bucket.appendChild(bucketName);
-		bucket.appendChild(creationDate);
-		buckets.appendChild(bucket);
-		rootElement.appendChild(buckets);
-		
-		return stringFromDoc(doc);
+		return builder.stringFromDoc(builder.listBuckets());
 	}
 	
 	/* need to do this in a cleaner way */
@@ -127,29 +48,8 @@ public class FakeRoot {
 	public String getAll(
 			@QueryParam("delimiter") String delim,
             @QueryParam("prefix") String prefix,
-            @QueryParam("max-keys") int maxKeysInt) {
-				
-		Document doc = this.docBuilder.newDocument();
-		doc.setXmlVersion("1.0");
+            @QueryParam("max-keys") int maxKeysInt) throws DecryptionException {
 		
-		Element rootElement = doc.createElement("ListBucketResult");
-		rootElement.setAttribute("xmlns", "http://doc.s3.amazonaws.com/2006-03-01");
-		doc.appendChild(rootElement);
-		
-		Element name = doc.createElement("Name");
-		name.setTextContent("fake_bucket");
-		rootElement.appendChild(name);
-		rootElement.appendChild(doc.createElement("Prefix"));
-		rootElement.appendChild(doc.createElement("Marker"));
-		
-		Element maxKeys = doc.createElement("MaxKeys");
-		maxKeys.setTextContent("1000");
-		rootElement.appendChild(maxKeys);
-		
-		Element isTruncated = doc.createElement("isTruncated");
-		isTruncated.setTextContent("false");
-		rootElement.appendChild(isTruncated);
-
 		if (prefix != null && (prefix.equals("/") || prefix.equals(""))) {
 			prefix = null;
 		}
@@ -163,24 +63,17 @@ public class FakeRoot {
 		}
 		
 		System.err.println("prefix: " + prefix);
-		
+
+		HashSet<SimpleFile> results = new HashSet<SimpleFile>();
 		for(String key : this.engine.listObjects(prefix)) {
-			Element contents = doc.createElement("Contents");
+			FSObject obj = engine.getObject(key);
 			
-			contents.appendChild(createElement(doc, "Key", key));
-			contents.appendChild(createElement(doc, "Size", "42"));
-			contents.appendChild(createElement(doc, "LastModified", "2006-02-03T16:41:58.000Z"));
-			contents.appendChild(createElement(doc, "ETag", "42"));
-			
-			rootElement.appendChild(contents);
+			if (obj instanceof SimpleFile) {
+				results.add((SimpleFile) obj);
+			}
 		}
-		return stringFromDoc(doc);
-	}
-	
-	private Element createElement(Document doc, String name, String value) {
-		Element xmlKey = doc.createElement(name);
-		xmlKey.setTextContent(value);
-		return xmlKey;
+		
+		return builder.stringFromDoc(builder.listElements(prefix, maxKeysInt, results));
 	}
 	
 	@GET
@@ -209,7 +102,6 @@ public class FakeRoot {
 	@Produces ("text/plain")
 	public Response getStatById(@PathParam("id") String id) throws DecryptionException, NoSuchAlgorithmException {
 		
-		System.err.println("HEAD by id:" + id);
 		Map<String, String> result = engine.statObject(id);
 		
 		if (result != null) {
@@ -294,12 +186,8 @@ public class FakeRoot {
 	@Path( "{id:.+}")
 	@Produces ("text/plain")
 	public Response deleteById(@PathParam("id") String id) throws DecryptionException {
-		
-		System.err.println("id: " + id);
-		
 		FSObject obj = engine.getObject(id);
 		engine.deleteObject(obj);
-		
 		return Response.accepted().status(204).build();
 	}	
 }
