@@ -1,6 +1,7 @@
 package at.ac.ait.archistar.frontend.s3;
 
 import java.security.NoSuchAlgorithmException;
+import java.util.Map;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -21,11 +22,11 @@ public class FakeRoot {
 	
 	private XmlDocumentBuilder builder;
 
-	private FakeBucket bucket;
+	private Map<String, FakeBucket> buckets;
 	
-	public FakeRoot(FakeBucket bucket) throws ParserConfigurationException {
+	public FakeRoot(Map<String, FakeBucket> buckets) throws ParserConfigurationException {
 		this.builder = new XmlDocumentBuilder();
-		this.bucket = bucket;
+		this.buckets = buckets;
 	}
 		
 	public String listBuckets() {
@@ -40,7 +41,7 @@ public class FakeRoot {
             @QueryParam("prefix") String prefix,
             @QueryParam("max-keys") int maxKeysInt) throws DecryptionException {
 		
-		return this.bucket.getAll(delim, prefix, maxKeysInt);
+		return this.buckets.get("fake_bucket").getAll(delim, prefix, maxKeysInt);
 	}
 	
 	@GET
@@ -49,7 +50,7 @@ public class FakeRoot {
 	public Response getById(@PathParam("id") String id
 			) throws DecryptionException, NoSuchAlgorithmException {
 		
-		return this.bucket.getById(id);
+		return this.buckets.get("fake_bucket").getById(id);
 	}
 
 	@HEAD
@@ -57,7 +58,7 @@ public class FakeRoot {
 	@Produces ("text/plain")
 	public Response getStatById(@PathParam("id") String id) throws DecryptionException, NoSuchAlgorithmException {
 		
-		return this.bucket.getStatById(id);
+		return this.buckets.get("fake_bucket").getStatById(id);
 	}
 	
 	@PUT
@@ -70,13 +71,13 @@ public class FakeRoot {
 						   @HeaderParam("x-amz-meta-mode") String mode,
 						   byte[] input) throws NoSuchAlgorithmException, DecryptionException {
 		
-		return this.bucket.writeById(id, gid, uid, mode, serverSideEncryption, input);
+		return this.buckets.get("fake_bucket").writeById(id, gid, uid, mode, serverSideEncryption, input);
 	}
 
 	@DELETE
 	@Path( "{id:.+}")
 	@Produces ("text/plain")
 	public Response deleteById(@PathParam("id") String id) throws DecryptionException {
-		return this.bucket.deleteById(id);
+		return this.buckets.get("fake_bucket").deleteById(id);
 	}	
 }
