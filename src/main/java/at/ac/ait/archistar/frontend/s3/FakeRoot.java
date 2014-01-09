@@ -37,6 +37,8 @@ public class FakeRoot {
             @QueryParam("max-keys") int maxKeysInt,
             @HeaderParam("X-Bucket") String bucket) throws DecryptionException {
 		
+		System.out.println("getAll: bucket: " + bucket + " prefix: " + prefix);
+		
 		if (bucket.isEmpty()) {
 			/* list all buckets */
 			return builder.stringFromDoc(builder.listBuckets(this.buckets));
@@ -44,7 +46,9 @@ public class FakeRoot {
 			return bucketNotFound(bucket);
 		} else {
 			/* return content of this bucket */
-			return this.buckets.get(bucket).getAll(bucket, delim, prefix, maxKeysInt);		
+			String tmp = this.buckets.get(bucket).getAll(bucket, delim, prefix, maxKeysInt);
+			System.err.println("done");
+			return tmp;
 		}
 	}
 	
@@ -59,6 +63,8 @@ public class FakeRoot {
 							@HeaderParam("X-Bucket") String bucket
 			) throws DecryptionException, NoSuchAlgorithmException {
 		
+		System.out.println("getById: bucket: " + bucket + " path: " + id);
+		
 		if (!this.buckets.containsKey(bucket)) {
 			return Response.accepted().status(404).entity(bucketNotFound(bucket)).build();
 		} else {
@@ -72,6 +78,8 @@ public class FakeRoot {
 	public Response getStatById(@PathParam("id") String id,
 								@HeaderParam("X-Bucket") String bucket
 							   ) throws DecryptionException, NoSuchAlgorithmException {
+		
+		System.out.println("getStatById: bucket: " + bucket + " path: " + id);
 		
 		if (!this.buckets.containsKey(bucket)) {
 			return Response.accepted().status(404).entity(bucketNotFound(bucket)).build();

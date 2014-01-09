@@ -3,11 +3,15 @@ package at.ac.ait.archistar.frontend.s3;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.LinkedList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.PreMatching;
 import javax.ws.rs.ext.Provider;
+
+import org.apache.commons.codec.binary.StringUtils;
 
 /**
  * this filter should normalize incoming requests. S3 allows two ways of
@@ -30,9 +34,6 @@ public class RedirectorFilter implements ContainerRequestFilter {
     	
     	if (host.endsWith(".s3.amazonaws.com")) {
     		/* bucket name is already set, do nothing */
-    	} else if (host.equalsIgnoreCase("s3.amazonaws.com")) {
-    		/* extract bucket from path and set header */
-    		adoptBucket(requestContext);
     	} else {
     		/* this is some invalid host -- normally this means this is a
     		 * local S3 installation -- try to extract the bucket from
@@ -49,19 +50,61 @@ public class RedirectorFilter implements ContainerRequestFilter {
     	String path = uri.getPath();
     	String bucketString = "";
     	String bucket = "";
+    	String query = uri.getQuery();
     	
+    	System.err.println("Input: " + uri.toString());
+    	    	
     	if (path.equals("/")) {
-    		bucketString = "s3.amazonaws.com";
-    		path = "/";
-    	} else if (path.indexOf("/") == path.lastIndexOf('/')) {
-    		bucket = path.substring(path.indexOf("/", 1));
-    		bucketString = bucket + ".s3.amazonaws.com";
-    		path = "/";
+        	bucketString = "s3.amazonaws.com";
+        	path = "/";    		
     	} else {
-    		bucket = path.substring(1, path.indexOf("/", 1));
-        	bucketString = bucket + ".s3.amazonaws.com";
-         	path = path.substring(path.indexOf("/", 1));
+    		Pattern p = Pattern.compile("^/*([^/]+)(.*)$");
+    		Matcher m = p.matcher(path);
+    		
+    		if (m.find() && m.groupCount() == 2) {
+    			bucket = m.group(1);
+    			path = m.group(2);
+            	bucketString = bucket + ".s3.amazonaws.com";
+    		} else {
+    			throw new RuntimeException();
+    		}
     	}
+    	
+    	/* nothing found, try query params */
+    	if (bucket != null && path != null && uri != null && uri.getQuery() != null && bucket.equalsIgnoreCase("") && path.equalsIgnoreCase("/") && !uri.getQuery().isEmpty()) {
+    		
+    		query = "";
+    		
+    		for(String part : uri.getQuery().split("&")) {
+    			
+    			if (!query.isEmpty()) {
+    				query = query + "&";
+    			}
+    			
+    			String key = part.split("=")[0];
+    			String value = part.split("=")[1];
+    			
+    			if (key.equalsIgnoreCase("prefix")) {
+        			Pattern p = Pattern.compile("^/*([^/]+)(.*)$");
+        			Matcher m = p.matcher(value);
+        			
+        			if (m.find()) {
+        				System.err.println("MATCH!");
+        				bucket = m.group(1);
+                    	bucketString = bucket + ".s3.amazonaws.com";
+                    	query = query + "prefix=" + m.group(2);
+        			} else {
+        				query = query + part;
+        			}
+    			} else {
+    				query = query + part;
+    			}
+    		}
+    	}
+    	
+    	System.err.println("Result-Bucket: " + bucket);
+    	System.err.println("Result-Path: " + path);
+    	System.err.println("Query: " + query);
     	
     	/* set Bucket */
     	ctx.getHeaders().add("X-Bucket", bucket);
@@ -73,7 +116,8 @@ public class RedirectorFilter implements ContainerRequestFilter {
     	
     	/* set URI */
 		try {
-			URI target = new URI(uri.getScheme(), uri.getUserInfo(), uri.getHost(), uri.getPort(), path, uri.getQuery(), uri.getFragment());
+			URI target = new URI(uri.getScheme(), uri.getUserInfo(), uri.getHost(), uri.getPort(), path, query, uri.getFragment());
+			System.err.println("Target: " + target.toString());
 	    	ctx.setRequestUri(target);
 		} catch (URISyntaxException e) {
 			// TODO Auto-generated catch block

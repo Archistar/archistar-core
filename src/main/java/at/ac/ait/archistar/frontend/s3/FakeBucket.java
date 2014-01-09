@@ -99,6 +99,13 @@ public class FakeBucket {
 		if (result != null) {
 			FSObject obj = engine.getObject(id);
 			
+			if (obj == null) {
+				System.err.println("returning 404");
+				ResponseBuilder resp = Response.accepted().status(404);
+				return resp.build();
+			}
+			
+			
 			SimpleFile file = null;
 			if (obj instanceof SimpleFile) {
 				file = (SimpleFile) obj;
