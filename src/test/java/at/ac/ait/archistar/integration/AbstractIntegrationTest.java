@@ -84,5 +84,4 @@ public abstract class AbstractIntegrationTest {
 			fail("could not decrypt fragments", e);
 		}
 	}
-
 }

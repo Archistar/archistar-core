@@ -1,6 +1,7 @@
 package at.ac.ait.archistar.middleware;
 
 import java.util.Dictionary;
+import java.util.Map;
 import java.util.Set;
 
 import static org.fest.assertions.api.Assertions.*;
@@ -29,6 +30,8 @@ public class Engine implements SimpleFileInterface {
 	private final MetadataService metadataService;
 	
 	private final CryptoEngine crypto;
+	
+	private final CustomSerializer serializer;
 
 	/**
 	 * Create a new Archistar engine containing the following components
@@ -43,6 +46,7 @@ public class Engine implements SimpleFileInterface {
 		this.distributor = distributor;
 		this.metadataService = naming;
 		this.crypto = crypto;
+		this.serializer = new CustomSerializer();
 	}
 
 	@Override
@@ -69,7 +73,9 @@ public class Engine implements SimpleFileInterface {
 		
 		// TODO: just assert that nothing went wrong..
 		assertThat(readCount).isEqualTo(servers.getOnlineStorageServerCount());
-		return this.crypto.decrypt(fragments);
+		byte[] decrypted =  this.crypto.decrypt(fragments);
+		
+		return this.serializer.deserialize(decrypted);
 	}
 
 	@Override
@@ -79,14 +85,16 @@ public class Engine implements SimpleFileInterface {
 		
 		Set<Fragment> fragments = this.metadataService.getDistributionFor(obj.getPath());
 		
+		byte[] serialized = this.serializer.serialize(obj);
+		
 		// encrypt the fragments
-		Set<Fragment> encryptedData = this.crypto.encrypt(obj, fragments);
+		Set<Fragment> encryptedData = this.crypto.encrypt(serialized, fragments);
 		
 		return this.distributor.putFragmentSet(encryptedData);	
 	}
 
 	@Override
-	public Dictionary<String, String> statObject(String path) {
+	public Map<String, String> statObject(String path) {
 		return metadataService.stat(path);
 	}
 

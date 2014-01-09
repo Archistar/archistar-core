@@ -11,15 +11,12 @@ import org.junit.Test;
 
 import at.ac.ait.archistar.backendserver.fragments.Fragment;
 import at.ac.ait.archistar.backendserver.storageinterface.StorageServer;
-import at.ac.ait.archistar.middleware.CustomSerializer;
 import at.ac.ait.archistar.middleware.crypto.CryptoEngine;
 import at.ac.ait.archistar.middleware.crypto.DecryptionException;
 import at.ac.ait.archistar.middleware.crypto.PseudoMirrorCryptoEngine;
-import at.ac.ait.archistar.middleware.frontend.FSObject;
 
 public class MirrorTest {
 	
-	private static FSObject testData;
 	private static Set<Fragment> distribution;
 	private static CryptoEngine cryptoEngine;
 	private final static byte[] mockSerializedData = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
@@ -29,11 +26,7 @@ public class MirrorTest {
 	@BeforeClass
 	public static void onceSetup() {
 		// GIVEN some test data
-		testData = mock(FSObject.class);
-		CustomSerializer serializer = mock(CustomSerializer.class);
-		when(serializer.serialize(testData)).thenReturn(mockSerializedData);
-		when(serializer.deserialize(mockSerializedData)).thenReturn(testData);		
-		cryptoEngine = new PseudoMirrorCryptoEngine(serializer);
+		cryptoEngine = new PseudoMirrorCryptoEngine();
 		
 		/* GIVEN some mock fragments */
 		distribution = new HashSet<Fragment>();
@@ -59,7 +52,7 @@ public class MirrorTest {
 	@Test
 	public void testIfCryptoEngineProducesEnoughFragments() {
 		// WHEN i encrypt some data
-		Set<Fragment> encrypted = cryptoEngine.encrypt(testData, distribution);
+		Set<Fragment> encrypted = cryptoEngine.encrypt(mockSerializedData, distribution);
 		
 		// THEN i except the data to be distributed to all servers
 		assertThat(encrypted).hasSize(distribution.size());
@@ -68,7 +61,7 @@ public class MirrorTest {
 	@Test
 	public void testIfMirroringWorks() {
 		// WHEN i encrypt data
-		cryptoEngine.encrypt(testData, distribution);
+		cryptoEngine.encrypt(mockSerializedData, distribution);
 		
 		// THEN i expect the serialized data to be forwarded to the fragments
 		verify(frag1).setData(mockSerializedData);
@@ -77,14 +70,14 @@ public class MirrorTest {
 		
 	@Test
 	public void testIfDecryptionProducesOriginalData() {
-		Set<Fragment> encrypted = cryptoEngine.encrypt(testData, distribution);
+		Set<Fragment> encrypted = cryptoEngine.encrypt(mockSerializedData, distribution);
 		
-		FSObject result = null;
+		byte[] result = null;
 		try {
 			result = cryptoEngine.decrypt(encrypted);
 		} catch (DecryptionException e) {
 			fail("error while decryption", e);
 		}
-		assertThat(result).isNotNull().isEqualTo(result);
+		assertThat(result).isEqualTo(mockSerializedData);
 	}
 }

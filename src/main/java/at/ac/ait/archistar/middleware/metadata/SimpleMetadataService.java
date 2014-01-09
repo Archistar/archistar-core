@@ -5,7 +5,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -19,21 +18,20 @@ import org.slf4j.LoggerFactory;
 import at.ac.ait.archistar.backendserver.fragments.Fragment;
 import at.ac.ait.archistar.backendserver.fragments.RemoteFragment;
 import at.ac.ait.archistar.backendserver.storageinterface.StorageServer;
+import at.ac.ait.archistar.middleware.crypto.CryptoEngine;
+import at.ac.ait.archistar.middleware.crypto.DecryptionException;
 import at.ac.ait.archistar.middleware.distributor.Distributor;
 import at.ac.ait.archistar.middleware.distributor.ServerConfiguration;
 import at.ac.ait.archistar.middleware.frontend.FSObject;
 
 /**
  * The metadata  service is responsible for storing all meta-information
- * aber filesystem layout, versions, etc.
+ * about filesystem layout, versions, etc.
  * 
- * TODO: start with thinking about serialized naming system (for usage
- *       in combination with a persistent storage unit)
- *       
  * TODO: think about when to remove a mapping from the database
  * TODO: remove direct distributor access
  * 
- * @author andy
+ * @author Andreas Happe <andreashappe@snikt.net>
  */
 public class SimpleMetadataService implements MetadataService {
 	
@@ -43,11 +41,14 @@ public class SimpleMetadataService implements MetadataService {
 	
 	private final ServerConfiguration servers;
 	
+	private final CryptoEngine crypto;
+	
 	private Logger logger = LoggerFactory.getLogger(SimpleMetadataService.class);
 	
-	public SimpleMetadataService(ServerConfiguration servers, Distributor distributor) {
+	public SimpleMetadataService(ServerConfiguration servers, Distributor distributor, CryptoEngine crypto) {
 		this.distributor = distributor;
 		this.servers = servers;
+		this.crypto = crypto;
 	}
 	
 	private Set<Fragment> getNewDistributionSet() {
@@ -58,6 +59,13 @@ public class SimpleMetadataService implements MetadataService {
 		return distribution;
 	}
 
+	private Set<Fragment> getNewDistributionSet(String fragmentId) {
+		HashSet<Fragment> distribution = new HashSet<Fragment>();
+		for(StorageServer s : this.servers.getOnlineStorageServers()) {
+			distribution.add(new RemoteFragment(fragmentId, s));
+		}
+		return distribution;
+	}
 	
 	private byte[] serializeDatabase() {		
 		try {
@@ -81,33 +89,29 @@ public class SimpleMetadataService implements MetadataService {
 		return null;
 	}
 	
-	/**
-	 * as we are non-persistent we just have to create a new collection
-	 * 
-	 * TODO: use distributor for distributed read
-	 */
 	@Override
 	public int connect() {
 		
 		int result = distributor.connectServers();
 		
 		/* get a new distribution set and set fragment-id to index */
-		Set<Fragment> index = getNewDistributionSet();
-		for(Fragment f : index) { f.setFragmentId("index"); }
-
-		/* TODO: use cryptoengine for this? */
-		byte[] data = null;
-		int readCount = distributor.getFragmentSet(index);
-		for(Fragment f : index) {
-			if (f.isSynchronized()) {
-				data = f.getData();
-			}
-		}
+		Set<Fragment> index = getNewDistributionSet("index");
 		
-		if (data != null && readCount == servers.getOnlineStorageServerCount()) {
+		/* use crypto engine to retrieve data */
+		distributor.getFragmentSet(index);
+		byte[] data = null;
+		
+		try {
+			data = this.crypto.decrypt(index);
+		} catch (DecryptionException e) {
+			logger.warn("error during decryption");
+			data = null;
+		}
+
+		/* now either rebuild database or create a new one */
+		if (data != null) {
 			database = deserializeDatabase(data);
 		} else {
-			logger.warn("creating and syncing a new database");
 			this.database = new HashMap<String, Set<Fragment>>();
 			synchronize();
 		}
@@ -175,11 +179,12 @@ public class SimpleMetadataService implements MetadataService {
 	public int synchronize() {
 		
 		/* this should actually be a merge not a simple sync (for multi-user usage) */
-		Set<Fragment> index = getNewDistributionSet();
-		for(Fragment f : index) { f.setFragmentId("index"); }
+		Set<Fragment> index = getNewDistributionSet("index");
 		byte[] data = serializeDatabase();
-		for(Fragment f : index) { f.setData(data); }	
-		distributor.putFragmentSet(index);		
+		
+		this.crypto.encrypt(data, index);
+		distributor.putFragmentSet(index);
+		
 		return 0;
 	}
 
@@ -195,17 +200,32 @@ public class SimpleMetadataService implements MetadataService {
 	}
 
 	@Override
-	public Dictionary<String, String> stat(String path) {
+	public Map<String, String> stat(String path) {
 		
-		if (path.equalsIgnoreCase("/")) {
-			
+		if (this.database.containsKey(path)) {
+			return new HashMap<String, String>();
+		} else {
+			return null;
 		}
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override
 	public Set<String> list(String path) {
-		return this.database.keySet();
+		Set<String> initialResult =  this.database.keySet();
+		
+		Set<String> result  = new HashSet<String>();
+		for(String key : initialResult) {
+			if (path != null) {
+				
+				System.err.println("strcmp: " + path + " vs " + key);
+				
+				if(key.startsWith(path)) {
+					result.add(key);
+				}
+			} else {
+				result.add(key);
+			}
+		}
+		return result;
 	}
 }

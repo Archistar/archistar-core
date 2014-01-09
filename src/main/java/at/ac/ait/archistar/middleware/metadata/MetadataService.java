@@ -1,6 +1,6 @@
 package at.ac.ait.archistar.middleware.metadata;
 
-import java.util.Dictionary;
+import java.util.Map;
 import java.util.Set;
 
 import at.ac.ait.archistar.backendserver.fragments.Fragment;
@@ -34,5 +34,5 @@ public interface MetadataService {
   int delete(FSObject obj);
 
   /** retrieves stat information about an object */
-  Dictionary<String, String> stat(String path);
+  Map<String, String> stat(String path);
 }

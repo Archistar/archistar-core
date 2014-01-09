@@ -1,6 +1,7 @@
 package at.ac.ait.archistar.middleware.frontend;
 
 import java.util.Dictionary;
+import java.util.Map;
 import java.util.Set;
 
 import at.ac.ait.archistar.middleware.crypto.DecryptionException;
@@ -30,7 +31,7 @@ public interface SimpleFileInterface {
   int deleteObject(FSObject obj);
 
   /** retrieve meta-data for some object */
-  Dictionary<String, String> statObject(String path);
+  Map<String, String> statObject(String path);
   
   /** list objects according to some path criteria */
   Set<String> listObjects(String path);

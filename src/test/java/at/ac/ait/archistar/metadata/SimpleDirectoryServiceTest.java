@@ -12,6 +12,8 @@ import org.junit.Test;
 
 import at.ac.ait.archistar.backendserver.fragments.Fragment;
 import at.ac.ait.archistar.backendserver.storageinterface.StorageServer;
+import at.ac.ait.archistar.middleware.crypto.CryptoEngine;
+import at.ac.ait.archistar.middleware.crypto.PseudoMirrorCryptoEngine;
 import at.ac.ait.archistar.middleware.distributor.Distributor;
 import at.ac.ait.archistar.middleware.distributor.ServerConfiguration;
 import at.ac.ait.archistar.middleware.metadata.MetadataService;
@@ -40,6 +42,8 @@ public class SimpleDirectoryServiceTest {
 		when(server2.isConnected()).thenReturn(true);
 		servers.add(server2);
 		
+		CryptoEngine crypto = new PseudoMirrorCryptoEngine();
+		
 		Set<Fragment> result = new HashSet<Fragment>();
 		Fragment frag1 = mock(Fragment.class);
 		when(frag1.getStorageServer()).thenReturn(server1);
@@ -53,7 +57,7 @@ public class SimpleDirectoryServiceTest {
 		when(config.getOnlineStorageServerCount()).thenReturn(2);
 		when(config.getOnlineStorageServers()).thenReturn(servers);
 		
-		theService = new SimpleMetadataService(config, distributor);
+		theService = new SimpleMetadataService(config, distributor, crypto);
 		theService.connect();
 	}
 	

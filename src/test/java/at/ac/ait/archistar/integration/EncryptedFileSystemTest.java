@@ -1,24 +1,32 @@
 package at.ac.ait.archistar.integration;
 
+import static org.fest.assertions.api.Assertions.assertThat;
+import static org.fest.assertions.api.Assertions.fail;
+
 import java.io.File;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Test;
 
 import at.ac.ait.archistar.backendserver.storageinterface.FilesystemStorage;
 import at.ac.ait.archistar.backendserver.storageinterface.StorageServer;
-import at.archistar.crypto.ShamirPSS;
+import at.archistar.crypto.KrawczykCSS;
 import at.archistar.crypto.random.FakeRandomSource;
-import at.ac.ait.archistar.middleware.CustomSerializer;
+import at.archistar.crypto.random.RandomSource;
 import at.ac.ait.archistar.middleware.TestEngine;
 import at.ac.ait.archistar.middleware.crypto.CryptoEngine;
+import at.ac.ait.archistar.middleware.crypto.DecryptionException;
 import at.ac.ait.archistar.middleware.crypto.SecretSharingCryptoEngine;
 import at.ac.ait.archistar.middleware.distributor.BFTDistributor;
 import at.ac.ait.archistar.middleware.distributor.Distributor;
 import at.ac.ait.archistar.middleware.distributor.TestServerConfiguration;
+import at.ac.ait.archistar.middleware.frontend.FSObject;
+import at.ac.ait.archistar.middleware.frontend.SimpleFile;
 import at.ac.ait.archistar.middleware.metadata.MetadataService;
 import at.ac.ait.archistar.middleware.metadata.SimpleMetadataService;
 
@@ -45,14 +53,40 @@ public class EncryptedFileSystemTest extends AbstractIntegrationTest {
 		return servers;
 	}
 	
+	@Test
+	public void testPersistedStoreAndRetrieveOperation() {
+		SimpleFile testObject = new SimpleFile(randomTestFilename(), testData, new HashMap<String, String>());
+		String path = testObject.getPath();
+		
+		// WHEN I connect engine and store a fragment 
+		engine.connect();
+		engine.putObject(testObject);
+
+		// AND I disconnect and reconnect
+		engine.disconnect();
+		
+		assertThat(engine.connect()).isEqualTo(engine.getNumberOfServers());
+		
+		// THEN the data should still be available
+		try {
+			FSObject retrObject = engine.getObject(path);
+			assertThat(retrObject).isNotNull().isInstanceOf(SimpleFile.class);
+			assertThat(path).isEqualTo(retrObject.getPath());
+			assertThat(((SimpleFile)retrObject).getData()).isEqualTo(testData);
+		} catch (DecryptionException e) {
+			fail("could not decrypt fragment", e);
+		}
+	}
+	
 	@BeforeClass
 	public static void prepareServer() {
 		serverConfig = new TestServerConfiguration(createNewServers());
 		serverConfig.setupTestServer(1);
 	
-		CryptoEngine crypto = new SecretSharingCryptoEngine(new CustomSerializer(), new ShamirPSS(4, 3, new FakeRandomSource()));
+		RandomSource rng = new FakeRandomSource();
+		CryptoEngine crypto = new SecretSharingCryptoEngine(new KrawczykCSS(4, 2, rng));
 		Distributor distributor = new BFTDistributor(serverConfig);
-		MetadataService metadata = new SimpleMetadataService(serverConfig, distributor);
+		MetadataService metadata = new SimpleMetadataService(serverConfig, distributor, crypto);
 		engine = new TestEngine(serverConfig, metadata, distributor, crypto);
 	}
 	

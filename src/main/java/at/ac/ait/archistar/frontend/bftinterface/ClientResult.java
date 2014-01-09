@@ -44,16 +44,10 @@ public class ClientResult {
 			throw new InconsistentResultsException();
 		}
 	
-		/* TODO: re-enable this
-		for(TransactionResult r : this.results.values()) {
-			if (!r.verifyContent(tx)) {
-				lock.unlock();
-				throw new InconsistentResultsException();
-			}
-		}*/
-		
 		results.put(tx.getReplicaId(), tx);
-		if (results.size() >= (f+1)) {
+		/* NOTE: this condition is highly dependent upon the used secret-sharing mechanism
+		 * TODO: move this somehow into crypto engine? */
+		if (results.size() >= (2*f+1)) {
 			condition.signal();
 			lock.unlock();
 			return true;
