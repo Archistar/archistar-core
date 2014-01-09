@@ -29,36 +29,55 @@ public class FakeRoot {
 		this.buckets = buckets;
 	}
 		
-	public String listBuckets() {
-		return builder.stringFromDoc(builder.listBuckets());
-	}
-	
-	/* need to do this in a cleaner way */
 	@GET
 	@Produces("text/plain")
 	public String getAll(
 			@QueryParam("delimiter") String delim,
             @QueryParam("prefix") String prefix,
-            @QueryParam("max-keys") int maxKeysInt) throws DecryptionException {
+            @QueryParam("max-keys") int maxKeysInt,
+            @HeaderParam("X-Bucket") String bucket) throws DecryptionException {
 		
-		return this.buckets.get("fake_bucket").getAll(delim, prefix, maxKeysInt);
+		if (bucket.isEmpty()) {
+			/* list all buckets */
+			return builder.stringFromDoc(builder.listBuckets(this.buckets));
+		} else if (!this.buckets.containsKey(bucket)) {
+			return bucketNotFound(bucket);
+		} else {
+			/* return content of this bucket */
+			return this.buckets.get(bucket).getAll(bucket, delim, prefix, maxKeysInt);		
+		}
+	}
+	
+	private String bucketNotFound(String bucket) {
+		return builder.stringFromDoc(builder.bucketNotFound(bucket));
 	}
 	
 	@GET
 	@Path( "{id:.+}")
 	@Produces ("text/plain")
-	public Response getById(@PathParam("id") String id
+	public Response getById(@PathParam("id") String id,
+							@HeaderParam("X-Bucket") String bucket
 			) throws DecryptionException, NoSuchAlgorithmException {
 		
-		return this.buckets.get("fake_bucket").getById(id);
+		if (!this.buckets.containsKey(bucket)) {
+			return Response.accepted().status(404).entity(bucketNotFound(bucket)).build();
+		} else {
+			return this.buckets.get(bucket).getById(id);
+		}
 	}
 
 	@HEAD
 	@Path( "{id:.+}")
 	@Produces ("text/plain")
-	public Response getStatById(@PathParam("id") String id) throws DecryptionException, NoSuchAlgorithmException {
+	public Response getStatById(@PathParam("id") String id,
+								@HeaderParam("X-Bucket") String bucket
+							   ) throws DecryptionException, NoSuchAlgorithmException {
 		
-		return this.buckets.get("fake_bucket").getStatById(id);
+		if (!this.buckets.containsKey(bucket)) {
+			return Response.accepted().status(404).entity(bucketNotFound(bucket)).build();
+		} else {		
+			return this.buckets.get(bucket).getStatById(id);
+		}
 	}
 	
 	@PUT
@@ -69,15 +88,26 @@ public class FakeRoot {
 						   @HeaderParam("x-amz-meta-gid") String gid,
 						   @HeaderParam("x-amz-meta-uid") String uid,
 						   @HeaderParam("x-amz-meta-mode") String mode,
+						   @HeaderParam("X-Bucket") String bucket,
 						   byte[] input) throws NoSuchAlgorithmException, DecryptionException {
 		
-		return this.buckets.get("fake_bucket").writeById(id, gid, uid, mode, serverSideEncryption, input);
+		if (!this.buckets.containsKey(bucket)) {
+			return Response.accepted().status(404).entity(bucketNotFound(bucket)).build();
+		} else {		
+			return this.buckets.get(bucket).writeById(id, gid, uid, mode, serverSideEncryption, input);
+		}
 	}
 
 	@DELETE
 	@Path( "{id:.+}")
 	@Produces ("text/plain")
-	public Response deleteById(@PathParam("id") String id) throws DecryptionException {
-		return this.buckets.get("fake_bucket").deleteById(id);
-	}	
+	public Response deleteById(@PathParam("id") String id,
+			   				   @HeaderParam("X-Bucket") String bucket
+							  ) throws DecryptionException {
+		if (!this.buckets.containsKey(bucket)) {
+			return Response.accepted().status(404).entity(bucketNotFound(bucket)).build();
+		} else {		
+			return this.buckets.get(bucket).deleteById(id);
+		}
+	}
 }

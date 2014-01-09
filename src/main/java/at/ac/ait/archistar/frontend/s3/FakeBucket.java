@@ -29,22 +29,12 @@ public class FakeBucket {
 	}
 	
 	/* list all elements within bucket */
-	public String getAll(String delim, String prefix, int maxKeysInt) throws DecryptionException {
-		
-		if (prefix != null && (prefix.equals("/") || prefix.equals(""))) {
-			prefix = null;
-		}
-		
-		if (prefix != null && prefix.startsWith("/fake_bucket")) {
-			prefix = prefix.substring(12);
-		}
-		
-		if (prefix != null && (prefix.equals("/") || prefix.equals(""))) {
-			prefix = null;
-		}
-		
-		System.err.println("prefix: " + prefix);
+	public String getAll(String bucketName, String delim, String prefix, int maxKeysInt) throws DecryptionException {
 
+		if (prefix != null && (prefix.equals("/") || prefix.equals(""))) {
+			prefix = null;
+		}
+		
 		HashSet<SimpleFile> results = new HashSet<SimpleFile>();
 		for(String key : this.engine.listObjects(prefix)) {
 			FSObject obj = engine.getObject(key);
@@ -54,12 +44,10 @@ public class FakeBucket {
 			}
 		}
 		
-		return builder.stringFromDoc(builder.listElements(prefix, maxKeysInt, results));
+		return builder.stringFromDoc(builder.listElements(prefix, bucketName, maxKeysInt, results));
 	}
 
 	public Response getById(String id) throws DecryptionException, NoSuchAlgorithmException {
-		
-		System.err.println("get within bucket upon " + id);
 		
 		FSObject obj = engine.getObject(id);
 		byte[] result = null;

@@ -4,6 +4,8 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -36,7 +38,7 @@ public class XmlDocumentBuilder {
 		return xmlKey;
 	}
 
-	public Document listElements(String prefix, int maxKeys, Set<SimpleFile> results) {
+	public Document listElements(String prefix, String bucketName, int maxKeys, Set<SimpleFile> results) {
 		Document doc = this.docBuilder.newDocument();
 		doc.setXmlVersion("1.0");
 		
@@ -45,7 +47,8 @@ public class XmlDocumentBuilder {
 		doc.appendChild(rootElement);
 		
 		Element name = doc.createElement("Name");
-		name.setTextContent("fake_bucket");
+		name.setTextContent(bucketName);
+		
 		rootElement.appendChild(name);
 		rootElement.appendChild(doc.createElement("Prefix"));
 		rootElement.appendChild(doc.createElement("Marker"));
@@ -76,7 +79,23 @@ public class XmlDocumentBuilder {
 		return doc;
 	}
 	
-	public Document listBuckets() {
+	public Document bucketNotFound(String bucket) {
+		
+		Document doc = this.docBuilder.newDocument();
+		doc.setXmlVersion("1.0");
+		
+		Element rootElement = doc.createElement("Error");
+		rootElement.setAttribute("xmlns", "http://doc.s3.amazonaws.com/2006-03-01");
+		doc.appendChild(rootElement);
+		
+		rootElement.appendChild(createElement(doc, "Code", "NoSuchBucket"));
+		rootElement.appendChild(createElement(doc, "Resource", bucket));
+		rootElement.appendChild(createElement(doc, "Resource", bucket));
+		
+		return doc;
+	}
+	
+	public Document listBuckets(Map<String, FakeBucket> bucketList) {
 		Document doc = this.docBuilder.newDocument();
 		doc.setXmlVersion("1.0");
 		
@@ -95,16 +114,16 @@ public class XmlDocumentBuilder {
 		rootElement.appendChild(owner);
 		
 		Element buckets = doc.createElement("Buckets");
-		Element bucket = doc.createElement("Bucket");
-		Element bucketName = doc.createElement("Name");
-		bucketName.setTextContent("fake_bucket");
 		
-		Element creationDate = doc.createElement("CreationDate");
-		creationDate.setTextContent("2006-02-03T16:41:58.000Z");
-		
-		bucket.appendChild(bucketName);
-		bucket.appendChild(creationDate);
-		buckets.appendChild(bucket);
+		for(Entry<String, FakeBucket> e : bucketList.entrySet()) {
+			
+			Element bucket = doc.createElement("Bucket");
+			
+			bucket.appendChild(createElement(doc, "Name", e.getKey()));
+			bucket.appendChild(createElement(doc, "CreationDate", "1982-07-07T16:41:58.000Z"));
+
+			buckets.appendChild(bucket);
+		}
 		rootElement.appendChild(buckets);
 		
 		return doc;

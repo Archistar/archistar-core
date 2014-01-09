@@ -2,6 +2,7 @@ package at.ac.ait.archistar.frontend.s3;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.LinkedList;
 
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
@@ -44,20 +45,35 @@ public class RedirectorFilter implements ContainerRequestFilter {
     private void adoptBucket(ContainerRequestContext ctx) {
     	/* extract bucket */
     	URI uri = ctx.getUriInfo().getRequestUri();
+    	
     	String path = uri.getPath();
-     	String bucket = path.substring(1, path.indexOf("/", 1));
-     	String resultPath = path.substring(path.indexOf("/", 1));
-    	String bucketString = bucket + ".s3.amazonaws.com";
+    	String bucketString = "";
+    	String bucket = "";
+    	
+    	if (path.equals("/")) {
+    		bucketString = "s3.amazonaws.com";
+    		path = "/";
+    	} else if (path.indexOf("/") == path.lastIndexOf('/')) {
+    		bucket = path.substring(path.indexOf("/", 1));
+    		bucketString = bucket + ".s3.amazonaws.com";
+    		path = "/";
+    	} else {
+    		bucket = path.substring(1, path.indexOf("/", 1));
+        	bucketString = bucket + ".s3.amazonaws.com";
+         	path = path.substring(path.indexOf("/", 1));
+    	}
+    	
+    	/* set Bucket */
+    	ctx.getHeaders().add("X-Bucket", bucket);
     	
     	/* set Host */
-    	ctx.getHeaders().add("Host", bucketString);
-       	
-    	System.err.println("new Host: " + bucketString);
+    	LinkedList<String> list = new LinkedList<String>();
+    	list.add(bucketString);
+    	ctx.getHeaders().put("Host", list);
     	
     	/* set URI */
 		try {
-			URI target = new URI(uri.getScheme(), uri.getUserInfo(), uri.getHost(), uri.getPort(), resultPath, uri.getQuery(), uri.getFragment());
-			System.err.println("New URL: " + target.toString());
+			URI target = new URI(uri.getScheme(), uri.getUserInfo(), uri.getHost(), uri.getPort(), path, uri.getQuery(), uri.getFragment());
 	    	ctx.setRequestUri(target);
 		} catch (URISyntaxException e) {
 			// TODO Auto-generated catch block
