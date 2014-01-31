@@ -19,9 +19,9 @@ import at.ac.ait.archistar.middleware.crypto.DecryptionException;
 @Path("/")
 public class FakeRoot {
 	
-	private XmlDocumentBuilder builder;
+	final private XmlDocumentBuilder builder;
 
-	private FakeBucket bucket;
+	final private FakeBucket bucket;
 	
 	public FakeRoot(FakeBucket bucket) throws ParserConfigurationException {
 		this.builder = new XmlDocumentBuilder();
@@ -34,7 +34,7 @@ public class FakeRoot {
 	
 	/* need to do this in a cleaner way */
 	@GET
-	@Produces("text/plain")
+	@Produces("application/xml")
 	public String getAll(
 			@QueryParam("delimiter") String delim,
             @QueryParam("prefix") String prefix,
@@ -62,7 +62,7 @@ public class FakeRoot {
 	
 	@PUT
 	@Path( "{id:.+}")
-	@Produces ("text/xml")
+	@Produces ("text/plain")
 	public Response writeById(@PathParam("id") String id,
 						   @HeaderParam("x-amz-server-side-encryption") String serverSideEncryption,
 						   @HeaderParam("x-amz-meta-gid") String gid,
