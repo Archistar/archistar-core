@@ -65,7 +65,7 @@ public class ServerServerCommunication {
 						ch.pipeline().addLast(
 								new SslHandler(engine),
 								new ObjectEncoder(),
-								new ObjectDecoder(ClassResolvers.cacheDisabled(null)));
+								new ObjectDecoder(OzymandiasServer.maxObjectSize, ClassResolvers.cacheDisabled(null)));
 					}
 				});
 			
