@@ -7,8 +7,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -217,10 +215,10 @@ public class SimpleMetadataService implements MetadataService {
 		
 		Set<String> result  = new HashSet<String>();
 		for(String key : initialResult) {
-			
-			System.err.println("str cmp: " + key + " vs " + path);
-			
 			if (path != null) {
+				
+				System.err.println("strcmp: " + path + " vs " + key);
+				
 				if(key.startsWith(path)) {
 					result.add(key);
 				}

@@ -6,15 +6,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
-import javax.ws.rs.HEAD;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.Path;
-import javax.ws.rs.GET;
-import javax.ws.rs.PUT;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.xml.parsers.ParserConfigurationException;
@@ -26,7 +17,6 @@ import at.ac.ait.archistar.middleware.crypto.DecryptionException;
 import at.ac.ait.archistar.middleware.frontend.FSObject;
 import at.ac.ait.archistar.middleware.frontend.SimpleFile;
 
-@Path("/fake_bucket")
 public class FakeBucket {
 	
 	private Engine engine;
@@ -39,27 +29,12 @@ public class FakeBucket {
 	}
 	
 	/* list all elements within bucket */
-	@GET
-	@Produces("text/plain")
-	public String getAll(
-			@QueryParam("delimiter") String delim,
-            @QueryParam("prefix") String prefix,
-            @QueryParam("max-keys") int maxKeysInt) throws DecryptionException {
-		
-		if (prefix != null && (prefix.equals("/") || prefix.equals(""))) {
-			prefix = null;
-		}
-		
-		if (prefix != null && prefix.startsWith("/fake_bucket")) {
-			prefix = prefix.substring(12);
-		}
-		
-		if (prefix != null && (prefix.equals("/") || prefix.equals(""))) {
-			prefix = null;
-		}
-		
-		System.err.println("prefix: " + prefix);
+	public String getAll(String bucketName, String delim, String prefix, int maxKeysInt) throws DecryptionException {
 
+		if (prefix != null && (prefix.equals("/") || prefix.equals(""))) {
+			prefix = null;
+		}
+		
 		HashSet<SimpleFile> results = new HashSet<SimpleFile>();
 		for(String key : this.engine.listObjects(prefix)) {
 			FSObject obj = engine.getObject(key);
@@ -69,16 +44,10 @@ public class FakeBucket {
 			}
 		}
 		
-		return builder.stringFromDoc(builder.listElements(prefix, maxKeysInt, results));
+		return builder.stringFromDoc(builder.listElements(prefix, bucketName, maxKeysInt, results));
 	}
 
-	
-	@GET
-	@Path( "{id:.+}")
-	@Produces ("text/plain")
-	public Response getById(@PathParam("id") String id) throws DecryptionException, NoSuchAlgorithmException {
-		
-		System.err.println("get within bucket upon " + id);
+	public Response getById(String id) throws DecryptionException, NoSuchAlgorithmException {
 		
 		FSObject obj = engine.getObject(id);
 		byte[] result = null;
@@ -93,15 +62,7 @@ public class FakeBucket {
 		return Response.accepted().entity(result).header("ETag", new String(Hex.encodeHex(thedigest))).build();
 	}
 	
-	@PUT
-	@Path( "{id:.+}")
-	@Produces ("text/xml")
-	public Response writeById(@PathParam("id") String id,
-							  @HeaderParam("x-amz-meta-gid") String gid,
-			   				  @HeaderParam("x-amz-meta-uid") String uid,
-			   				  @HeaderParam("x-amz-meta-mode") String mode,
-						      @HeaderParam("x-amz-server-side-encryption") String serverSideEncryption,
-						      byte[] input) throws NoSuchAlgorithmException, DecryptionException {
+	public Response writeById(String id, String gid, String uid, String mode, String serverSideEncryption, byte[] input) throws NoSuchAlgorithmException, DecryptionException {
 		
 		System.err.println("id: " + id);
 		
@@ -121,10 +82,7 @@ public class FakeBucket {
 		return Response.accepted().header("ETag", new String(Hex.encodeHex(thedigest))).build();
 	}
 
-	@DELETE
-	@Path( "{id:.+}")
-	@Produces ("text/plain")
-	public Response deleteById(@PathParam("id") String id) throws DecryptionException {
+	public Response deleteById(String id) throws DecryptionException {
 		
 		System.err.println("id: " + id);
 		
@@ -134,15 +92,19 @@ public class FakeBucket {
 		return Response.accepted().status(204).build();
 	}
 	
-	@HEAD
-	@Path( "{id:.+}")
-	@Produces ("text/plain")
-	public Response getStatById(@PathParam("id") String id) throws DecryptionException, NoSuchAlgorithmException {
+	public Response getStatById(String id) throws DecryptionException, NoSuchAlgorithmException {
 		
 		Map<String, String> result = engine.statObject(id);
 		
 		if (result != null) {
 			FSObject obj = engine.getObject(id);
+			
+			if (obj == null) {
+				System.err.println("returning 404");
+				ResponseBuilder resp = Response.accepted().status(404);
+				return resp.build();
+			}
+			
 			
 			SimpleFile file = null;
 			if (obj instanceof SimpleFile) {

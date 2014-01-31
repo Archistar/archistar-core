@@ -1,6 +1,7 @@
 package at.ac.ait.archistar.frontend;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -15,6 +16,7 @@ import at.ac.ait.archistar.backendserver.storageinterface.FilesystemStorage;
 import at.ac.ait.archistar.backendserver.storageinterface.StorageServer;
 import at.ac.ait.archistar.frontend.s3.FakeBucket;
 import at.ac.ait.archistar.frontend.s3.FakeRoot;
+import at.ac.ait.archistar.frontend.s3.RedirectorFilter;
 import at.ac.ait.archistar.middleware.Engine;
 import at.ac.ait.archistar.middleware.crypto.CryptoEngine;
 import at.ac.ait.archistar.middleware.crypto.SecretSharingCryptoEngine;
@@ -41,14 +43,19 @@ public class ArchistarS3 {
 		engine.connect();
 		
 
-		/* where to setup buckets/services? */
+		/* setup buckets/services? */
 		ResteasyDeployment deployment = new ResteasyDeployment();
 		
+		HashMap<String, FakeBucket> buckets = new HashMap<String, FakeBucket>();
+		buckets.put("fake_bucket", new FakeBucket(engine));
+		
 		List<Object> resources = new LinkedList<Object>();
-		FakeBucket bucket = new FakeBucket(engine);
-		resources.add(bucket);
-		resources.add(new FakeRoot(bucket));
+		resources.add(new FakeRoot(buckets));
 		deployment.setResources(resources);
+
+		List<Object> providers = new LinkedList<Object>();
+		providers.add(new RedirectorFilter());
+		deployment.setProviders(providers);
 		
 		netty = createServer(deployment);
 		netty.start();

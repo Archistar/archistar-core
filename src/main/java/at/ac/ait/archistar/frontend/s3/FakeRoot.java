@@ -1,6 +1,7 @@
 package at.ac.ait.archistar.frontend.s3;
 
 import java.security.NoSuchAlgorithmException;
+import java.util.Map;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -21,43 +22,70 @@ public class FakeRoot {
 	
 	final private XmlDocumentBuilder builder;
 
-	final private FakeBucket bucket;
+	private Map<String, FakeBucket> buckets;
 	
-	public FakeRoot(FakeBucket bucket) throws ParserConfigurationException {
+	public FakeRoot(Map<String, FakeBucket> buckets) throws ParserConfigurationException {
 		this.builder = new XmlDocumentBuilder();
-		this.bucket = bucket;
+		this.buckets = buckets;
 	}
 		
-	public String listBuckets() {
-		return builder.stringFromDoc(builder.listBuckets());
-	}
-	
-	/* need to do this in a cleaner way */
 	@GET
 	@Produces("application/xml")
 	public String getAll(
 			@QueryParam("delimiter") String delim,
             @QueryParam("prefix") String prefix,
-            @QueryParam("max-keys") int maxKeysInt) throws DecryptionException {
+            @QueryParam("max-keys") int maxKeysInt,
+            @HeaderParam("X-Bucket") String bucket) throws DecryptionException {
 		
-		return this.bucket.getAll(delim, prefix, maxKeysInt);
+		System.out.println("getAll: bucket: " + bucket + " prefix: " + prefix);
+		
+		if (bucket.isEmpty()) {
+			/* list all buckets */
+			return builder.stringFromDoc(builder.listBuckets(this.buckets));
+		} else if (!this.buckets.containsKey(bucket)) {
+			return bucketNotFound(bucket);
+		} else {
+			/* return content of this bucket */
+			String tmp = this.buckets.get(bucket).getAll(bucket, delim, prefix, maxKeysInt);
+			System.err.println("done");
+			return tmp;
+		}
+	}
+	
+	private String bucketNotFound(String bucket) {
+		return builder.stringFromDoc(builder.bucketNotFound(bucket));
 	}
 	
 	@GET
 	@Path( "{id:.+}")
 	@Produces ("text/plain")
-	public Response getById(@PathParam("id") String id
+	public Response getById(@PathParam("id") String id,
+							@HeaderParam("X-Bucket") String bucket
 			) throws DecryptionException, NoSuchAlgorithmException {
 		
-		return this.bucket.getById(id);
+		System.out.println("getById: bucket: " + bucket + " path: " + id);
+		
+		if (!this.buckets.containsKey(bucket)) {
+			return Response.accepted().status(404).entity(bucketNotFound(bucket)).build();
+		} else {
+			return this.buckets.get(bucket).getById(id);
+		}
 	}
 
 	@HEAD
 	@Path( "{id:.+}")
 	@Produces ("text/plain")
-	public Response getStatById(@PathParam("id") String id) throws DecryptionException, NoSuchAlgorithmException {
+	public Response getStatById(@PathParam("id") String id,
+								@HeaderParam("X-Bucket") String bucket
+							   ) throws DecryptionException, NoSuchAlgorithmException {
 		
-		return this.bucket.getStatById(id);
+		System.out.println("getStatById: bucket: " + bucket + " path: " + id);
+		
+		if (!this.buckets.containsKey(bucket)) {
+			return Response.accepted().status(404).entity(bucketNotFound(bucket)).build();
+		} else {		
+			return this.buckets.get(bucket).getStatById(id);
+		}
 	}
 	
 	@PUT
@@ -68,15 +96,26 @@ public class FakeRoot {
 						   @HeaderParam("x-amz-meta-gid") String gid,
 						   @HeaderParam("x-amz-meta-uid") String uid,
 						   @HeaderParam("x-amz-meta-mode") String mode,
+						   @HeaderParam("X-Bucket") String bucket,
 						   byte[] input) throws NoSuchAlgorithmException, DecryptionException {
 		
-		return this.bucket.writeById(id, gid, uid, mode, serverSideEncryption, input);
+		if (!this.buckets.containsKey(bucket)) {
+			return Response.accepted().status(404).entity(bucketNotFound(bucket)).build();
+		} else {		
+			return this.buckets.get(bucket).writeById(id, gid, uid, mode, serverSideEncryption, input);
+		}
 	}
 
 	@DELETE
 	@Path( "{id:.+}")
 	@Produces ("text/plain")
-	public Response deleteById(@PathParam("id") String id) throws DecryptionException {
-		return this.bucket.deleteById(id);
-	}	
+	public Response deleteById(@PathParam("id") String id,
+			   				   @HeaderParam("X-Bucket") String bucket
+							  ) throws DecryptionException {
+		if (!this.buckets.containsKey(bucket)) {
+			return Response.accepted().status(404).entity(bucketNotFound(bucket)).build();
+		} else {		
+			return this.buckets.get(bucket).deleteById(id);
+		}
+	}
 }
