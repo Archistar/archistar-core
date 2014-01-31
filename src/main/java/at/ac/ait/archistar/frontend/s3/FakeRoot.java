@@ -55,6 +55,10 @@ public class FakeRoot {
 	private String bucketNotFound(String bucket) {
 		return builder.stringFromDoc(builder.bucketNotFound(bucket));
 	}
+        
+        private String noSuchKey(String id) {
+            	return builder.stringFromDoc(builder.noSuchKey(id));
+        }
 	
 	@GET
 	@Path( "{id:.+}")
@@ -68,7 +72,12 @@ public class FakeRoot {
 		if (!this.buckets.containsKey(bucket)) {
 			return Response.accepted().status(404).entity(bucketNotFound(bucket)).build();
 		} else {
-			return this.buckets.get(bucket).getById(id);
+                    Response resp = this.buckets.get(bucket).getById(id);
+                    
+                    if (resp == null) {
+                        resp = Response.accepted().status(404).type("application/xml").entity(noSuchKey(id)).build();
+                    }
+                    return resp;
 		}
 	}
 
@@ -112,6 +121,7 @@ public class FakeRoot {
 	public Response deleteById(@PathParam("id") String id,
 			   				   @HeaderParam("X-Bucket") String bucket
 							  ) throws DecryptionException {
+            
 		if (!this.buckets.containsKey(bucket)) {
 			return Response.accepted().status(404).entity(bucketNotFound(bucket)).build();
 		} else {		

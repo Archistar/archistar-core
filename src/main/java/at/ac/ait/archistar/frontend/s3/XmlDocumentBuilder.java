@@ -144,4 +144,19 @@ public class XmlDocumentBuilder {
 		
 		return stringWriter.toString();
 	}
+
+    Document noSuchKey(String id) {
+        Document doc = this.docBuilder.newDocument();
+	doc.setXmlVersion("1.0");
+		
+	Element rootElement = doc.createElement("Error");
+	rootElement.setAttribute("xmlns", "http://doc.s3.amazonaws.com/2006-03-01");
+	doc.appendChild(rootElement);
+	
+        rootElement.appendChild(createElement(doc, "Message", "The resource you requested does not exist"));
+	rootElement.appendChild(createElement(doc, "Code", "NoSuchKey"));
+	rootElement.appendChild(createElement(doc, "Resource", id));
+	
+        return doc;
+    }
 }
