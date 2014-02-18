@@ -1,6 +1,5 @@
 package at.ac.ait.archistar.middleware;
 
-import java.util.Dictionary;
 import java.util.Map;
 import java.util.Set;
 

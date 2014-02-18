@@ -11,8 +11,6 @@ import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.PreMatching;
 import javax.ws.rs.ext.Provider;
 
-import org.apache.commons.codec.binary.StringUtils;
-
 /**
  * this filter should normalize incoming requests. S3 allows two ways of
  * addressing incoming requests: path style and virtual style. With this
