@@ -92,7 +92,7 @@ public class OzymandiasServer implements Runnable, BftEngineCallbacks {
                     ch.pipeline().addLast(
                     		new SslHandler(engine),
                             new ObjectEncoder(),
-                            new ObjectDecoder(ClassResolvers.cacheDisabled(null)),
+                            new ObjectDecoder(1024*1024*4, ClassResolvers.cacheDisabled(null)),
                             handler);
                 }
              }).option(ChannelOption.SO_BACKLOG,  128)

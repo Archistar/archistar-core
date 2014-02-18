@@ -99,6 +99,8 @@ public class FakeRoot {
 						   @HeaderParam("X-Bucket") String bucket,
 						   byte[] input) throws NoSuchAlgorithmException, DecryptionException {
 		
+		System.out.println("writeById: bucket: " + bucket + " path: " + id + "input length: " + input.length);
+		
 		if (!this.buckets.containsKey(bucket)) {
 			return Response.accepted().status(404).entity(bucketNotFound(bucket)).build();
 		} else {		
