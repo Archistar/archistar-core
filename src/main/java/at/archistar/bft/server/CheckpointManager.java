@@ -1,4 +1,4 @@
-package at.ac.ait.archistar.bft.checkpointing;
+package at.archistar.bft.server;
 
 import java.nio.ByteBuffer;
 import java.security.MessageDigest;
@@ -12,9 +12,8 @@ import java.util.TreeMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import at.ac.ait.archistar.bft.BftEngineCallbacks;
-import at.ac.ait.archistar.bft.Transaction;
-import at.ac.ait.archistar.middleware.DigestHelper;
+import at.archistar.bft.helper.DigestHelper;
+import at.archistar.bft.messages.CheckpointMessage;
 
 public class CheckpointManager {
 	

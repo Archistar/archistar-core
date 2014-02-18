@@ -1,4 +1,5 @@
-package at.ac.ait.archistar.bft.commands;
+package at.archistar.bft.messages;
+
 
 
 public class CommitCommand extends IntraReplicaCommand {

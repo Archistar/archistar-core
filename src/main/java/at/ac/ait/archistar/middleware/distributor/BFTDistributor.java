@@ -7,11 +7,11 @@ import java.util.Map;
 import java.util.Set;
 
 import at.ac.ait.archistar.backendserver.fragments.Fragment;
-import at.ac.ait.archistar.bft.commands.ClientCommand;
-import at.ac.ait.archistar.frontend.bftinterface.ClientResult;
 import at.ac.ait.archistar.frontend.bftinterface.OzymandiasClient;
 import at.ac.ait.archistar.middleware.commands.ReadCommand;
 import at.ac.ait.archistar.middleware.commands.WriteCommand;
+import at.archistar.bft.client.ClientResult;
+import at.archistar.bft.messages.ClientCommand;
 
 /**]
  * Implements the Distributor interface via a simple BFT protocol. For

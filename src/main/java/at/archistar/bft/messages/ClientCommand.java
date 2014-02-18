@@ -1,9 +1,9 @@
-package at.ac.ait.archistar.bft.commands;
+package at.archistar.bft.messages;
 
 import java.nio.ByteBuffer;
 import java.security.MessageDigest;
 
-import at.ac.ait.archistar.middleware.DigestHelper;
+import at.archistar.bft.helper.DigestHelper;
 
 /**
  * this is a command from the client to a replica

@@ -1,9 +1,8 @@
-package at.ac.ait.archistar.bft.checkpointing;
+package at.archistar.bft.messages;
 
 import java.util.Map;
 import java.util.Map.Entry;
 
-import at.ac.ait.archistar.bft.commands.IntraReplicaCommand;
 
 public class CheckpointMessage extends IntraReplicaCommand {
 	

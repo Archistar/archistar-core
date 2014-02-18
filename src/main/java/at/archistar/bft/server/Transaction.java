@@ -1,4 +1,4 @@
-package at.ac.ait.archistar.bft;
+package at.archistar.bft.server;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -7,14 +7,14 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import at.ac.ait.archistar.bft.commands.AbstractCommand;
-import at.ac.ait.archistar.bft.commands.ClientCommand;
-import at.ac.ait.archistar.bft.commands.ClientFragmentCommand;
-import at.ac.ait.archistar.bft.commands.CommitCommand;
-import at.ac.ait.archistar.bft.commands.PrepareCommand;
-import at.ac.ait.archistar.bft.commands.PreprepareCommand;
-import at.ac.ait.archistar.middleware.InconsistentResultsException;
-import at.ac.ait.archistar.middleware.commands.TransactionResult;
+import at.archistar.bft.exceptions.InconsistentResultsException;
+import at.archistar.bft.messages.AbstractCommand;
+import at.archistar.bft.messages.ClientCommand;
+import at.archistar.bft.messages.ClientFragmentCommand;
+import at.archistar.bft.messages.CommitCommand;
+import at.archistar.bft.messages.PrepareCommand;
+import at.archistar.bft.messages.PreprepareCommand;
+import at.archistar.bft.messages.TransactionResult;
 
 /**
  * This is used to store transaction information for an operation. It contains

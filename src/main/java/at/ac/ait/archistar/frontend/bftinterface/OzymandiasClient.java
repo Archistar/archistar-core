@@ -7,11 +7,12 @@ import java.util.Map.Entry;
 
 import javax.net.ssl.SSLEngine;
 
-import at.ac.ait.archistar.bft.commands.AbstractCommand;
-import at.ac.ait.archistar.bft.commands.ClientCommand;
-import at.ac.ait.archistar.middleware.InconsistentResultsException;
-import at.ac.ait.archistar.middleware.commands.TransactionResult;
 import at.ac.ait.archistar.trustmanager.SSLContextFactory;
+import at.archistar.bft.client.ClientResult;
+import at.archistar.bft.exceptions.InconsistentResultsException;
+import at.archistar.bft.messages.AbstractCommand;
+import at.archistar.bft.messages.ClientCommand;
+import at.archistar.bft.messages.TransactionResult;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;

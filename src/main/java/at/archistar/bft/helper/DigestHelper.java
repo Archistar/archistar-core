@@ -1,4 +1,4 @@
-package at.ac.ait.archistar.middleware;
+package at.archistar.bft.helper;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;

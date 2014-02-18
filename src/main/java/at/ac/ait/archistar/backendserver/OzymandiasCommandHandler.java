@@ -6,10 +6,10 @@ import org.slf4j.LoggerFactory;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.ChannelHandler.Sharable;
-import at.ac.ait.archistar.bft.BftEngine;
-import at.ac.ait.archistar.bft.commands.AbstractCommand;
-import at.ac.ait.archistar.bft.commands.ClientCommand;
-import at.ac.ait.archistar.bft.commands.IntraReplicaCommand;
+import at.archistar.bft.messages.AbstractCommand;
+import at.archistar.bft.messages.ClientCommand;
+import at.archistar.bft.messages.IntraReplicaCommand;
+import at.archistar.bft.server.BftEngine;
 
 /**
  * This handles all incoming commands (from clients or servers). Mostly

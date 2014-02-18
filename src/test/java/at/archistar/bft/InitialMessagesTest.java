@@ -1,14 +1,16 @@
-package at.ac.ait.archistar.bft_core;
+package at.archistar.bft;
 
 import org.junit.Test;
 
 import static org.mockito.Mockito.*;
-import at.ac.ait.archistar.bft.BftEngine;
-import at.ac.ait.archistar.bft.BftEngineCallbacks;
-import at.ac.ait.archistar.bft.commands.ClientCommand;
-import at.ac.ait.archistar.bft.commands.IntraReplicaCommand;
-import at.ac.ait.archistar.bft.commands.PreprepareCommand;
+
 import at.ac.ait.archistar.middleware.commands.WriteCommand;
+
+import at.archistar.bft.messages.ClientCommand;
+import at.archistar.bft.messages.IntraReplicaCommand;
+import at.archistar.bft.messages.PreprepareCommand;
+import at.archistar.bft.server.BftEngine;
+import at.archistar.bft.server.BftEngineCallbacks;
 
 public class InitialMessagesTest {
 	

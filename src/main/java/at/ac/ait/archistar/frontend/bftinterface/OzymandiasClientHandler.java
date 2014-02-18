@@ -3,8 +3,8 @@ package at.ac.ait.archistar.frontend.bftinterface;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import at.ac.ait.archistar.bft.commands.ClientCommand;
-import at.ac.ait.archistar.middleware.commands.TransactionResult;
+import at.archistar.bft.messages.ClientCommand;
+import at.archistar.bft.messages.TransactionResult;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 

@@ -1,12 +1,12 @@
-package at.ac.ait.archistar.frontend.bftinterface;
+package at.archistar.bft.client;
 
 import java.util.HashMap;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import at.ac.ait.archistar.middleware.InconsistentResultsException;
-import at.ac.ait.archistar.middleware.commands.TransactionResult;
+import at.archistar.bft.exceptions.InconsistentResultsException;
+import at.archistar.bft.messages.TransactionResult;
 
 /**
  * This class is used to transform the asynchronous client-replica

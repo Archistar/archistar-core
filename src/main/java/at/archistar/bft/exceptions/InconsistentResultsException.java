@@ -1,4 +1,4 @@
-package at.ac.ait.archistar.middleware;
+package at.archistar.bft.exceptions;
 
 public class InconsistentResultsException extends Exception {
 

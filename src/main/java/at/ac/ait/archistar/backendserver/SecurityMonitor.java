@@ -3,8 +3,8 @@ package at.ac.ait.archistar.backendserver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import at.ac.ait.archistar.bft.checkpointing.CheckpointMessage;
-import at.ac.ait.archistar.bft.commands.AbstractCommand;
+import at.archistar.bft.messages.AbstractCommand;
+import at.archistar.bft.messages.CheckpointMessage;
 
 /**
  * This class responds to the different error situations

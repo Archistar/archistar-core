@@ -19,8 +19,8 @@ import java.util.Set;
 
 import javax.net.ssl.SSLEngine;
 
-import at.ac.ait.archistar.bft.commands.AbstractCommand;
 import at.ac.ait.archistar.trustmanager.SSLContextFactory;
+import at.archistar.bft.messages.AbstractCommand;
 
 /**
  * This class is repsonsible for sending messages to all replicas

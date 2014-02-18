@@ -1,6 +1,6 @@
 package at.ac.ait.archistar.middleware.commands;
 
-import at.ac.ait.archistar.bft.commands.ClientFragmentCommand;
+import at.archistar.bft.messages.ClientFragmentCommand;
 
 /**
  * This command is used by a client to forward an update/write

@@ -1,18 +1,20 @@
-package at.ac.ait.archistar.bft_core;
+package at.archistar.bft;
 
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
 import static org.fest.assertions.api.Assertions.*;
 import static org.mockito.Mockito.*;
-import at.ac.ait.archistar.bft.BftEngine;
-import at.ac.ait.archistar.bft.BftEngineCallbacks;
-import at.ac.ait.archistar.bft.commands.ClientCommand;
-import at.ac.ait.archistar.bft.commands.CommitCommand;
-import at.ac.ait.archistar.bft.commands.PrepareCommand;
-import at.ac.ait.archistar.bft.commands.PreprepareCommand;
-import at.ac.ait.archistar.middleware.commands.TransactionResult;
+
 import at.ac.ait.archistar.middleware.commands.WriteCommand;
+
+import at.archistar.bft.messages.ClientCommand;
+import at.archistar.bft.messages.CommitCommand;
+import at.archistar.bft.messages.PrepareCommand;
+import at.archistar.bft.messages.PreprepareCommand;
+import at.archistar.bft.messages.TransactionResult;
+import at.archistar.bft.server.BftEngine;
+import at.archistar.bft.server.BftEngineCallbacks;
 
 public class PerfectRunTest {
 

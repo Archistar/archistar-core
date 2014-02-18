@@ -1,10 +1,10 @@
-package at.ac.ait.archistar.bft;
+package at.archistar.bft.server;
 
-import at.ac.ait.archistar.bft.checkpointing.CheckpointMessage;
-import at.ac.ait.archistar.bft.commands.AbstractCommand;
-import at.ac.ait.archistar.bft.commands.ClientCommand;
-import at.ac.ait.archistar.bft.commands.IntraReplicaCommand;
-import at.ac.ait.archistar.middleware.commands.TransactionResult;
+import at.archistar.bft.messages.AbstractCommand;
+import at.archistar.bft.messages.CheckpointMessage;
+import at.archistar.bft.messages.ClientCommand;
+import at.archistar.bft.messages.IntraReplicaCommand;
+import at.archistar.bft.messages.TransactionResult;
 
 public interface BftEngineCallbacks {
 

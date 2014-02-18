@@ -1,10 +1,9 @@
-package at.ac.ait.archistar.middleware.commands;
+package at.archistar.bft.messages;
 
 import java.util.Arrays;
 
 import javax.xml.bind.DatatypeConverter;
 
-import at.ac.ait.archistar.bft.commands.ClientCommand;
 
 /**
  * This is used by the replicas to signal back an operation's

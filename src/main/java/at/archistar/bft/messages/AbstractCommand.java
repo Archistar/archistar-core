@@ -1,4 +1,4 @@
-package at.ac.ait.archistar.bft.commands;
+package at.archistar.bft.messages;
 
 import java.io.Serializable;
 
