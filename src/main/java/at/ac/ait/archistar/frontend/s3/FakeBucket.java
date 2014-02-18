@@ -51,15 +51,16 @@ public class FakeBucket {
 		
 		FSObject obj = engine.getObject(id);
 		byte[] result = null;
+                
+                if (obj != null && obj instanceof SimpleFile) {
+                    result = ((SimpleFile) obj).getData();
 		
-		if (obj instanceof SimpleFile) {
-			result = ((SimpleFile) obj).getData();
-		}
-		
-		MessageDigest md = MessageDigest.getInstance("MD5");
-		byte[] thedigest = md.digest(result);
-		
-		return Response.accepted().entity(result).header("ETag", new String(Hex.encodeHex(thedigest))).build();
+                    MessageDigest md = MessageDigest.getInstance("MD5");
+                    byte[] thedigest = md.digest(result);
+                    return Response.accepted().entity(result).header("ETag", new String(Hex.encodeHex(thedigest))).build();
+               } else {
+                    return null;
+               }
 	}
 	
 	public Response writeById(String id, String gid, String uid, String mode, String serverSideEncryption, byte[] input) throws NoSuchAlgorithmException, DecryptionException {

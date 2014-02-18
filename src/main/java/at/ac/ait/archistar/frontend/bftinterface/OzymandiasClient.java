@@ -1,5 +1,6 @@
 package at.ac.ait.archistar.frontend.bftinterface;
 
+import at.ac.ait.archistar.backendserver.OzymandiasServer;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -110,7 +111,7 @@ public class OzymandiasClient {
                 ch.pipeline().addLast(
                 		new SslHandler(engine),
                         new ObjectEncoder(),
-                        new ObjectDecoder(ClassResolvers.cacheDisabled(null)),
+                        new ObjectDecoder(OzymandiasServer.maxObjectSize, ClassResolvers.cacheDisabled(null)),
                         handler);
             }
          });

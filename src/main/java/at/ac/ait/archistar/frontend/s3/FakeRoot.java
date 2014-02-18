@@ -20,7 +20,7 @@ import at.ac.ait.archistar.middleware.crypto.DecryptionException;
 @Path("/")
 public class FakeRoot {
 	
-	private XmlDocumentBuilder builder;
+	final private XmlDocumentBuilder builder;
 
 	private Map<String, FakeBucket> buckets;
 	
@@ -30,7 +30,7 @@ public class FakeRoot {
 	}
 		
 	@GET
-	@Produces("text/plain")
+	@Produces("application/xml")
 	public String getAll(
 			@QueryParam("delimiter") String delim,
             @QueryParam("prefix") String prefix,
@@ -55,6 +55,10 @@ public class FakeRoot {
 	private String bucketNotFound(String bucket) {
 		return builder.stringFromDoc(builder.bucketNotFound(bucket));
 	}
+        
+        private String noSuchKey(String id) {
+            	return builder.stringFromDoc(builder.noSuchKey(id));
+        }
 	
 	@GET
 	@Path( "{id:.+}")
@@ -68,7 +72,12 @@ public class FakeRoot {
 		if (!this.buckets.containsKey(bucket)) {
 			return Response.accepted().status(404).entity(bucketNotFound(bucket)).build();
 		} else {
-			return this.buckets.get(bucket).getById(id);
+                    Response resp = this.buckets.get(bucket).getById(id);
+                    
+                    if (resp == null) {
+                        resp = Response.accepted().status(404).type("application/xml").entity(noSuchKey(id)).build();
+                    }
+                    return resp;
 		}
 	}
 
@@ -90,7 +99,7 @@ public class FakeRoot {
 	
 	@PUT
 	@Path( "{id:.+}")
-	@Produces ("text/xml")
+	@Produces ("text/plain")
 	public Response writeById(@PathParam("id") String id,
 						   @HeaderParam("x-amz-server-side-encryption") String serverSideEncryption,
 						   @HeaderParam("x-amz-meta-gid") String gid,
@@ -114,6 +123,7 @@ public class FakeRoot {
 	public Response deleteById(@PathParam("id") String id,
 			   				   @HeaderParam("X-Bucket") String bucket
 							  ) throws DecryptionException {
+            
 		if (!this.buckets.containsKey(bucket)) {
 			return Response.accepted().status(404).entity(bucketNotFound(bucket)).build();
 		} else {		

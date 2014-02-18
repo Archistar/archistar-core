@@ -37,8 +37,8 @@ import io.netty.handler.ssl.SslHandler;
  */
 public class OzymandiasServer implements Runnable, BftEngineCallbacks {
 
-	private final int serverId;
-	private final Map<Integer, Integer> serverList;
+    private final int serverId;
+    private final Map<Integer, Integer> serverList;
     private final int port;
     
     private Map<Integer, ChannelHandlerContext> clientMap = new HashMap<Integer, ChannelHandlerContext>();
@@ -59,6 +59,8 @@ public class OzymandiasServer implements Runnable, BftEngineCallbacks {
     private BftEngine bftEngine;
     
     private final SecurityMonitor secMonitor;
+    /** max message size in bytes */
+    public static int maxObjectSize = 10 * 1024 * 1024;
     
     public OzymandiasServer(int myServerId, Map<Integer, Integer> serverList, int f, ExecutionHandler executor, NioEventLoopGroup bossGroup, NioEventLoopGroup workerGroup) {
         this.bossGroup = bossGroup;
@@ -92,7 +94,7 @@ public class OzymandiasServer implements Runnable, BftEngineCallbacks {
                     ch.pipeline().addLast(
                     		new SslHandler(engine),
                             new ObjectEncoder(),
-                            new ObjectDecoder(1024*1024*4, ClassResolvers.cacheDisabled(null)),
+                            new ObjectDecoder(maxObjectSize, ClassResolvers.cacheDisabled(null)),
                             handler);
                 }
              }).option(ChannelOption.SO_BACKLOG,  128)
