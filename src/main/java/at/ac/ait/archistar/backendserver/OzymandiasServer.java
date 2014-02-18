@@ -6,8 +6,8 @@ import java.util.Map;
 import javax.net.ssl.SSLEngine;
 
 import at.ac.ait.archistar.backendserver.storageinterface.DisconnectedException;
-import at.ac.ait.archistar.middleware.commands.ReadCommand;
-import at.ac.ait.archistar.middleware.commands.WriteCommand;
+import at.ac.ait.archistar.engine.messages.ReadCommand;
+import at.ac.ait.archistar.engine.messages.WriteCommand;
 import at.ac.ait.archistar.trustmanager.SSLContextFactory;
 import at.archistar.bft.messages.AbstractCommand;
 import at.archistar.bft.messages.CheckpointMessage;

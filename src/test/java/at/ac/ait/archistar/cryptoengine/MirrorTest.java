@@ -11,9 +11,9 @@ import org.junit.Test;
 
 import at.ac.ait.archistar.backendserver.fragments.Fragment;
 import at.ac.ait.archistar.backendserver.storageinterface.StorageServer;
-import at.ac.ait.archistar.middleware.crypto.CryptoEngine;
-import at.ac.ait.archistar.middleware.crypto.DecryptionException;
-import at.ac.ait.archistar.middleware.crypto.PseudoMirrorCryptoEngine;
+import at.ac.ait.archistar.engine.crypto.CryptoEngine;
+import at.ac.ait.archistar.engine.crypto.DecryptionException;
+import at.ac.ait.archistar.engine.crypto.PseudoMirrorCryptoEngine;
 
 public class MirrorTest {
 	

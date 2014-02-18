@@ -8,9 +8,9 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 
-import at.ac.ait.archistar.middleware.CustomSerializer;
-import at.ac.ait.archistar.middleware.frontend.FSObject;
-import at.ac.ait.archistar.middleware.frontend.SimpleFile;
+import at.ac.ait.archistar.engine.dataobjects.CustomSerializer;
+import at.ac.ait.archistar.engine.dataobjects.FSObject;
+import at.ac.ait.archistar.engine.dataobjects.SimpleFile;
 
 public class CustomSerializerTest {
 	

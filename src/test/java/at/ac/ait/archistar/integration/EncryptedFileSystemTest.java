@@ -15,20 +15,20 @@ import org.junit.Test;
 
 import at.ac.ait.archistar.backendserver.storageinterface.FilesystemStorage;
 import at.ac.ait.archistar.backendserver.storageinterface.StorageServer;
+import at.ac.ait.archistar.engine.TestEngine;
+import at.ac.ait.archistar.engine.crypto.CryptoEngine;
+import at.ac.ait.archistar.engine.crypto.DecryptionException;
+import at.ac.ait.archistar.engine.crypto.SecretSharingCryptoEngine;
+import at.ac.ait.archistar.engine.dataobjects.FSObject;
+import at.ac.ait.archistar.engine.dataobjects.SimpleFile;
+import at.ac.ait.archistar.engine.distributor.BFTDistributor;
+import at.ac.ait.archistar.engine.distributor.Distributor;
+import at.ac.ait.archistar.engine.distributor.TestServerConfiguration;
+import at.ac.ait.archistar.engine.metadata.MetadataService;
+import at.ac.ait.archistar.engine.metadata.SimpleMetadataService;
 import at.archistar.crypto.KrawczykCSS;
 import at.archistar.crypto.random.FakeRandomSource;
 import at.archistar.crypto.random.RandomSource;
-import at.ac.ait.archistar.middleware.TestEngine;
-import at.ac.ait.archistar.middleware.crypto.CryptoEngine;
-import at.ac.ait.archistar.middleware.crypto.DecryptionException;
-import at.ac.ait.archistar.middleware.crypto.SecretSharingCryptoEngine;
-import at.ac.ait.archistar.middleware.distributor.BFTDistributor;
-import at.ac.ait.archistar.middleware.distributor.Distributor;
-import at.ac.ait.archistar.middleware.distributor.TestServerConfiguration;
-import at.ac.ait.archistar.middleware.frontend.FSObject;
-import at.ac.ait.archistar.middleware.frontend.SimpleFile;
-import at.ac.ait.archistar.middleware.metadata.MetadataService;
-import at.ac.ait.archistar.middleware.metadata.SimpleMetadataService;
 
 public class EncryptedFileSystemTest extends AbstractIntegrationTest {
 	
