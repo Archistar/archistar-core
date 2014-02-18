@@ -12,12 +12,12 @@ import org.junit.Test;
 
 import at.ac.ait.archistar.backendserver.fragments.Fragment;
 import at.ac.ait.archistar.backendserver.storageinterface.StorageServer;
-import at.ac.ait.archistar.middleware.crypto.CryptoEngine;
-import at.ac.ait.archistar.middleware.crypto.PseudoMirrorCryptoEngine;
-import at.ac.ait.archistar.middleware.distributor.Distributor;
-import at.ac.ait.archistar.middleware.distributor.ServerConfiguration;
-import at.ac.ait.archistar.middleware.metadata.MetadataService;
-import at.ac.ait.archistar.middleware.metadata.SimpleMetadataService;
+import at.ac.ait.archistar.engine.crypto.CryptoEngine;
+import at.ac.ait.archistar.engine.crypto.PseudoMirrorCryptoEngine;
+import at.ac.ait.archistar.engine.distributor.Distributor;
+import at.ac.ait.archistar.engine.distributor.ServerConfiguration;
+import at.ac.ait.archistar.engine.metadata.MetadataService;
+import at.ac.ait.archistar.engine.metadata.SimpleMetadataService;
 
 public class SimpleDirectoryServiceTest {
 	

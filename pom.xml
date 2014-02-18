@@ -82,6 +82,12 @@
   		<artifactId>netty-all</artifactId>
   		<version>4.0.0.CR9</version>
     </dependency>
+    <dependency>
+      <groupId>at.archistar</groupId>
+      <artifactId>archistar-bft</artifactId>
+      <version>0.0.1</version>
+    </dependency>
+
     <!-- library for secret-sharing -->
     <dependency>
       <groupId>at.archistar</groupId>

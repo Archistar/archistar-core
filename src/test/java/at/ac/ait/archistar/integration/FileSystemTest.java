@@ -15,17 +15,17 @@ import org.slf4j.LoggerFactory;
 import static org.fest.assertions.api.Assertions.*;
 import at.ac.ait.archistar.backendserver.storageinterface.FilesystemStorage;
 import at.ac.ait.archistar.backendserver.storageinterface.StorageServer;
-import at.ac.ait.archistar.middleware.TestEngine;
-import at.ac.ait.archistar.middleware.crypto.CryptoEngine;
-import at.ac.ait.archistar.middleware.crypto.DecryptionException;
-import at.ac.ait.archistar.middleware.crypto.PseudoMirrorCryptoEngine;
-import at.ac.ait.archistar.middleware.distributor.BFTDistributor;
-import at.ac.ait.archistar.middleware.distributor.Distributor;
-import at.ac.ait.archistar.middleware.distributor.TestServerConfiguration;
-import at.ac.ait.archistar.middleware.frontend.FSObject;
-import at.ac.ait.archistar.middleware.frontend.SimpleFile;
-import at.ac.ait.archistar.middleware.metadata.MetadataService;
-import at.ac.ait.archistar.middleware.metadata.SimpleMetadataService;
+import at.ac.ait.archistar.engine.TestEngine;
+import at.ac.ait.archistar.engine.crypto.CryptoEngine;
+import at.ac.ait.archistar.engine.crypto.DecryptionException;
+import at.ac.ait.archistar.engine.crypto.PseudoMirrorCryptoEngine;
+import at.ac.ait.archistar.engine.dataobjects.FSObject;
+import at.ac.ait.archistar.engine.dataobjects.SimpleFile;
+import at.ac.ait.archistar.engine.distributor.BFTDistributor;
+import at.ac.ait.archistar.engine.distributor.Distributor;
+import at.ac.ait.archistar.engine.distributor.TestServerConfiguration;
+import at.ac.ait.archistar.engine.metadata.MetadataService;
+import at.ac.ait.archistar.engine.metadata.SimpleMetadataService;
 
 public class FileSystemTest extends AbstractIntegrationTest {
 	

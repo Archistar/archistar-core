@@ -10,11 +10,11 @@ import org.junit.Test;
 
 import at.ac.ait.archistar.backendserver.storageinterface.DisconnectedException;
 import at.ac.ait.archistar.backendserver.storageinterface.StorageServer;
-import at.ac.ait.archistar.middleware.TestEngine;
-import at.ac.ait.archistar.middleware.crypto.DecryptionException;
-import at.ac.ait.archistar.middleware.distributor.TestServerConfiguration;
-import at.ac.ait.archistar.middleware.frontend.FSObject;
-import at.ac.ait.archistar.middleware.frontend.SimpleFile;
+import at.ac.ait.archistar.engine.TestEngine;
+import at.ac.ait.archistar.engine.crypto.DecryptionException;
+import at.ac.ait.archistar.engine.dataobjects.FSObject;
+import at.ac.ait.archistar.engine.dataobjects.SimpleFile;
+import at.ac.ait.archistar.engine.distributor.TestServerConfiguration;
 
 public abstract class AbstractIntegrationTest {
 	

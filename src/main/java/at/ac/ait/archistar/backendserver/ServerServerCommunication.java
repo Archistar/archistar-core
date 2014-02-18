@@ -19,8 +19,8 @@ import java.util.Set;
 
 import javax.net.ssl.SSLEngine;
 
-import at.ac.ait.archistar.bft.commands.AbstractCommand;
 import at.ac.ait.archistar.trustmanager.SSLContextFactory;
+import at.archistar.bft.messages.AbstractCommand;
 
 /**
  * This class is repsonsible for sending messages to all replicas
@@ -65,7 +65,7 @@ public class ServerServerCommunication {
 						ch.pipeline().addLast(
 								new SslHandler(engine),
 								new ObjectEncoder(),
-								new ObjectDecoder(ClassResolvers.cacheDisabled(null)));
+								new ObjectDecoder(OzymandiasServer.maxObjectSize, ClassResolvers.cacheDisabled(null)));
 					}
 				});
 			

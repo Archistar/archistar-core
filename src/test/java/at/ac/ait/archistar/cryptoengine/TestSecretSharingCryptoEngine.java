@@ -10,12 +10,12 @@ import org.junit.Test;
 
 import at.ac.ait.archistar.backendserver.fragments.Fragment;
 import at.ac.ait.archistar.backendserver.fragments.RemoteFragment;
+import at.ac.ait.archistar.engine.crypto.CryptoEngine;
+import at.ac.ait.archistar.engine.crypto.DecryptionException;
+import at.ac.ait.archistar.engine.crypto.SecretSharingCryptoEngine;
 import at.archistar.crypto.SecretSharing;
 import at.archistar.crypto.ShamirPSS;
 import at.archistar.crypto.random.FakeRandomSource;
-import at.ac.ait.archistar.middleware.crypto.CryptoEngine;
-import at.ac.ait.archistar.middleware.crypto.DecryptionException;
-import at.ac.ait.archistar.middleware.crypto.SecretSharingCryptoEngine;
 
 public class TestSecretSharingCryptoEngine {
 	

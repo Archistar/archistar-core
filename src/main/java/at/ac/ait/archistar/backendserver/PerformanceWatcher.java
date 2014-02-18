@@ -1,6 +1,6 @@
 package at.ac.ait.archistar.backendserver;
 
-import at.ac.ait.archistar.bft.BftEngine;
+import at.archistar.bft.server.BftEngine;
 
 public class PerformanceWatcher extends Thread {
 
