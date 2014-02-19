@@ -7,7 +7,8 @@ Archistar is a  multi-cloud prototype written during the *tada* Archistar projec
 ## Some background
 
 - secure cloud-based storage
-- BFT network for total ordering
+- uses [archistar-bft](https://github.com/archistar/archistar-bft) BFT library for achieving total ordering
+- uses [netty.io](http://netty.io) as network transport
 - uses [archistar-smc](https://github.com/archistar/archistar-smc) for secret sharing, currently test-cases utilize Sharmir's Secret Sharing
 - Multiple backend storage options (memory-only, file-backed, S3-backed)
 - TLS authentication and encryption between communication partners -- key validation is not implemented yet
