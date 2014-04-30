@@ -34,9 +34,9 @@ public class BFTDistributor implements Distributor {
 
 	private ServerConfiguration config;
 	
-	public BFTDistributor(ServerConfiguration config) {
+	public BFTDistributor(ServerConfiguration config, NioEventLoopGroup loopGroup) {
 		this.config = config;
-		this.client = new OzymandiasClient(config.getBFTServerNetworkPortMap(), f, new NioEventLoopGroup());
+		this.client = new OzymandiasClient(config.getBFTServerNetworkPortMap(), f, loopGroup);
 	}
 
 	@Override

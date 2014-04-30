@@ -1,5 +1,7 @@
 package at.ac.ait.archistar.integration;
 
+import io.netty.channel.nio.NioEventLoopGroup;
+
 import java.util.HashSet;
 
 import org.junit.AfterClass;
@@ -30,7 +32,7 @@ public class MemoryOnlyTest extends AbstractIntegrationTest {
 		serverConfig.setupTestServer(1);
 		
 		CryptoEngine crypto = new PseudoMirrorCryptoEngine();
-		Distributor distributor = new BFTDistributor(serverConfig);
+		Distributor distributor = new BFTDistributor(serverConfig, new NioEventLoopGroup());
 		MetadataService metadata = new SimpleMetadataService(serverConfig, distributor, crypto);
 		engine = new TestEngine(serverConfig, metadata, distributor, crypto);
 	}

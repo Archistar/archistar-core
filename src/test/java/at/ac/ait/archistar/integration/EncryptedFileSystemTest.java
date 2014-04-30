@@ -3,6 +3,8 @@ package at.ac.ait.archistar.integration;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.fest.assertions.api.Assertions.fail;
 
+import io.netty.channel.nio.NioEventLoopGroup;
+
 import java.io.File;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -85,7 +87,7 @@ public class EncryptedFileSystemTest extends AbstractIntegrationTest {
 	
 		RandomSource rng = new FakeRandomSource();
 		CryptoEngine crypto = new SecretSharingCryptoEngine(new KrawczykCSS(4, 2, rng));
-		Distributor distributor = new BFTDistributor(serverConfig);
+		Distributor distributor = new BFTDistributor(serverConfig, new NioEventLoopGroup());
 		MetadataService metadata = new SimpleMetadataService(serverConfig, distributor, crypto);
 		engine = new TestEngine(serverConfig, metadata, distributor, crypto);
 	}
