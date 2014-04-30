@@ -187,7 +187,7 @@ public class OzymandiasServer implements Runnable, BftEngineCallbacks {
 	@Override
 	public void answerClient(TransactionResult transactionResult) {
 		ChannelHandlerContext ctx = this.clientMap.get(transactionResult.getClientId());
-		ctx.write(transactionResult);
+		ctx.writeAndFlush(transactionResult);
 	}
 
 	public void setClientSession(int clientId, ChannelHandlerContext ctx) {

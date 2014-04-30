@@ -10,7 +10,6 @@ import javax.net.ssl.SSLEngine;
 import at.ac.ait.archistar.trustmanager.SSLContextFactory;
 import at.archistar.bft.client.ClientResult;
 import at.archistar.bft.exceptions.InconsistentResultsException;
-import at.archistar.bft.messages.AbstractCommand;
 import at.archistar.bft.messages.ClientCommand;
 import at.archistar.bft.messages.TransactionResult;
 import io.netty.bootstrap.Bootstrap;
@@ -59,9 +58,9 @@ public class OzymandiasClient {
      * 
      * @param msg the message to be sent
      */
-    public void sendMessage(Map<Integer, AbstractCommand> msg) {
-    	for(Entry<Integer, AbstractCommand> e: msg.entrySet()) {
-    		channelList.get(e.getKey()).write(e.getValue());
+    public void sendMessage(Map<Integer, ClientCommand> msg) {
+    	for(Entry<Integer, ClientCommand> e: msg.entrySet()) {
+    		channelList.get(e.getKey()).writeAndFlush(e.getValue());
     	}
     }
     
@@ -78,9 +77,7 @@ public class OzymandiasClient {
     	ClientResult result = new ClientResult(f, clientId, clientSequence);
    		this.results.put(clientSequence, result);
    		
-    	for(Entry<Integer, ClientCommand> e: msg.entrySet()) {
-    		channelList.get(e.getKey()).write(e.getValue());
-    	}
+   		sendMessage(msg);
     	result.waitForEnoughAnswers();
     	
     	return result;

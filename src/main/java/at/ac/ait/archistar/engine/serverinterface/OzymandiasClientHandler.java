@@ -31,7 +31,7 @@ public class OzymandiasClientHandler extends SimpleChannelInboundHandler<ClientC
     }
 
 	@Override
-	protected void messageReceived(ChannelHandlerContext ctx, ClientCommand msg) throws Exception {
+	protected void channelRead0(ChannelHandlerContext ctx, ClientCommand msg) throws Exception {
 		logger.debug("received: {}", msg);
 		if (msg instanceof TransactionResult) {
 			this.ozymandiasClient.positiveResultCountReached(msg.getClientId(), msg.getClientSequence(), (TransactionResult)msg);

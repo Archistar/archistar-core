@@ -34,7 +34,7 @@ public class OzymandiasCommandHandler extends SimpleChannelInboundHandler<Abstra
     }
     
     @Override
-    public void messageReceived(ChannelHandlerContext ctx, AbstractCommand msg) {
+    public void channelRead0(ChannelHandlerContext ctx, AbstractCommand msg) {
     	
     	logger.debug("server {} received {}", parentSystem.getReplicaId(), msg);
     	

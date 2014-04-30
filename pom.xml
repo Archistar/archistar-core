@@ -80,7 +80,7 @@
   	<dependency>
   		<groupId>io.netty</groupId>
   		<artifactId>netty-all</artifactId>
-  		<version>4.0.0.CR9</version>
+  		<version>4.0.18.Final</version>
     </dependency>
     <dependency>
       <groupId>at.archistar</groupId>

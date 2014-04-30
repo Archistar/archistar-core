@@ -83,7 +83,7 @@ public class ServerServerCommunication {
 	
 	public void send(AbstractCommand cmd) {
 		for(Channel channel : this.channels) {
-			channel.write(cmd);
+			channel.writeAndFlush(cmd);
 		}
 	}
 }
