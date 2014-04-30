@@ -85,14 +85,14 @@
     <dependency>
       <groupId>at.archistar</groupId>
       <artifactId>archistar-bft</artifactId>
-      <version>0.0.1</version>
+      <version>0.0.2</version>
     </dependency>
 
     <!-- library for secret-sharing -->
     <dependency>
       <groupId>at.archistar</groupId>
       <artifactId>archistar-smc</artifactId>
-      <version>0.0.2-snapshot</version>
+      <version>0.0.3-snapshot</version>
     </dependency>
   </dependencies>
    <build>
