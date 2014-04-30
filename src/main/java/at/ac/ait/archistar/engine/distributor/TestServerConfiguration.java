@@ -20,10 +20,18 @@ public class TestServerConfiguration extends ServerConfiguration {
 	
 	private HashSet<OzymandiasServer> servers;
 	
-	private Thread[] replicas;
+	private NioEventLoopGroup loopGroup;
 	
+	private Thread[] replicas;
+
 	public TestServerConfiguration(Set<StorageServer> servers) {
 		super(servers);
+		this.loopGroup = new NioEventLoopGroup(16);
+	}
+	
+	public TestServerConfiguration(Set<StorageServer> servers, NioEventLoopGroup loopGroup) {
+		super(servers);
+		this.loopGroup = loopGroup;
 	}
 	
 	/** TODO: should we move the setupTestServer / teardownTestServer methods into a subclass? */
@@ -38,7 +46,7 @@ public class TestServerConfiguration extends ServerConfiguration {
 		for(StorageServer s : serverMapId.values()) {
 			s.connect();
 			
-    		OzymandiasServer tmp = new OzymandiasServer(s.getBFTId(), getBFTServerNetworkPortMap(), f, s, new NioEventLoopGroup(), new NioEventLoopGroup());
+    		OzymandiasServer tmp = new OzymandiasServer(s.getBFTId(), getBFTServerNetworkPortMap(), f, s, loopGroup, loopGroup);
     		servers.add(tmp);
     		Thread thr = new Thread(tmp);
     		replicas[i++] = thr;

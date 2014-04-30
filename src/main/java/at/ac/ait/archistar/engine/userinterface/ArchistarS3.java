@@ -1,5 +1,7 @@
 package at.ac.ait.archistar.engine.userinterface;
 
+import io.netty.channel.nio.NioEventLoopGroup;
+
 import java.io.File;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -80,11 +82,13 @@ public class ArchistarS3 {
 	}
 	
 	private static Engine createEngine() {
-		TestServerConfiguration serverConfig = new TestServerConfiguration(createNewServers());
+		NioEventLoopGroup loopGroup = new NioEventLoopGroup(16);
+		
+		TestServerConfiguration serverConfig = new TestServerConfiguration(createNewServers(), loopGroup);
 		
 		serverConfig.setupTestServer(1);
 		CryptoEngine crypto = new SecretSharingCryptoEngine(new ShamirPSS(4, 3, new FakeRandomSource()));
-		Distributor distributor = new BFTDistributor(serverConfig);
+		Distributor distributor = new BFTDistributor(serverConfig, loopGroup);
 		MetadataService metadata = new SimpleMetadataService(serverConfig, distributor, crypto);
 		return new Engine(serverConfig, metadata, distributor, crypto);
 	}
