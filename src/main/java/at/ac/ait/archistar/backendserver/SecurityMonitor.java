@@ -66,7 +66,7 @@ public class SecurityMonitor {
 	 */
 	public void invalidCheckpointMessage(CheckpointMessage msg) {
 		/* wrong message data type */
-		logger.error("server " + myself.getReplicaId() + " message:" + msg);
+		logger.error("invalid checkpoint message server " + myself.getReplicaId() + " message:" + msg);
 		assert(false);
 	}
 
