@@ -64,7 +64,7 @@ public class Engine implements SimpleFileInterface {
 	}
 
 	@Override
-	public FSObject getObject(String path) throws DecryptionException {
+	public synchronized FSObject getObject(String path) throws DecryptionException {
 		
 		Set<Fragment> fragments = this.metadataService.getDistributionFor(path);
 		
@@ -79,7 +79,7 @@ public class Engine implements SimpleFileInterface {
 	}
 
 	@Override
-	public int putObject(FSObject obj) {
+	public synchronized int putObject(FSObject obj) {
 		assertThat(obj).isNotNull();
 		assertThat(metadataService).isNotNull();
 		
@@ -94,17 +94,17 @@ public class Engine implements SimpleFileInterface {
 	}
 
 	@Override
-	public Map<String, String> statObject(String path) {
+	public synchronized Map<String, String> statObject(String path) {
 		return metadataService.stat(path);
 	}
 
 	@Override
-	public int deleteObject(FSObject obj) {
+	public synchronized int deleteObject(FSObject obj) {
 		return metadataService.delete(obj);
 	}
 
 	@Override
-	public Set<String> listObjects(String path) {
+	public synchronized Set<String> listObjects(String path) {
 		return this.metadataService.list(path);
 	}
 }
