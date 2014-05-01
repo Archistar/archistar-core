@@ -36,10 +36,6 @@ public class OzymandiasClient {
 	
 	private Map<Integer, Channel> channelList;
     
-    private Channel channel;
-    
-    private Bootstrap b;
-    
     private int f = 1;
     
     private EventLoopGroup group;
@@ -93,7 +89,7 @@ public class OzymandiasClient {
     	
     	final OzymandiasClientHandler handler = new OzymandiasClientHandler(this);
     	
-        b = new Bootstrap();
+        Bootstrap b = new Bootstrap();
         b.group(group)
          .channel(NioSocketChannel.class)
          .handler(new ChannelInitializer<SocketChannel>() {
@@ -112,15 +108,6 @@ public class OzymandiasClient {
          });
         
         return b.connect("127.0.0.1", port).sync().channel();
-    }
-
-    public void run() throws Exception {
-    	try {
-            // Start the connection attempt.
-            channel.closeFuture().sync();
-        } finally {
-            group.shutdownGracefully();
-        }
     }
 
     /**
