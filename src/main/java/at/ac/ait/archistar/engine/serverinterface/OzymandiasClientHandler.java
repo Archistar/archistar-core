@@ -34,7 +34,7 @@ public class OzymandiasClientHandler extends SimpleChannelInboundHandler<ClientC
 	protected void channelRead0(ChannelHandlerContext ctx, ClientCommand msg) throws Exception {
 		logger.debug("received: {}", msg);
 		if (msg instanceof TransactionResult) {
-			this.ozymandiasClient.positiveResultCountReached(msg.getClientId(), msg.getClientSequence(), (TransactionResult)msg);
+			this.ozymandiasClient.addReplicaResult(msg.getClientId(), msg.getClientSequence(), (TransactionResult)msg);
 		} else {
 			logger.warn("unknown command: {}", msg);
 		}

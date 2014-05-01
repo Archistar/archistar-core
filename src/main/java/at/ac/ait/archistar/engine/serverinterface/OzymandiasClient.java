@@ -9,6 +9,7 @@ import javax.net.ssl.SSLEngine;
 
 import at.ac.ait.archistar.trustmanager.SSLContextFactory;
 import at.archistar.bft.client.ClientResult;
+import at.archistar.bft.client.ResultManager;
 import at.archistar.bft.exceptions.InconsistentResultsException;
 import at.archistar.bft.messages.ClientCommand;
 import at.archistar.bft.messages.TransactionResult;
@@ -43,25 +44,14 @@ public class OzymandiasClient {
     
     private EventLoopGroup group;
     
-    private Map<Integer, ClientResult> results;
-
+    private ResultManager resultManager;
+    
     public OzymandiasClient(Map <Integer, Integer> serverList, int f, NioEventLoopGroup group) {
         this.serverList = serverList;
         this.channelList = new HashMap<Integer, Channel>();
-        this.results = new HashMap<Integer, ClientResult>();
         this.f = f;
         this.group = group;
-    }
-    
-    /**
-     * asynchronously sends a message to all replicas
-     * 
-     * @param msg the message to be sent
-     */
-    public void sendMessage(Map<Integer, ClientCommand> msg) {
-    	for(Entry<Integer, ClientCommand> e: msg.entrySet()) {
-    		channelList.get(e.getKey()).writeAndFlush(e.getValue());
-    	}
+        this.resultManager = new ResultManager();
     }
     
     /**
@@ -71,13 +61,20 @@ public class OzymandiasClient {
      * @return 
      */
     public ClientResult sendRoundtripMessage(Map<Integer, ClientCommand> msg) {
-    	
+
+    	/* TODO: check if all clientIds and clientSequences are the same */
     	int clientId = msg.get(0).getClientId();
     	int clientSequence = msg.get(0).getClientSequence();
-    	ClientResult result = new ClientResult(f, clientId, clientSequence);
-   		this.results.put(clientSequence, result);
-   		
-   		sendMessage(msg);
+    	
+    	/* create a new operation wait object */
+    	ClientResult result = this.resultManager.addClientOperation(f, clientId, clientSequence);
+    	
+    	/* asynchronously send a message to all replicas */ 
+    	for(Entry<Integer, ClientCommand> e: msg.entrySet()) {
+    		channelList.get(e.getKey()).writeAndFlush(e.getValue());
+    	}
+
+    	/* wait for answers */
     	result.waitForEnoughAnswers();
     	
     	return result;
@@ -125,17 +122,17 @@ public class OzymandiasClient {
             group.shutdownGracefully();
         }
     }
-    
+
     /**
+     * adds a replica's result. This is used to determine when enough results for determining
+     * an operations result were received
      * 
-     * @param i 
-     * @param clientId for which client operation should be waited
-     * @param msg 
-     * 
-     * @return true if 3f+1 messages were received
-     * @throws InconsistentResultsException 
+     * @param clientId the result's client id
+     * @param clientSequence the result's client sequence
+     * @param tx the result
+     * @throws InconsistentResultsException seems like a faulty replica did send something unexpected
      */
-	public boolean positiveResultCountReached(int clientId, int clientSequence, TransactionResult tx) throws InconsistentResultsException {
-		return this.results.get(clientSequence).addResult(clientId, clientSequence, tx);
+	public void addReplicaResult(int clientId, int clientSequence, TransactionResult tx) throws InconsistentResultsException {
+		resultManager.addClientResponse(clientId, clientSequence, tx);
 	}
 }

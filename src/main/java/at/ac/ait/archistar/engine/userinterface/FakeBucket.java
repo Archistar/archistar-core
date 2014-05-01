@@ -65,8 +65,6 @@ public class FakeBucket {
 	
 	public Response writeById(String id, String gid, String uid, String mode, String serverSideEncryption, byte[] input) throws NoSuchAlgorithmException, DecryptionException {
 		
-		System.err.println("id: " + id);
-		
 		SimpleFile obj = new SimpleFile(id, input, new HashMap<String, String>());
 		
 		obj.setMetaData("gid", gid);
@@ -84,8 +82,6 @@ public class FakeBucket {
 	}
 
 	public Response deleteById(String id) throws DecryptionException {
-		
-		System.err.println("id: " + id);
 		
 		FSObject obj = engine.getObject(id);
 		engine.deleteObject(obj);

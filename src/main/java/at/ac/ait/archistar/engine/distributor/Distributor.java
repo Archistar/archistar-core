@@ -16,9 +16,9 @@ import at.ac.ait.archistar.backendserver.fragments.Fragment;
  */
 public interface Distributor {
 	
-	int putFragmentSet(Set<Fragment> fragments);
+	boolean putFragmentSet(Set<Fragment> fragments);
 	
-	public int getFragmentSet(Set<Fragment> fragments);
+	public boolean getFragmentSet(Set<Fragment> fragments);
 		
 	int connectServers();
 	

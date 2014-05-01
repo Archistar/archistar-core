@@ -46,7 +46,7 @@ public abstract class AbstractIntegrationTest {
 			HashMap<String, Integer> fragCount = serverConfig.getStorageFragmentCounts(); 
 
 			/* add one fragment per storage server */
-			assertThat(engine.putObject(testObject)).isEqualTo(engine.getNumberOfServers());
+			assertThat(engine.putObject(testObject)).isEqualTo(true);
 
 			/* expect the operation to be executed at (at least) f+1 nodes. The other (3f+1)-(f+1)
 			 * nodes might still need longer to perform the operation or might be in error
@@ -73,7 +73,7 @@ public abstract class AbstractIntegrationTest {
 		String path = testObject.getPath();
 		
 		engine.connect();
-		assertThat(engine.putObject(testObject)).isEqualTo(engine.getNumberOfServers());
+		assertThat(engine.putObject(testObject)).isEqualTo(true);
 		assertThat(testObject.getPath()).isEqualTo(path);
 		try {
 			FSObject retrObject = engine.getObject(path);

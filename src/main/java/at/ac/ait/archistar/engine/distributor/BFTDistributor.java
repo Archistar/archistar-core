@@ -40,7 +40,7 @@ public class BFTDistributor implements Distributor {
 	}
 
 	@Override
-	public int putFragmentSet(Set<Fragment> fragments) {
+	public boolean putFragmentSet(Set<Fragment> fragments) {
 		
 		Map<Integer, ClientCommand> msg = new HashMap<Integer, ClientCommand>();
 		
@@ -51,12 +51,11 @@ public class BFTDistributor implements Distributor {
 		this.client.sendRoundtripMessage(msg);
 		clientSequence++;
 		
-		/* TODO: change this to go with the 2f+1 flow */
-		return fragments.size();
+		return fragments.size() >= (2*f+1);
 	}
 
 	@Override
-	public int getFragmentSet(Set<Fragment> fragments) {
+	public boolean getFragmentSet(Set<Fragment> fragments) {
 		
 		Map<Integer, ClientCommand> msg = new HashMap<Integer, ClientCommand>();
 		
@@ -79,8 +78,7 @@ public class BFTDistributor implements Distributor {
 		
 		clientSequence++;
 		
-		/* TODO: change this to go with the 2f+1 flow */
-		return fragments.size();
+		return fragments.size() >= (2*f+1);
 	}
 
 	/* starts up virtual servers */
@@ -96,9 +94,8 @@ public class BFTDistributor implements Distributor {
 			this.client.connect();
 			alreadyConnected = true;
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
-			
+			assert(false);
 			return -1;
 		}
 		

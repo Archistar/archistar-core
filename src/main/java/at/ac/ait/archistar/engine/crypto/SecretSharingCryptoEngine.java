@@ -13,6 +13,12 @@ import at.archistar.crypto.WeakSecurityException;
 import at.archistar.crypto.data.Share;
 import at.archistar.helper.ShareSerializer;
 
+/**
+ * wrapper for using an archistar-smc secret-sharing algorithm with
+ * the archistar-core system
+ * 
+ * @author andy
+ */
 public class SecretSharingCryptoEngine implements CryptoEngine {
 	
 	private final SecretSharing sharingAlgorithm;
@@ -42,7 +48,6 @@ public class SecretSharingCryptoEngine implements CryptoEngine {
 		try {
 			combined = this.sharingAlgorithm.reconstruct(shares);
 		} catch (GeneralSecurityException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			assert(false);
 		}

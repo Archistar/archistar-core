@@ -73,7 +73,6 @@ public class TestServerConfiguration extends ServerConfiguration {
     		try {
 				s.join();
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
     	}

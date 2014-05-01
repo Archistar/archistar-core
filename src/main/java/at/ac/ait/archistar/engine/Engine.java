@@ -69,17 +69,17 @@ public class Engine implements SimpleFileInterface {
 		Set<Fragment> fragments = this.metadataService.getDistributionFor(path);
 		
 		assertThat(fragments).hasSize(servers.getOnlineStorageServerCount());
-		int readCount = this.distributor.getFragmentSet(fragments);
+		boolean result = this.distributor.getFragmentSet(fragments);
 		
 		// TODO: just assert that nothing went wrong..
-		assertThat(readCount).isEqualTo(servers.getOnlineStorageServerCount());
+		assertThat(result).isEqualTo(true);
 		byte[] decrypted =  this.crypto.decrypt(fragments);
 		
 		return this.serializer.deserialize(decrypted);
 	}
 
 	@Override
-	public synchronized int putObject(FSObject obj) {
+	public synchronized boolean putObject(FSObject obj) {
 		assertThat(obj).isNotNull();
 		assertThat(metadataService).isNotNull();
 		

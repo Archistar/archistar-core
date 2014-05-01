@@ -128,8 +128,8 @@ public class OzymandiasServer implements Runnable, BftEngineCallbacks {
 			this.watcher.interrupt();
 			this.watcher.join();
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			assert(false);
 		}
 		ChannelFuture cf = serverChannel.channel().close();
 		cf.awaitUninterruptibly();

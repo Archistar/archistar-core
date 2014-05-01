@@ -60,9 +60,6 @@ public class JetS3tStorage implements StorageServer {
 		}
 	}
 
-	/*
-	 * TODO since when is getObject deprectated?
-	 */
 	@SuppressWarnings("deprecation")
 	public byte[] getBlob(String id) throws DisconnectedException {
 		
@@ -111,8 +108,6 @@ public class JetS3tStorage implements StorageServer {
 
 	public int connect() {
 		try {
-			/* TODO: this shouldn't be that ugly.. */
-			
 			s3service = new RestS3Service(awsCredentials);
 			Jets3tProperties props = s3service.getJetS3tProperties();
 			props.setProperty("s3service.s3-endpoint-http-port", "10453");

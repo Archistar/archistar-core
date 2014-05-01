@@ -25,8 +25,7 @@ public class PerformanceWatcher extends Thread {
 			server.checkCollections();
 			
 			if (server.isPrimary()) {
-				server.outputTransactionCount();
-				server.outputTiming();
+				server.outputDebugInformation();
 			}
 			
 			try {

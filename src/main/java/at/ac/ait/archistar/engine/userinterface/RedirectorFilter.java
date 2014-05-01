@@ -11,6 +11,9 @@ import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.PreMatching;
 import javax.ws.rs.ext.Provider;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * this filter should normalize incoming requests. S3 allows two ways of
  * addressing incoming requests: path style and virtual style. With this
@@ -22,6 +25,9 @@ import javax.ws.rs.ext.Provider;
 @Provider
 @PreMatching
 public class RedirectorFilter implements ContainerRequestFilter {
+	
+	private Logger logger = LoggerFactory.getLogger(RedirectorFilter.class);
+	
     @Override
     public void filter(ContainerRequestContext requestContext) {
     	
@@ -50,7 +56,7 @@ public class RedirectorFilter implements ContainerRequestFilter {
     	String bucket = "";
     	String query = uri.getQuery();
     	
-    	System.err.println("Input: " + uri.toString());
+    	logger.debug("Input: " + uri.toString());
     	    	
     	if (path.equals("/")) {
         	bucketString = "s3.amazonaws.com";
@@ -100,9 +106,7 @@ public class RedirectorFilter implements ContainerRequestFilter {
     		}
     	}
     	
-    	System.err.println("Result-Bucket: " + bucket);
-    	System.err.println("Result-Path: " + path);
-    	System.err.println("Query: " + query);
+    	logger.debug("redirected: " + uri.toString() + " -> " + bucket + "/" + path + "?" + query);
     	
     	/* set Bucket */
     	ctx.getHeaders().add("X-Bucket", bucket);
@@ -115,7 +119,7 @@ public class RedirectorFilter implements ContainerRequestFilter {
     	/* set URI */
 		try {
 			URI target = new URI(uri.getScheme(), uri.getUserInfo(), uri.getHost(), uri.getPort(), path, query, uri.getFragment());
-			System.err.println("Target: " + target.toString());
+			logger.info("redirected: " + uri.toString() + " -> " + target.toString());
 	    	ctx.setRequestUri(target);
 		} catch (URISyntaxException e) {
 			// TODO Auto-generated catch block

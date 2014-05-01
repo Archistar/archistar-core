@@ -71,7 +71,7 @@ public class SecurityMonitor {
 	}
 
 	public void invalidMessageReceived(AbstractCommand msg) {
-		// TODO Auto-generated method stub
-		
+		logger.error("invalid message received on " + myself.getReplicaId() + " message:" + msg);
+		assert(false);
 	}
 }

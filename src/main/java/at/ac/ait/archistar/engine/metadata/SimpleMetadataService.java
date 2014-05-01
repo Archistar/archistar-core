@@ -28,9 +28,6 @@ import at.ac.ait.archistar.engine.distributor.ServerConfiguration;
  * The metadata  service is responsible for storing all meta-information
  * about filesystem layout, versions, etc.
  * 
- * TODO: think about when to remove a mapping from the database
- * TODO: remove direct distributor access
- * 
  * @author Andreas Happe <andreashappe@snikt.net>
  */
 public class SimpleMetadataService implements MetadataService {

@@ -23,7 +23,7 @@ import at.ac.ait.archistar.trustmanager.SSLContextFactory;
 import at.archistar.bft.messages.AbstractCommand;
 
 /**
- * This class is repsonsible for sending messages to all replicas
+ * This class is responsible for sending messages to all replicas
  * currently within the replica system.
  * 
  * @author andy

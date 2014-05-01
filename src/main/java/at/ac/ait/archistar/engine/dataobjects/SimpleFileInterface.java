@@ -24,7 +24,7 @@ public interface SimpleFileInterface {
   FSObject getObject(String path) throws DecryptionException;
 
   /** put some object (file or directory) onto the servers */
-  int putObject(FSObject obj);
+  boolean putObject(FSObject obj);
 
   /** remove an object from all servers */
   int deleteObject(FSObject obj);
