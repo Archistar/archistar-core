@@ -4,8 +4,8 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
 /**
- * A bogus key store which provides all the required information to
- * create an example SSL connection.
+ * A bogus key store which provides all the required information to create an
+ * example SSL connection.
  *
  * To generate a bogus key store:
  * <pre>
@@ -16,6 +16,7 @@ import java.io.InputStream;
  * </pre>
  */
 public final class SecureKeyStore {
+
     private static final short[] DATA = {
         0xfe, 0xed, 0xfe, 0xed, 0x00, 0x00, 0x00, 0x02,
         0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x01,
@@ -274,11 +275,11 @@ public final class SecureKeyStore {
         0xc2, 0x61, 0xf4, 0xdb, 0x40, 0x93, 0x1d, 0x63,
         0x8a, 0x50, 0x4c, 0x11, 0x39, 0xb1, 0x91, 0xc1,
         0xe6, 0x9d, 0xd9, 0x1a, 0x62, 0x1b, 0xb8, 0xd3,
-        0xd6, 0x9a, 0x6d, 0xb9, 0x8e, 0x15, 0x51 };
+        0xd6, 0x9a, 0x6d, 0xb9, 0x8e, 0x15, 0x51};
 
     public static InputStream asInputStream() {
         byte[] data = new byte[DATA.length];
-        for (int i = 0; i < data.length; i ++) {
+        for (int i = 0; i < data.length; i++) {
             data[i] = (byte) DATA[i];
         }
         return new ByteArrayInputStream(data);

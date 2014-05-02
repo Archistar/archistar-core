@@ -5,38 +5,41 @@ import java.util.Map;
 
 /**
  * Provide a simple FSFile implementation for the prototype
- * 
+ *
  * @author andy
  */
-public class SimpleFile implements FSFile, Serializable {
-	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 961269599570217856L;
-	private String path;
-	private byte[] data;
-	private Map<String, String> metadata;
+public class SimpleFile implements Serializable, FSObject {
 
-	public SimpleFile(String path, byte[] data, Map<String, String> metadata) {
-		this.path = path;
-		this.data = data;
-		this.metadata = metadata;
-	}
+    private static final long serialVersionUID = 961269599570217856L;
+    
+    private final String path;
+    
+    private final byte[] data;
+    
+    private final Map<String, String> metadata;
 
-	public Map<String, String> getMetadata() {
-		return this.metadata;
-	}
+    public SimpleFile(String path, byte[] data, Map<String, String> metadata) {
+        this.path = path;
+        this.data = data;
+        this.metadata = metadata;
+    }
 
-	public String setMetaData(String key, String value) {
-		return this.metadata.put(key, value);
-	}
+    @Override
+    public Map<String, String> getMetadata() {
+        return this.metadata;
+    }
 
-	public byte[] getData() {
-		return this.data;
-	}
+    @Override
+    public String setMetaData(String key, String value) {
+        return this.metadata.put(key, value);
+    }
 
-	public String getPath() {
-		return this.path;
-	}
+    public byte[] getData() {
+        return this.data;
+    }
+
+    @Override
+    public String getPath() {
+        return this.path;
+    }
 }

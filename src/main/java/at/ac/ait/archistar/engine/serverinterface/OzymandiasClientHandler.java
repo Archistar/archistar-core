@@ -12,31 +12,33 @@ import io.netty.channel.SimpleChannelInboundHandler;
  * Listener for incoming replica messages. Currently only a transaction's result
  * is transmitted.
  * 
+ * Note: I wanted to integrate this into OzymandiasClient but failed due to threading
+ *
  * @author andy
  */
 public class OzymandiasClientHandler extends SimpleChannelInboundHandler<ClientCommand> {
 
-	private Logger logger = LoggerFactory.getLogger(OzymandiasClientHandler.class);
-    
-    private OzymandiasClient ozymandiasClient;
-    
-    public OzymandiasClientHandler(OzymandiasClient ozymandiasClient) {
-    	this.ozymandiasClient = ozymandiasClient;
-	}
+    private Logger logger = LoggerFactory.getLogger(OzymandiasClientHandler.class);
 
-	@Override
+    private final OzymandiasClient ozymandiasClient;
+
+    public OzymandiasClientHandler(OzymandiasClient ozymandiasClient) {
+        this.ozymandiasClient = ozymandiasClient;
+    }
+
+    @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         logger.warn("Unexpected exception from downstream.", cause);
         ctx.close();
     }
 
-	@Override
-	protected void channelRead0(ChannelHandlerContext ctx, ClientCommand msg) throws Exception {
-		logger.debug("received: {}", msg);
-		if (msg instanceof TransactionResult) {
-			this.ozymandiasClient.positiveResultCountReached(msg.getClientId(), msg.getClientSequence(), (TransactionResult)msg);
-		} else {
-			logger.warn("unknown command: {}", msg);
-		}
-	}
+    @Override
+    protected void channelRead0(ChannelHandlerContext ctx, ClientCommand msg) throws Exception {
+        logger.debug("received: {}", msg);
+        if (msg instanceof TransactionResult) {
+            this.ozymandiasClient.addReplicaResult(msg.getClientId(), msg.getClientSequence(), (TransactionResult) msg);
+        } else {
+            logger.warn("unknown command: {}", msg);
+        }
+    }
 }

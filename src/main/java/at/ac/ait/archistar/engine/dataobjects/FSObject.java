@@ -7,9 +7,9 @@ import java.util.Map;
  */
 public interface FSObject {
 
-  Map<String, String> getMetadata();
+    Map<String, String> getMetadata();
 
-  String setMetaData(String key, String value);
-  
-  String getPath();
+    String setMetaData(String key, String value);
+
+    String getPath();
 };
