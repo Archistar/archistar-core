@@ -16,13 +16,18 @@ import javax.ws.rs.core.Response;
 import javax.xml.parsers.ParserConfigurationException;
 
 import at.ac.ait.archistar.engine.crypto.DecryptionException;
-
+/**
+ * this is the fake root-level of our S3 server. For now it just returns a list
+ * of supported buckets
+ * 
+ * @author andy
+ */
 @Path("/")
 public class FakeRoot {
 
     final private XmlDocumentBuilder builder;
 
-    private Map<String, FakeBucket> buckets;
+    private final Map<String, FakeBucket> buckets;
 
     public FakeRoot(Map<String, FakeBucket> buckets) throws ParserConfigurationException {
         this.builder = new XmlDocumentBuilder();

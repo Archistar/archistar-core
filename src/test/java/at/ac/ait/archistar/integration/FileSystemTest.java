@@ -31,7 +31,7 @@ import at.ac.ait.archistar.engine.metadata.SimpleMetadataService;
 
 public class FileSystemTest extends AbstractIntegrationTest {
 
-    private Logger logger = LoggerFactory.getLogger(FileSystemTest.class);
+    private final Logger logger = LoggerFactory.getLogger(FileSystemTest.class);
 
     private static Set<StorageServer> createNewServers() {
         File baseDir = new File("/tmp/test-filesystem/" + UUID.randomUUID() + "/");
@@ -46,7 +46,7 @@ public class FileSystemTest extends AbstractIntegrationTest {
         File dir4 = new File(baseDir, "4");
         dir4.mkdir();
 
-        HashSet<StorageServer> servers = new HashSet<StorageServer>();
+        HashSet<StorageServer> servers = new HashSet<>();
         servers.add(new FilesystemStorage(0, dir1));
         servers.add(new FilesystemStorage(1, dir2));
         servers.add(new FilesystemStorage(2, dir3));

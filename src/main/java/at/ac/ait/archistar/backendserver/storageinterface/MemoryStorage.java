@@ -15,9 +15,9 @@ public class MemoryStorage implements StorageServer {
 
     private boolean connected = false;
 
-    private String id;
+    private final String id;
 
-    private int internalBFTId;
+    private final int internalBFTId;
 
     public MemoryStorage(int bftId) {
         this.id = UUID.randomUUID().toString();
@@ -25,12 +25,14 @@ public class MemoryStorage implements StorageServer {
     }
 
     /* memory storage does not need any connect operation */
+    @Override
     public int connect() {
-        this.data = new HashMap<String, byte[]>();
+        this.data = new HashMap<>();
         this.connected = true;
         return 0;
     }
 
+    @Override
     public int disconnect() {
 
         this.data.clear();
@@ -38,6 +40,7 @@ public class MemoryStorage implements StorageServer {
         return 0;
     }
 
+    @Override
     public byte[] putBlob(String path, byte[] blob) throws DisconnectedException {
 
         if (!this.connected) {
@@ -48,6 +51,7 @@ public class MemoryStorage implements StorageServer {
         return blob;
     }
 
+    @Override
     public byte[] getBlob(String path) throws DisconnectedException {
 
         if (!this.connected) {
@@ -61,14 +65,17 @@ public class MemoryStorage implements StorageServer {
         return this.data.get(path);
     }
 
+    @Override
     public boolean isConnected() {
         return this.connected;
     }
 
+    @Override
     public int getFragmentCount() {
         return this.data.size();
     }
 
+    @Override
     public String getId() {
         return id;
     }

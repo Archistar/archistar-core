@@ -17,7 +17,7 @@ import at.ac.ait.archistar.backendserver.storageinterface.StorageServer;
  */
 public class ServerConfiguration {
 
-    protected HashMap<String, StorageServer> serverMapId = new HashMap<String, StorageServer>();
+    protected HashMap<String, StorageServer> serverMapId = new HashMap<>();
 
     public ServerConfiguration(Set<StorageServer> servers) {
         for (StorageServer s : servers) {
@@ -32,7 +32,7 @@ public class ServerConfiguration {
      */
     public Map<Integer, Integer> getBFTServerNetworkPortMap() {
 
-        HashMap<Integer, Integer> serverList = new HashMap<Integer, Integer>();
+        HashMap<Integer, Integer> serverList = new HashMap<>();
         int i = 0;
         for (StorageServer s : this.serverMapId.values()) {
             serverList.put(s.getBFTId(), 20000 + i++);

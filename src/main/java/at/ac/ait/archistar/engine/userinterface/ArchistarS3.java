@@ -27,6 +27,17 @@ import at.ac.ait.archistar.engine.metadata.SimpleMetadataService;
 import at.archistar.crypto.ShamirPSS;
 import at.archistar.crypto.random.FakeRandomSource;
 
+/**
+ * this bootstrap a local S3 archistar instance containing one archistar
+ * director with an client-side S3/HTTP/Rest inteface and four backend-storage
+ * servers utilizing filesystem based storage.
+ * 
+ * Note: maybe we should exchange the filesystem based storage with a pure
+ * memory based storage as this would remove the need for writable filesystems
+ * for the test case
+ * 
+ * @author andy
+ */
 public class ArchistarS3 {
 
     /**
@@ -46,14 +57,14 @@ public class ArchistarS3 {
         /* setup buckets/services? */
         ResteasyDeployment deployment = new ResteasyDeployment();
 
-        HashMap<String, FakeBucket> buckets = new HashMap<String, FakeBucket>();
+        HashMap<String, FakeBucket> buckets = new HashMap<>();
         buckets.put("fake_bucket", new FakeBucket(engine));
 
-        List<Object> resources = new LinkedList<Object>();
+        List<Object> resources = new LinkedList<>();
         resources.add(new FakeRoot(buckets));
         deployment.setResources(resources);
 
-        List<Object> providers = new LinkedList<Object>();
+        List<Object> providers = new LinkedList<>();
         providers.add(new RedirectorFilter());
         deployment.setProviders(providers);
 
@@ -74,7 +85,7 @@ public class ArchistarS3 {
         File dir4 = new File(baseDir, "4");
         dir4.mkdir();
 
-        HashSet<StorageServer> servers = new HashSet<StorageServer>();
+        HashSet<StorageServer> servers = new HashSet<>();
         servers.add(new FilesystemStorage(0, dir1));
         servers.add(new FilesystemStorage(1, dir2));
         servers.add(new FilesystemStorage(2, dir3));

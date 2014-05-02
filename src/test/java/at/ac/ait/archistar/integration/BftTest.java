@@ -23,7 +23,7 @@ public class BftTest extends AbstractIntegrationTest {
     @BeforeClass
     public static void prepareBftNetwork() {
         /* test configuration */
-        HashSet<StorageServer> servers = new HashSet<StorageServer>();
+        HashSet<StorageServer> servers = new HashSet<>();
         servers.add(new MemoryStorage(0));
         servers.add(new MemoryStorage(1));
         servers.add(new MemoryStorage(2));

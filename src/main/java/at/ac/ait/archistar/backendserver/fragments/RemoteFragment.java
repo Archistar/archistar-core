@@ -6,7 +6,7 @@ import at.ac.ait.archistar.backendserver.storageinterface.StorageServer;
 
 /**
  * minimal implementation of the Fragment interface for use with the Archistar
- * protoype
+ * prototype
  *
  * @author andy
  */
@@ -37,32 +37,39 @@ public class RemoteFragment implements Fragment, Serializable {
         this.scheme = EncryptionScheme.NONE;
     }
 
+    @Override
     public byte[] setData(byte[] data) {
         this.data = data;
         this.syncedToServer = false;
         return this.data;
     }
 
+    @Override
     public byte[] getData() {
         return this.data;
     }
 
+    @Override
     public boolean isSynchronized() {
         return this.syncedToServer;
     }
 
+    @Override
     public String getFragmentId() {
         return fragmentId;
     }
 
+    @Override
     public StorageServer getStorageServer() {
         return this.server;
     }
 
+    @Override
     public boolean setSynchronized(boolean value) {
         return this.syncedToServer = value;
     }
 
+    @Override
     public String setFragmentId(String fragmentId) {
         return this.fragmentId = fragmentId;
     }

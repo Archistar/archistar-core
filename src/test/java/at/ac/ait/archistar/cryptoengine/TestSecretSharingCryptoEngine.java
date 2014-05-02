@@ -34,7 +34,7 @@ public class TestSecretSharingCryptoEngine {
     @Test
     public void testIfDecryptionProducesOriginalData() {
 
-        Set<Fragment> distribution = new HashSet<Fragment>();
+        Set<Fragment> distribution = new HashSet<>();
         distribution.add(new RemoteFragment("frag-1"));
         distribution.add(new RemoteFragment("frag-2"));
         distribution.add(new RemoteFragment("frag-3"));
@@ -57,5 +57,4 @@ public class TestSecretSharingCryptoEngine {
         }
         assertThat(result).isNotNull().isEqualTo(mockSerializedData);
     }
-
 }

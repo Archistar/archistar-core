@@ -47,7 +47,7 @@ public class EncryptedFileSystemTest extends AbstractIntegrationTest {
         File dir4 = new File(baseDir, "4");
         dir4.mkdir();
 
-        HashSet<StorageServer> servers = new HashSet<StorageServer>();
+        HashSet<StorageServer> servers = new HashSet<>();
         servers.add(new FilesystemStorage(0, dir1));
         servers.add(new FilesystemStorage(1, dir2));
         servers.add(new FilesystemStorage(2, dir3));

@@ -30,21 +30,36 @@ import at.archistar.bft.messages.AbstractCommand;
  */
 public class ServerServerCommunication {
 
-    private Map<Integer, Integer> serverList;
+    /**
+     * mapping from replica id -> port. Note: currently only connnections to localhost are supported
+     */
+    private final Map<Integer, Integer> serverList;
 
-    private Set<Channel> channels;
+    /**
+     * opened channels
+     */
+    private final Set<Channel> channels;
 
+    /**
+     * my server/replica Id -- this is used so that we are not connecting to
+     * ourself
+     */
     private int myServerId = -1;
 
     private EventLoopGroup loopGroup = null;
 
     public ServerServerCommunication(int myId, Map<Integer, Integer> serverList, EventLoopGroup elg) {
         this.serverList = serverList;
-        this.channels = new HashSet<Channel>();
+        this.channels = new HashSet<>();
         this.myServerId = myId;
         this.loopGroup = elg;
     }
 
+    /**
+     * conncets to all replicas
+     *
+     * @throws InterruptedException
+     */
     public void connect() throws InterruptedException {
         for (Entry<Integer, Integer> e : this.serverList.entrySet()) {
             int replicaId = e.getKey();
@@ -80,6 +95,11 @@ public class ServerServerCommunication {
         }
     }
 
+    /**
+     * sends a message to all connected replicas
+     *
+     * @param cmd the to be sent message
+     */
     public void send(AbstractCommand cmd) {
         for (Channel channel : this.channels) {
             channel.writeAndFlush(cmd);

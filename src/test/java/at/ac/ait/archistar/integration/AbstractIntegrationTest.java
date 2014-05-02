@@ -55,7 +55,7 @@ public abstract class AbstractIntegrationTest {
              */
             int increaseCount = 0;
             for (Map.Entry<String, Integer> m : serverConfig.getStorageFragmentCounts().entrySet()) {
-                int oldValue = fragCount.get(m.getKey()).intValue();
+                int oldValue = fragCount.get(m.getKey());
 
                 if (m.getValue() == (oldValue + 1)) {
                     increaseCount++;

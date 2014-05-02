@@ -13,13 +13,14 @@ import java.io.ObjectOutputStream;
  */
 public class CustomSerializer implements Serializer {
 
+    @Override
     public byte[] serialize(FSObject input) {
 
         try {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            ObjectOutputStream out = new ObjectOutputStream(bos);
-            out.writeObject(input);
-            out.close();
+            try (ObjectOutputStream out = new ObjectOutputStream(bos)) {
+                out.writeObject(input);
+            }
 
             return bos.toByteArray();
         } catch (IOException e) {
@@ -28,19 +29,16 @@ public class CustomSerializer implements Serializer {
         }
     }
 
+    @Override
     public FSObject deserialize(byte[] data) {
 
         if (data == null) {
             return null;
         }
 
-        try {
-            ByteArrayInputStream door = new ByteArrayInputStream(data);
-            ObjectInputStream reader = new ObjectInputStream(door);
+        try (ObjectInputStream reader = new ObjectInputStream(new ByteArrayInputStream(data))){
             return (FSObject) reader.readObject();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
+        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
         return null;

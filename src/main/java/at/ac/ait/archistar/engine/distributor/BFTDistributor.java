@@ -33,7 +33,7 @@ public class BFTDistributor implements Distributor {
 
     private final int f = 1;
 
-    private ServerConfiguration config;
+    private final ServerConfiguration config;
 
     public BFTDistributor(ServerConfiguration config, NioEventLoopGroup loopGroup) {
         this.config = config;
@@ -58,7 +58,7 @@ public class BFTDistributor implements Distributor {
     @Override
     public boolean getFragmentSet(Set<Fragment> fragments) {
 
-        Map<Integer, ClientCommand> msg = new HashMap<Integer, ClientCommand>();
+        Map<Integer, ClientCommand> msg = new HashMap<>();
 
         for (Fragment f : fragments) {
             msg.put(f.getStorageServer().getBFTId(), new ReadCommand(clientId, clientSequence, f.getFragmentId()));

@@ -9,7 +9,6 @@ import java.util.Set;
 import at.ac.ait.archistar.backendserver.OzymandiasServer;
 import at.ac.ait.archistar.backendserver.storageinterface.DisconnectedException;
 import at.ac.ait.archistar.backendserver.storageinterface.StorageServer;
-import at.ac.ait.archistar.engine.distributor.ServerConfiguration;
 
 /**
  * this adds support for creating/stopping test servers as well as a couple of
@@ -45,7 +44,7 @@ public class TestServerConfiguration extends ServerConfiguration {
         int servercount = serverMapId.size();
 
         replicas = new Thread[servercount];
-        servers = new HashSet<OzymandiasServer>();
+        servers = new HashSet<>();
 
         for (StorageServer s : serverMapId.values()) {
             s.connect();
@@ -84,7 +83,7 @@ public class TestServerConfiguration extends ServerConfiguration {
 
     public HashMap<String, Integer> getStorageFragmentCounts() throws DisconnectedException {
 
-        HashMap<String, Integer> result = new HashMap<String, Integer>();
+        HashMap<String, Integer> result = new HashMap<>();
 
         for (StorageServer s : getOnlineStorageServers()) {
             result.put(s.getId(), s.getFragmentCount());

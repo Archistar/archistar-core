@@ -10,13 +10,12 @@ import at.ac.ait.archistar.backendserver.storageinterface.StorageServer;
 public interface Fragment {
 
     public enum EncryptionScheme {
-
         NONE,
         SHAMIR
     };
 
     /**
-     * @param the data that should be stored within the fragment
+     * @param data the data that should be stored within the fragment
      * @return the stored data
      */
     byte[] setData(byte[] data);
@@ -33,7 +32,7 @@ public interface Fragment {
     boolean isSynchronized();
 
     /**
-     * @param set the synchronized state (is the fragment in-sync with the
+     * @param value set the synchronized state (is the fragment in-sync with the
      * storage server side representation) to true
      * @return the new state
      */
@@ -57,7 +56,16 @@ public interface Fragment {
      */
     String setFragmentId(String string);
 
+    /**
+     * which encryption scheme was used for this fragment
+     * @return the used encryption scheme
+     */
     EncryptionScheme getEncryptionScheme();
 
+    /**
+     * sets the to-be-used encryption scheme
+     * 
+     * @param scheme the scheme which will be used to encrypt the data
+     */
     void setEncryptionScheme(EncryptionScheme scheme);
 }

@@ -7,14 +7,15 @@ import at.archistar.bft.messages.AbstractCommand;
 import at.archistar.bft.messages.CheckpointMessage;
 
 /**
- * This class responds to the different error situations TODO: maybe use
- * singleton pattern for this?
+ * This class responds to the different error situations
+ *
+ * TODO: maybe use singleton pattern for this?
  *
  * @author andy
  */
 public class SecurityMonitor {
 
-    private Logger logger = LoggerFactory.getLogger(SecurityMonitor.class);
+    private final Logger logger = LoggerFactory.getLogger(SecurityMonitor.class);
 
     private final OzymandiasServer myself;
 
@@ -40,7 +41,7 @@ public class SecurityMonitor {
     public boolean replicasMightBeMalicous() {
         logger.warn("primary might be malicous?");
 
-        myself.getBftEngine().tryAdvanceEra();
+        myself.tryAdvanceEra();
         assert (false);
         return true;
     }

@@ -29,7 +29,7 @@ public class MirrorTest {
         cryptoEngine = new PseudoMirrorCryptoEngine();
 
         /* GIVEN some mock fragments */
-        distribution = new HashSet<Fragment>();
+        distribution = new HashSet<>();
         StorageServer server = mock(StorageServer.class);
 
         frag1 = mock(Fragment.class);

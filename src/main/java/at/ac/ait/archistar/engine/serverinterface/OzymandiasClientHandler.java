@@ -11,6 +11,8 @@ import io.netty.channel.SimpleChannelInboundHandler;
 /**
  * Listener for incoming replica messages. Currently only a transaction's result
  * is transmitted.
+ * 
+ * Note: I wanted to integrate this into OzymandiasClient but failed due to threading
  *
  * @author andy
  */
@@ -18,7 +20,7 @@ public class OzymandiasClientHandler extends SimpleChannelInboundHandler<ClientC
 
     private Logger logger = LoggerFactory.getLogger(OzymandiasClientHandler.class);
 
-    private OzymandiasClient ozymandiasClient;
+    private final OzymandiasClient ozymandiasClient;
 
     public OzymandiasClientHandler(OzymandiasClient ozymandiasClient) {
         this.ozymandiasClient = ozymandiasClient;

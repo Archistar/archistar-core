@@ -32,7 +32,7 @@ public class SimpleDirectoryServiceTest {
         distributor = mock(Distributor.class);
         config = mock(ServerConfiguration.class);
 
-        Set<StorageServer> servers = new HashSet<StorageServer>();
+        Set<StorageServer> servers = new HashSet<>();
 
         server1 = mock(StorageServer.class);
         when(server1.isConnected()).thenReturn(true);
@@ -44,7 +44,7 @@ public class SimpleDirectoryServiceTest {
 
         CryptoEngine crypto = new PseudoMirrorCryptoEngine();
 
-        Set<Fragment> result = new HashSet<Fragment>();
+        Set<Fragment> result = new HashSet<>();
         Fragment frag1 = mock(Fragment.class);
         when(frag1.getStorageServer()).thenReturn(server1);
         when(frag1.getFragmentId()).thenReturn("fragement-1");
@@ -67,7 +67,7 @@ public class SimpleDirectoryServiceTest {
         Set<Fragment> result = theService.getDistributionFor("/some-test-path");
         assertThat(result).hasSize(config.getOnlineStorageServerCount());
 
-        Set<StorageServer> choosenServers = new HashSet<StorageServer>();
+        Set<StorageServer> choosenServers = new HashSet<>();
         for (Fragment f : result) {
             choosenServers.add(f.getStorageServer());
         }
@@ -81,12 +81,12 @@ public class SimpleDirectoryServiceTest {
         Set<Fragment> result2 = theService.getDistributionFor("/some-test-path");
 
         // equivalent to result1.map(&:getStorageServer()) == result2.map(&:getStorageServer())
-        Set<String> fragmentIds1 = new HashSet<String>();
+        Set<String> fragmentIds1 = new HashSet<>();
         for (Fragment f : result1) {
             fragmentIds1.add(f.getFragmentId());
         }
 
-        Set<String> fragmentIds2 = new HashSet<String>();
+        Set<String> fragmentIds2 = new HashSet<>();
 
         for (Fragment f : result2) {
             fragmentIds2.add(f.getFragmentId());
@@ -103,12 +103,12 @@ public class SimpleDirectoryServiceTest {
         Set<Fragment> result2 = theService.getDistributionFor("/some-test-path");
 
         // equivalent to result1.map(&:getStorageServer()) == result2.map(&:getStorageServer())
-        Set<StorageServer> servers1 = new HashSet<StorageServer>();
+        Set<StorageServer> servers1 = new HashSet<>();
         for (Fragment f : result1) {
             servers1.add(f.getStorageServer());
         }
 
-        Set<StorageServer> servers2 = new HashSet<StorageServer>();
+        Set<StorageServer> servers2 = new HashSet<>();
 
         for (Fragment f : result2) {
             servers2.add(f.getStorageServer());

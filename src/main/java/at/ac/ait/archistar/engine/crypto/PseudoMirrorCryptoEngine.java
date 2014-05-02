@@ -19,6 +19,7 @@ public class PseudoMirrorCryptoEngine implements CryptoEngine {
      * checks if data within all fragments is the same and returns the
      * encapsulated data
      */
+    @Override
     public byte[] decrypt(Set<Fragment> input) throws DecryptionException {
 
         byte[] reference = null;
@@ -44,6 +45,7 @@ public class PseudoMirrorCryptoEngine implements CryptoEngine {
      * this sets data for each fragment -- no encryption whatsoever, pure
      * duplication
      */
+    @Override
     public Set<Fragment> encrypt(byte[] data, Set<Fragment> fragments) {
         for (Fragment f : fragments) {
             f.setData(data);

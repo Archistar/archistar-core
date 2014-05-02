@@ -7,7 +7,6 @@ import java.util.Set;
 import static org.fest.assertions.api.Assertions.*;
 import at.ac.ait.archistar.backendserver.fragments.Fragment;
 import at.ac.ait.archistar.backendserver.fragments.Fragment.EncryptionScheme;
-import at.ac.ait.archistar.engine.crypto.CryptoEngine;
 import at.archistar.crypto.SecretSharing;
 import at.archistar.crypto.WeakSecurityException;
 import at.archistar.crypto.data.Share;
@@ -27,6 +26,7 @@ public class SecretSharingCryptoEngine implements CryptoEngine {
         this.sharingAlgorithm = sharingAlgorithm;
     }
 
+    @Override
     public byte[] decrypt(Set<Fragment> input) throws DecryptionException {
 
         Share[] shares = new Share[input.size()];
@@ -54,6 +54,7 @@ public class SecretSharingCryptoEngine implements CryptoEngine {
         return combined;
     }
 
+    @Override
     public Set<Fragment> encrypt(byte[] originalContent, Set<Fragment> fragments) {
 
         try {
@@ -73,10 +74,7 @@ public class SecretSharingCryptoEngine implements CryptoEngine {
                 f.setData(binData);
                 f.setEncryptionScheme(EncryptionScheme.SHAMIR);
             }
-        } catch (WeakSecurityException e) {
-            e.printStackTrace();
-            assert (false);
-        } catch (GeneralSecurityException e) {
+        } catch (WeakSecurityException | GeneralSecurityException e) {
             e.printStackTrace();
             assert (false);
         }

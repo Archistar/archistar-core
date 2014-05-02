@@ -3,6 +3,7 @@ package at.ac.ait.archistar.backendserver.storageinterface;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 
 import org.apache.commons.io.IOUtils;
 
@@ -16,9 +17,9 @@ public class FilesystemStorage implements StorageServer {
 
     private boolean connected = false;
 
-    private int internalBFTId;
+    private final int internalBFTId;
 
-    private File baseFp;
+    private final File baseFp;
 
     public FilesystemStorage(int bftId, File baseDir) {
         this.baseFp = baseDir;
@@ -26,6 +27,7 @@ public class FilesystemStorage implements StorageServer {
     }
 
     /* memory storage does not need any connect operation */
+    @Override
     public int connect() {
         if (!baseFp.isDirectory() || !baseFp.canWrite()) {
             assert (false);
@@ -36,11 +38,13 @@ public class FilesystemStorage implements StorageServer {
         }
     }
 
+    @Override
     public int disconnect() {
         this.connected = false;
         return 0;
     }
 
+    @Override
     public byte[] putBlob(String id, byte[] blob) throws DisconnectedException {
 
         validateOnline();
@@ -52,7 +56,7 @@ public class FilesystemStorage implements StorageServer {
             out = new FileOutputStream(new_file);
             out.write(blob);
             out.close();
-        } catch (Exception e) {
+        } catch (IOException e) {
             e.printStackTrace();
             assert (false);
         }
@@ -77,6 +81,7 @@ public class FilesystemStorage implements StorageServer {
         return false;
     }
 
+    @Override
     public byte[] getBlob(String id) throws DisconnectedException {
 
         validateOnline();
@@ -90,11 +95,8 @@ public class FilesystemStorage implements StorageServer {
         assert (new_file.exists());
         assert (new_file.canRead());
 
-        try {
-            FileInputStream in = new FileInputStream(new_file);
-            byte[] blob = IOUtils.toByteArray(in);
-            in.close();
-            return blob;
+        try (FileInputStream in = new FileInputStream(new_file)) {
+            return IOUtils.toByteArray(in);
         } catch (Exception e) {
             e.printStackTrace();
             assert (false);
@@ -103,16 +105,19 @@ public class FilesystemStorage implements StorageServer {
         return null;
     }
 
+    @Override
     public boolean isConnected() {
         return this.connected;
     }
 
+    @Override
     public int getFragmentCount() throws DisconnectedException {
         validateOnline();
 
         return baseFp.list().length;
     }
 
+    @Override
     public String getId() {
         return "storage:///" + this.baseFp.getAbsolutePath();
     }

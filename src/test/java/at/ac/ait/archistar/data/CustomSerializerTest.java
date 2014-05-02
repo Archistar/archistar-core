@@ -21,7 +21,7 @@ public class CustomSerializerTest {
 
     @Before
     public void prepareTestdata() {
-        Map<String, String> metadata = new HashMap<String, String>();
+        Map<String, String> metadata = new HashMap<>();
         metadata.put("key0", "value0");
         metadata.put("key1", "value1");
 

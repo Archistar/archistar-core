@@ -8,15 +8,15 @@ import java.util.Map;
  *
  * @author andy
  */
-public class SimpleFile implements FSFile, Serializable {
+public class SimpleFile implements Serializable, FSObject {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 961269599570217856L;
-    private String path;
-    private byte[] data;
-    private Map<String, String> metadata;
+    
+    private final String path;
+    
+    private final byte[] data;
+    
+    private final Map<String, String> metadata;
 
     public SimpleFile(String path, byte[] data, Map<String, String> metadata) {
         this.path = path;
@@ -24,10 +24,12 @@ public class SimpleFile implements FSFile, Serializable {
         this.metadata = metadata;
     }
 
+    @Override
     public Map<String, String> getMetadata() {
         return this.metadata;
     }
 
+    @Override
     public String setMetaData(String key, String value) {
         return this.metadata.put(key, value);
     }
@@ -36,6 +38,7 @@ public class SimpleFile implements FSFile, Serializable {
         return this.data;
     }
 
+    @Override
     public String getPath() {
         return this.path;
     }

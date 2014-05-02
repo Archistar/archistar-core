@@ -16,21 +16,37 @@ import at.ac.ait.archistar.engine.metadata.MetadataService;
 
 /**
  * As most Archistar instances look kinda the same this class tries to capture
- * most of the similarities. This should prevent Archistar clients to
- * reimplement the same functionality over and over again.
+ * most of the similarities. This should prevent Archistar clients from
+ * reimplementing the same functionality over and over again.
  *
  * @author andy
  */
 public class Engine implements SimpleFileInterface {
 
+    /**
+     * our server configuration
+     */
     protected final ServerConfiguration servers;
 
+    /**
+     * the distributor which will transfer requests over the BFT network to the
+     * replicasS
+     */
     protected final Distributor distributor;
 
+    /**
+     * our naming service
+     */
     private final MetadataService metadataService;
 
+    /**
+     * cryptographic directives
+     */
     private final CryptoEngine crypto;
 
+    /**
+     * the serializer used to tranform objects into byte arrays
+     */
     private final CustomSerializer serializer;
 
     /**

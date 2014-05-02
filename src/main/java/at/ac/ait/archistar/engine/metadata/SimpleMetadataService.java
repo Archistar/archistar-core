@@ -49,7 +49,7 @@ public class SimpleMetadataService implements MetadataService {
     }
 
     private Set<Fragment> getNewDistributionSet() {
-        HashSet<Fragment> distribution = new HashSet<Fragment>();
+        HashSet<Fragment> distribution = new HashSet<>();
         for (StorageServer s : this.servers.getOnlineStorageServers()) {
             distribution.add(new RemoteFragment(UUID.randomUUID().toString(), s));
         }
@@ -57,7 +57,7 @@ public class SimpleMetadataService implements MetadataService {
     }
 
     private Set<Fragment> getNewDistributionSet(String fragmentId) {
-        HashSet<Fragment> distribution = new HashSet<Fragment>();
+        HashSet<Fragment> distribution = new HashSet<>();
         for (StorageServer s : this.servers.getOnlineStorageServers()) {
             distribution.add(new RemoteFragment(fragmentId, s));
         }
@@ -109,7 +109,7 @@ public class SimpleMetadataService implements MetadataService {
         if (data != null) {
             database = deserializeDatabase(data);
         } else {
-            this.database = new HashMap<String, Set<Fragment>>();
+            this.database = new HashMap<>();
             synchronize();
         }
         return result;
@@ -124,12 +124,12 @@ public class SimpleMetadataService implements MetadataService {
             ObjectInputStream reader = new ObjectInputStream(door);
 
             int mappingCount = reader.readInt();
-            database = new HashMap<String, Set<Fragment>>();
+            database = new HashMap<>();
 
             for (int i = 0; i < mappingCount; i++) {
                 String filename = (String) reader.readObject();
                 int fragmentCount = reader.readInt();
-                HashSet<Fragment> map = new HashSet<Fragment>();
+                HashSet<Fragment> map = new HashSet<>();
                 for (int j = 0; j < fragmentCount; j++) {
                     String id = (String) reader.readObject();
                     String serverid = (String) reader.readObject();
@@ -200,7 +200,7 @@ public class SimpleMetadataService implements MetadataService {
     public Map<String, String> stat(String path) {
 
         if (this.database.containsKey(path)) {
-            return new HashMap<String, String>();
+            return new HashMap<>();
         } else {
             return null;
         }
@@ -210,12 +210,9 @@ public class SimpleMetadataService implements MetadataService {
     public Set<String> list(String path) {
         Set<String> initialResult = this.database.keySet();
 
-        Set<String> result = new HashSet<String>();
+        Set<String> result = new HashSet<>();
         for (String key : initialResult) {
             if (path != null) {
-
-                System.err.println("strcmp: " + path + " vs " + key);
-
                 if (key.startsWith(path)) {
                     result.add(key);
                 }

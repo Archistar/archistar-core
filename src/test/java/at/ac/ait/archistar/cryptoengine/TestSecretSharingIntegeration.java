@@ -25,5 +25,4 @@ public class TestSecretSharingIntegeration {
         byte reconstructedData[] = algorithm.reconstruct(shares);
         assertThat(reconstructedData).isEqualTo(data);
     }
-
 }

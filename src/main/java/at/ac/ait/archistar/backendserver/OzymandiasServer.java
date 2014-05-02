@@ -31,42 +31,62 @@ import io.netty.handler.codec.serialization.ObjectEncoder;
 import io.netty.handler.ssl.SslHandler;
 
 /**
- * This is the main application logic of the BFT server.
+ * This is the main archistar/bft server application logic
  *
  * @author andy
  */
 public class OzymandiasServer implements Runnable, BftEngineCallbacks {
 
+    /**
+     * my internal server id
+     */
     private final int serverId;
+
+    /**
+     * a serverid -> port mapping for our servers
+     */
     private final Map<Integer, Integer> serverList;
+
+    /**
+     * upon which port is the server listening
+     */
     private final int port;
 
-    private Map<Integer, ChannelHandlerContext> clientMap = new HashMap<Integer, ChannelHandlerContext>();
+    private final Map<Integer, ChannelHandlerContext> clientMap = new HashMap<>();
 
     /**
      * used for server-to-server communication
      */
-    private ServerServerCommunication servers;
+    private final ServerServerCommunication servers;
 
     /**
-     * used to output performance numbers every couple of seconds
+     * the executor is responsible for actually performing data I/O operations
+     * on the server
      */
-    private PerformanceWatcher watcher = null;
-
-    private ExecutionHandler executor;
+    private final ExecutionHandler executor;
 
     private EventLoopGroup bossGroup;
-    private EventLoopGroup workerGroup;
-    private ChannelFuture serverChannel;
-    private ServerBootstrap b;
 
-    private BftEngine bftEngine;
+    private EventLoopGroup workerGroup;
+
+    /**
+     * this is the listening server channel (will be configured to use the
+     * configured server port)
+     */
+    private ChannelFuture serverChannel;
+
+    /**
+     * this encapsulates the server's BFT state. It is responsible for creating
+     * a distributed "shared" state between all replicas/servers
+     */
+    private final BftEngine bftEngine;
 
     private final SecurityMonitor secMonitor;
+
     /**
      * max message size in bytes
      */
-    public static int maxObjectSize = 10 * 1024 * 1024;
+    public final static int maxObjectSize = 10 * 1024 * 1024;
 
     public OzymandiasServer(int myServerId, Map<Integer, Integer> serverList, int f, ExecutionHandler executor, NioEventLoopGroup bossGroup, NioEventLoopGroup workerGroup) {
         this.bossGroup = bossGroup;
@@ -81,13 +101,16 @@ public class OzymandiasServer implements Runnable, BftEngineCallbacks {
         this.bftEngine = new BftEngine(serverId, f, this);
     }
 
+    /**
+     * setup the server listening ports and handler routines
+     */
+    @Override
     public void run() {
         /* start up netty listener */
-        final OzymandiasCommandHandler handler = new OzymandiasCommandHandler(this, bftEngine);
+        final OzymandiasCommandHandler handler = new OzymandiasCommandHandler(this);
 
-        watcher = new PerformanceWatcher(bftEngine);
         try {
-            b = new ServerBootstrap();
+            ServerBootstrap b = new ServerBootstrap();
 
             b.group(bossGroup, workerGroup)
                     .channel(NioServerSocketChannel.class)
@@ -119,35 +142,39 @@ public class OzymandiasServer implements Runnable, BftEngineCallbacks {
         }
     }
 
+    /**
+     * connect to all configured BFT replicas
+     */
     public void connectServers() throws InterruptedException {
         this.servers.connect();
     }
 
-    public void send(AbstractCommand cmd) {
-        this.servers.send(cmd);
-    }
-
+    /**
+     * shutdown server process (listeners and handlers
+     */
     public void shutdown() {
-        try {
-            this.watcher.setShutdown();
-            this.watcher.interrupt();
-            this.watcher.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            assert (false);
-        }
         ChannelFuture cf = serverChannel.channel().close();
         cf.awaitUninterruptibly();
     }
 
+    /**
+     * return the servers id
+     * 
+     * @return server replica id
+     */
     public int getReplicaId() {
         return this.serverId;
     }
 
-    public ExecutionHandler getExecutionHandler() {
-        return this.executor;
-    }
-
+    /**
+     * this handler is called by the BFT engine as soon as a command can be
+     * executed upon a replica (as it was received on enough replicas in the
+     * same order)
+     * 
+     * @param cmd the to be executed command
+     * @return the executed commands result
+     */
+    @Override
     public byte[] executeClientCommand(ClientCommand cmd) {
         byte[] binResult = null;
 
@@ -164,14 +191,9 @@ public class OzymandiasServer implements Runnable, BftEngineCallbacks {
         return binResult;
     }
 
-    public BftEngine getBftEngine() {
-        return this.bftEngine;
-    }
-
     @Override
     public void invalidMessageReceived(AbstractCommand msg) {
         this.secMonitor.invalidMessageReceived(msg);
-
     }
 
     @Override
@@ -199,5 +221,17 @@ public class OzymandiasServer implements Runnable, BftEngineCallbacks {
         if (!this.clientMap.containsKey(clientId)) {
             this.clientMap.put(clientId, ctx);
         }
+    }
+
+    void processIntraReplicaCommand(IntraReplicaCommand intraReplicaCommand) {
+        this.bftEngine.processIntraReplicaCommand(intraReplicaCommand);
+    }
+
+    void processClientCommand(ClientCommand clientCommand) {
+        this.bftEngine.processClientCommand(clientCommand);
+    }
+
+    void tryAdvanceEra() {
+        this.bftEngine.tryAdvanceEra();
     }
 }

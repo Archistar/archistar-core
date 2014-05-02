@@ -17,11 +17,18 @@ import at.ac.ait.archistar.engine.crypto.DecryptionException;
 import at.ac.ait.archistar.engine.dataobjects.FSObject;
 import at.ac.ait.archistar.engine.dataobjects.SimpleFile;
 
+/**
+ * this is a fake bucket implementation that forwards all incoming S3 commands
+ * to the internal Archistar engine (which in turn forwards those commands to
+ * the replicas)
+ * 
+ * @author andy
+ */
 public class FakeBucket {
 
-    private Engine engine;
+    private final Engine engine;
 
-    private XmlDocumentBuilder builder;
+    private final XmlDocumentBuilder builder;
 
     public FakeBucket(Engine engine) throws ParserConfigurationException {
         this.engine = engine;
@@ -35,7 +42,7 @@ public class FakeBucket {
             prefix = null;
         }
 
-        HashSet<SimpleFile> results = new HashSet<SimpleFile>();
+        HashSet<SimpleFile> results = new HashSet<>();
         for (String key : this.engine.listObjects(prefix)) {
             FSObject obj = engine.getObject(key);
 

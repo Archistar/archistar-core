@@ -32,9 +32,9 @@ import io.netty.handler.ssl.SslHandler;
  */
 public class OzymandiasClient {
 
-    private Map<Integer, Integer> serverList;
+    private final Map<Integer, Integer> serverList;
 
-    private Map<Integer, Channel> channelList;
+    private final Map<Integer, Channel> channelList;
 
     private int f = 1;
 
@@ -44,7 +44,7 @@ public class OzymandiasClient {
 
     public OzymandiasClient(Map<Integer, Integer> serverList, int f, NioEventLoopGroup group) {
         this.serverList = serverList;
-        this.channelList = new HashMap<Integer, Channel>();
+        this.channelList = new HashMap<>();
         this.f = f;
         this.group = group;
         this.resultManager = new ResultManager();

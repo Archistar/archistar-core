@@ -22,11 +22,15 @@ import org.jets3t.service.security.AWSCredentials;
  */
 public class JetS3tStorage implements StorageServer {
 
-    private AWSCredentials awsCredentials;
+    private final AWSCredentials awsCredentials;
+    
     private S3Service s3service;
+    
     private S3Bucket s3bucket;
-    private String bucketId;
-    private int internalBFTId;
+    
+    private final String bucketId;
+    
+    private final int internalBFTId;
 
     public JetS3tStorage(int bftId, String awsAccessKey, String awsSecretKey, String bucketId) {
         awsCredentials = new AWSCredentials(awsAccessKey, awsSecretKey);
@@ -34,6 +38,7 @@ public class JetS3tStorage implements StorageServer {
         this.internalBFTId = bftId;
     }
 
+    @Override
     public byte[] putBlob(String id, byte[] blob) throws DisconnectedException {
 
         if (s3service == null || s3bucket == null) {
@@ -44,23 +49,14 @@ public class JetS3tStorage implements StorageServer {
             StorageObject obj = new S3Object(id, blob);
             s3service.putObject(s3bucket.getName(), obj);
             return blob;
-        } catch (S3ServiceException e) {
-            e.printStackTrace();
-            throw new DisconnectedException();
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new DisconnectedException();
-        } catch (ServiceException e) {
-            e.printStackTrace();
-            throw new DisconnectedException();
-        } catch (NoSuchAlgorithmException e) {
-            /* WTF? exception */
+        } catch (IOException | NoSuchAlgorithmException | ServiceException e) {
             e.printStackTrace();
             throw new DisconnectedException();
         }
     }
 
     @SuppressWarnings("deprecation")
+    @Override
     public byte[] getBlob(String id) throws DisconnectedException {
 
         try {
@@ -69,13 +65,7 @@ public class JetS3tStorage implements StorageServer {
             }
             S3Object obj = s3service.getObject(s3bucket, id);
             return IOUtils.toByteArray(obj.getDataInputStream());
-        } catch (S3ServiceException e) {
-            e.printStackTrace();
-            throw new DisconnectedException();
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new DisconnectedException();
-        } catch (ServiceException e) {
+        } catch (ServiceException | IOException e) {
             e.printStackTrace();
             throw new DisconnectedException();
         }
@@ -97,6 +87,7 @@ public class JetS3tStorage implements StorageServer {
      * @see at.ac.ait.archistar.storage.StorageServer#getFragmentCount()
      */
     @SuppressWarnings("deprecation")
+    @Override
     public int getFragmentCount() throws DisconnectedException {
         try {
             return s3service.listObjects(s3bucket).length;
@@ -106,6 +97,7 @@ public class JetS3tStorage implements StorageServer {
         }
     }
 
+    @Override
     public int connect() {
         try {
             s3service = new RestS3Service(awsCredentials);
@@ -129,6 +121,7 @@ public class JetS3tStorage implements StorageServer {
         return 0;
     }
 
+    @Override
     public int disconnect() {
         s3bucket = null;
         try {
@@ -142,10 +135,12 @@ public class JetS3tStorage implements StorageServer {
         return 0;
     }
 
+    @Override
     public boolean isConnected() {
         return s3service != null;
     }
 
+    @Override
     public String getId() {
         return "s3://amazon/" + bucketId + "/";
     }
