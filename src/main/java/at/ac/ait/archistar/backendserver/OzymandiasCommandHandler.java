@@ -12,40 +12,40 @@ import at.archistar.bft.messages.IntraReplicaCommand;
 import at.archistar.bft.server.BftEngine;
 
 /**
- * This handles all incoming commands (from clients or servers). Mostly
- * all commands are forwarded to the server process.
- * 
+ * This handles all incoming commands (from clients or servers). Mostly all
+ * commands are forwarded to the server process.
+ *
  * @author andy
  */
 @Sharable
 public class OzymandiasCommandHandler extends SimpleChannelInboundHandler<AbstractCommand> {
 
-	private Logger logger = LoggerFactory.getLogger(OzymandiasCommandHandler.class);
+    private Logger logger = LoggerFactory.getLogger(OzymandiasCommandHandler.class);
 
     private OzymandiasServer parentSystem;
-    
+
     private BftEngine engine;
-       
+
     public OzymandiasCommandHandler(OzymandiasServer ozzy, BftEngine engine) {
-    	super();
-    	this.parentSystem = ozzy;
-    	
-    	this.engine = engine;
+        super();
+        this.parentSystem = ozzy;
+
+        this.engine = engine;
     }
-    
+
     @Override
     public void channelRead0(ChannelHandlerContext ctx, AbstractCommand msg) {
-    	
-    	logger.debug("server {} received {}", parentSystem.getReplicaId(), msg);
-    	
-    	if(msg instanceof IntraReplicaCommand) {
-    		this.engine.processIntraReplicaCommand((IntraReplicaCommand)msg);
-    	} else if (msg instanceof ClientCommand) {
-    		this.parentSystem.setClientSession(((ClientCommand) msg).getClientId(), ctx);
-    		this.engine.processClientCommand((ClientCommand)msg);
-    	} else {
-    		assert(false);
-    	}
+
+        logger.debug("server {} received {}", parentSystem.getReplicaId(), msg);
+
+        if (msg instanceof IntraReplicaCommand) {
+            this.engine.processIntraReplicaCommand((IntraReplicaCommand) msg);
+        } else if (msg instanceof ClientCommand) {
+            this.parentSystem.setClientSession(((ClientCommand) msg).getClientId(), ctx);
+            this.engine.processClientCommand((ClientCommand) msg);
+        } else {
+            assert (false);
+        }
     }
 
     @Override

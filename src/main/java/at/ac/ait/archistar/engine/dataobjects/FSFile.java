@@ -5,5 +5,5 @@ package at.ac.ait.archistar.engine.dataobjects;
  */
 interface FSFile extends FSObject {
 
-  byte[] getData();
+    byte[] getData();
 };

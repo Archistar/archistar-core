@@ -27,99 +27,100 @@ import io.netty.handler.ssl.SslHandler;
 
 /**
  * this is the main interface for Clients contacting replicas
- * 
+ *
  * @author andy
  */
 public class OzymandiasClient {
-	
-	private Map<Integer, Integer> serverList;
-	
-	private Map<Integer, Channel> channelList;
-    
+
+    private Map<Integer, Integer> serverList;
+
+    private Map<Integer, Channel> channelList;
+
     private int f = 1;
-    
+
     private EventLoopGroup group;
-    
+
     private ResultManager resultManager;
-    
-    public OzymandiasClient(Map <Integer, Integer> serverList, int f, NioEventLoopGroup group) {
+
+    public OzymandiasClient(Map<Integer, Integer> serverList, int f, NioEventLoopGroup group) {
         this.serverList = serverList;
         this.channelList = new HashMap<Integer, Channel>();
         this.f = f;
         this.group = group;
         this.resultManager = new ResultManager();
     }
-    
+
     /**
      * Sends a message and waits for all replicas replies
-     * 
+     *
      * @param msg the message to be sent
-     * @return 
+     * @return
      */
     public ClientResult sendRoundtripMessage(Map<Integer, ClientCommand> msg) {
 
-    	/* TODO: check if all clientIds and clientSequences are the same */
-    	int clientId = msg.get(0).getClientId();
-    	int clientSequence = msg.get(0).getClientSequence();
-    	
-    	/* create a new operation wait object */
-    	ClientResult result = this.resultManager.addClientOperation(f, clientId, clientSequence);
-    	
-    	/* asynchronously send a message to all replicas */ 
-    	for(Entry<Integer, ClientCommand> e: msg.entrySet()) {
-    		channelList.get(e.getKey()).writeAndFlush(e.getValue());
-    	}
+        /* TODO: check if all clientIds and clientSequences are the same */
+        int clientId = msg.get(0).getClientId();
+        int clientSequence = msg.get(0).getClientSequence();
 
-    	/* wait for answers */
-    	result.waitForEnoughAnswers();
-    	
-    	return result;
+        /* create a new operation wait object */
+        ClientResult result = this.resultManager.addClientOperation(f, clientId, clientSequence);
+
+        /* asynchronously send a message to all replicas */
+        for (Entry<Integer, ClientCommand> e : msg.entrySet()) {
+            channelList.get(e.getKey()).writeAndFlush(e.getValue());
+        }
+
+        /* wait for answers */
+        result.waitForEnoughAnswers();
+
+        return result;
     }
-    
+
     public void connect() throws Exception {
-    	for(Entry<Integer, Integer> e : this.serverList.entrySet()) {
-    		int serverId = e.getKey();
-    		int serverPort = e.getValue();
-    		
-    		this.channelList.put(serverId, connectServer(serverPort));
-    	}
+        for (Entry<Integer, Integer> e : this.serverList.entrySet()) {
+            int serverId = e.getKey();
+            int serverPort = e.getValue();
+
+            this.channelList.put(serverId, connectServer(serverPort));
+        }
     }
-    
+
     private Channel connectServer(int port) throws Exception {
-    	
-    	final OzymandiasClientHandler handler = new OzymandiasClientHandler(this);
-    	
+
+        final OzymandiasClientHandler handler = new OzymandiasClientHandler(this);
+
         Bootstrap b = new Bootstrap();
         b.group(group)
-         .channel(NioSocketChannel.class)
-         .handler(new ChannelInitializer<SocketChannel>() {
-            @Override
-            public void initChannel(SocketChannel ch) throws Exception {
-            	
-            	SSLEngine engine = SSLContextFactory.getClientContext().createSSLEngine();
-            	engine.setUseClientMode(true);
-            	
-                ch.pipeline().addLast(
-                		new SslHandler(engine),
-                        new ObjectEncoder(),
-                        new ObjectDecoder(OzymandiasServer.maxObjectSize, ClassResolvers.cacheDisabled(null)),
-                        handler);
-            }
-         });
-        
+                .channel(NioSocketChannel.class)
+                .handler(new ChannelInitializer<SocketChannel>() {
+                    @Override
+                    public void initChannel(SocketChannel ch) throws Exception {
+
+                        SSLEngine engine = SSLContextFactory.getClientContext().createSSLEngine();
+                        engine.setUseClientMode(true);
+
+                        ch.pipeline().addLast(
+                                new SslHandler(engine),
+                                new ObjectEncoder(),
+                                new ObjectDecoder(OzymandiasServer.maxObjectSize, ClassResolvers.cacheDisabled(null)),
+                                handler);
+                    }
+                });
+
         return b.connect("127.0.0.1", port).sync().channel();
     }
 
     /**
-     * adds a replica's result. This is used to determine when enough results for determining
-     * an operations result were received
-     * 
+     * adds a replica's result. This is used to determine when enough results
+     * for determining an operations result were received
+     *
      * @param clientId the result's client id
      * @param clientSequence the result's client sequence
      * @param tx the result
-     * @throws InconsistentResultsException seems like a faulty replica did send something unexpected
+     * @throws InconsistentResultsException seems like a faulty replica did send
+     * something unexpected
      */
-	public void addReplicaResult(int clientId, int clientSequence, TransactionResult tx) throws InconsistentResultsException {
-		resultManager.addClientResponse(clientId, clientSequence, tx);
-	}
+    public void addReplicaResult(int clientId, int clientSequence, TransactionResult tx) throws InconsistentResultsException {
+        resultManager.addClientResponse(clientId, clientSequence, tx);
+    }
 }

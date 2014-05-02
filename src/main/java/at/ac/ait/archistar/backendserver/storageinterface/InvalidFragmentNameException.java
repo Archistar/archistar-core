@@ -10,9 +10,9 @@ package at.ac.ait.archistar.backendserver.storageinterface;
  */
 public class InvalidFragmentNameException extends Exception {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -2279567565333516592L;
-    
+    /**
+     *
+     */
+    private static final long serialVersionUID = -2279567565333516592L;
+
 }

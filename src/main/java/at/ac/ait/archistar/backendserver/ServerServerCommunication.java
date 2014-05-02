@@ -23,67 +23,66 @@ import at.ac.ait.archistar.trustmanager.SSLContextFactory;
 import at.archistar.bft.messages.AbstractCommand;
 
 /**
- * This class is responsible for sending messages to all replicas
- * currently within the replica system.
- * 
+ * This class is responsible for sending messages to all replicas currently
+ * within the replica system.
+ *
  * @author andy
  */
 public class ServerServerCommunication {
 
-	private Map<Integer, Integer> serverList;
-	
-	private Set<Channel> channels;
-	
-	private int myServerId = -1;
+    private Map<Integer, Integer> serverList;
 
-	private EventLoopGroup loopGroup = null;
+    private Set<Channel> channels;
 
-	public ServerServerCommunication(int myId, Map<Integer, Integer> serverList, EventLoopGroup elg) {
-		this.serverList = serverList;
-		this.channels = new HashSet<Channel>();
-		this.myServerId = myId;
-		this.loopGroup = elg;
-	}
-	
-	public void connect() throws InterruptedException {
-		for(Entry<Integer, Integer> e : this.serverList.entrySet()) {
-			int replicaId = e.getKey();
-			int replicaPort = e.getValue();
-			
-			
-			if (replicaId != myServerId) {
-				Bootstrap b = new Bootstrap();
-				b.group(loopGroup)
-				.channel(NioSocketChannel.class)
-				.handler(new ChannelInitializer<SocketChannel>() {
-					@Override
-					public void initChannel(SocketChannel ch) throws Exception {
-						// enable SSL/TLS support
-						SSLEngine engine = SSLContextFactory.getClientContext().createSSLEngine();
-						engine.setUseClientMode(true);
-            	
-						ch.pipeline().addLast(
-								new SslHandler(engine),
-								new ObjectEncoder(),
-								new ObjectDecoder(OzymandiasServer.maxObjectSize, ClassResolvers.cacheDisabled(null)));
-					}
-				});
-			
-				/* wait till server is connected */
-				ChannelFuture f = null;
-				do {
-					f = b.connect("127.0.0.1", replicaPort);
-					f.await();
-				} while(!(f.isDone() && f.isSuccess())); 				
-				
-				this.channels.add(f.sync().channel());
-			}
-		}
-	}
-	
-	public void send(AbstractCommand cmd) {
-		for(Channel channel : this.channels) {
-			channel.writeAndFlush(cmd);
-		}
-	}
+    private int myServerId = -1;
+
+    private EventLoopGroup loopGroup = null;
+
+    public ServerServerCommunication(int myId, Map<Integer, Integer> serverList, EventLoopGroup elg) {
+        this.serverList = serverList;
+        this.channels = new HashSet<Channel>();
+        this.myServerId = myId;
+        this.loopGroup = elg;
+    }
+
+    public void connect() throws InterruptedException {
+        for (Entry<Integer, Integer> e : this.serverList.entrySet()) {
+            int replicaId = e.getKey();
+            int replicaPort = e.getValue();
+
+            if (replicaId != myServerId) {
+                Bootstrap b = new Bootstrap();
+                b.group(loopGroup)
+                        .channel(NioSocketChannel.class)
+                        .handler(new ChannelInitializer<SocketChannel>() {
+                            @Override
+                            public void initChannel(SocketChannel ch) throws Exception {
+                                // enable SSL/TLS support
+                                SSLEngine engine = SSLContextFactory.getClientContext().createSSLEngine();
+                                engine.setUseClientMode(true);
+
+                                ch.pipeline().addLast(
+                                        new SslHandler(engine),
+                                        new ObjectEncoder(),
+                                        new ObjectDecoder(OzymandiasServer.maxObjectSize, ClassResolvers.cacheDisabled(null)));
+                            }
+                        });
+
+                /* wait till server is connected */
+                ChannelFuture f = null;
+                do {
+                    f = b.connect("127.0.0.1", replicaPort);
+                    f.await();
+                } while (!(f.isDone() && f.isSuccess()));
+
+                this.channels.add(f.sync().channel());
+            }
+        }
+    }
+
+    public void send(AbstractCommand cmd) {
+        for (Channel channel : this.channels) {
+            channel.writeAndFlush(cmd);
+        }
+    }
 }

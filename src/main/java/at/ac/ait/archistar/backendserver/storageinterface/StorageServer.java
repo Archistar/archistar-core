@@ -4,20 +4,20 @@ import at.ac.ait.archistar.backendserver.ExecutionHandler;
 
 /**
  * Interface to a storage server.
- * 
+ *
  * @author andy
  */
 public interface StorageServer extends ExecutionHandler {
 
-	int getFragmentCount() throws DisconnectedException;
-	
-	int connect();
+    int getFragmentCount() throws DisconnectedException;
 
-	int disconnect();
+    int connect();
 
-	boolean isConnected();
+    int disconnect();
 
-	String getId();
-	
-	int getBFTId();
+    boolean isConnected();
+
+    String getId();
+
+    int getBFTId();
 }
