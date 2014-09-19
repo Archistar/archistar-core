@@ -99,3 +99,10 @@ $ md5sum testfile.2
 ## License
 
 This project is licensed under the GPLv2. If you want to use Archistar under a different license please contact Thomas Loruenser <thomas.loruenser@ait.ac.at>.
+
+## Citing Archistar
+
+If you find Archistar useful for your work or if you use Archistar in a project, paper, website, etc., 
+please cite the software as
+
+T. Lorünser, A. Happe, D. Slamanig (2014). “ARCHISTAR – A framework for secure distributed storage”. GNU General Public License. http://ARCHISTAR.at
