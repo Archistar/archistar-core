@@ -24,8 +24,8 @@ import at.ac.ait.archistar.engine.dataobjects.SimpleFile;
 
 public class XmlDocumentBuilder {
 
-    private DocumentBuilderFactory docFactory;
-    private DocumentBuilder docBuilder;
+    private final DocumentBuilderFactory docFactory;
+    private final DocumentBuilder docBuilder;
 
     public XmlDocumentBuilder() throws ParserConfigurationException {
         this.docFactory = DocumentBuilderFactory.newInstance();
@@ -64,9 +64,9 @@ public class XmlDocumentBuilder {
             try {
                 MessageDigest md = MessageDigest.getInstance("MD5");
                 byte[] thedigest = md.digest(entry.getData());
-                eTag = new String(Hex.encodeHex(thedigest));
+                eTag = Hex.encodeHex(thedigest);
             } catch (NoSuchAlgorithmException e) {
-                e.printStackTrace();
+                assert(false);
             }
 
             contents.appendChild(createElement(doc, "Key", entry.getPath()));

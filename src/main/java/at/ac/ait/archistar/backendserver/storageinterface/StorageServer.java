@@ -1,6 +1,7 @@
 package at.ac.ait.archistar.backendserver.storageinterface;
 
 import at.ac.ait.archistar.backendserver.ExecutionHandler;
+import java.io.Serializable;
 
 /**
  * Interface to a storage server.

@@ -18,11 +18,11 @@ import at.ac.ait.archistar.backendserver.storageinterface.StorageServer;
  */
 public class TestServerConfiguration extends ServerConfiguration {
 
-    private HashSet<OzymandiasServer> servers;
+    private HashSet<OzymandiasServer> servers = new HashSet<>();
 
-    private NioEventLoopGroup loopGroup;
+    private final NioEventLoopGroup loopGroup;
 
-    private Thread[] replicas;
+    private Thread[] replicas = new Thread[0];
 
     public TestServerConfiguration(Set<StorageServer> servers) {
         super(servers);
@@ -61,7 +61,6 @@ public class TestServerConfiguration extends ServerConfiguration {
             try {
                 o.connectServers();
             } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }

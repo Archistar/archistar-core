@@ -13,9 +13,9 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.jboss.resteasy.util.Hex;
 
 import at.ac.ait.archistar.engine.Engine;
-import at.ac.ait.archistar.engine.crypto.DecryptionException;
 import at.ac.ait.archistar.engine.dataobjects.FSObject;
 import at.ac.ait.archistar.engine.dataobjects.SimpleFile;
+import at.archistar.crypto.exceptions.ReconstructionException;
 
 /**
  * this is a fake bucket implementation that forwards all incoming S3 commands
@@ -36,7 +36,7 @@ public class FakeBucket {
     }
 
     /* list all elements within bucket */
-    public String getAll(String bucketName, String delim, String prefix, int maxKeysInt) throws DecryptionException {
+    public String getAll(String bucketName, String delim, String prefix, int maxKeysInt) throws ReconstructionException {
 
         if (prefix != null && (prefix.equals("/") || prefix.equals(""))) {
             prefix = null;
@@ -54,23 +54,21 @@ public class FakeBucket {
         return builder.stringFromDoc(builder.listElements(prefix, bucketName, maxKeysInt, results));
     }
 
-    public Response getById(String id) throws DecryptionException, NoSuchAlgorithmException {
+    public Response getById(String id) throws NoSuchAlgorithmException, ReconstructionException {
 
         FSObject obj = engine.getObject(id);
-        byte[] result = null;
-
         if (obj != null && obj instanceof SimpleFile) {
-            result = ((SimpleFile) obj).getData();
+            byte[] result = ((SimpleFile) obj).getData();
 
             MessageDigest md = MessageDigest.getInstance("MD5");
             byte[] thedigest = md.digest(result);
-            return Response.accepted().entity(result).header("ETag", new String(Hex.encodeHex(thedigest))).build();
+            return Response.accepted().entity(result).header("ETag", Hex.encodeHex(thedigest)).build();
         } else {
             return null;
         }
     }
 
-    public Response writeById(String id, String gid, String uid, String mode, String serverSideEncryption, byte[] input) throws NoSuchAlgorithmException, DecryptionException {
+    public Response writeById(String id, String gid, String uid, String mode, String serverSideEncryption, byte[] input) throws NoSuchAlgorithmException, ReconstructionException {
 
         SimpleFile obj = new SimpleFile(id, input, new HashMap<String, String>());
 
@@ -85,10 +83,10 @@ public class FakeBucket {
 
         engine.getObject(id);
 
-        return Response.accepted().header("ETag", new String(Hex.encodeHex(thedigest))).build();
+        return Response.accepted().header("ETag", Hex.encodeHex(thedigest)).build();
     }
 
-    public Response deleteById(String id) throws DecryptionException {
+    public Response deleteById(String id) throws ReconstructionException {
 
         FSObject obj = engine.getObject(id);
         engine.deleteObject(obj);
@@ -96,7 +94,7 @@ public class FakeBucket {
         return Response.accepted().status(204).build();
     }
 
-    public Response getStatById(String id) throws DecryptionException, NoSuchAlgorithmException {
+    public Response getStatById(String id) throws ReconstructionException, NoSuchAlgorithmException {
 
         Map<String, String> result = engine.statObject(id);
 
@@ -112,11 +110,13 @@ public class FakeBucket {
             SimpleFile file = null;
             if (obj instanceof SimpleFile) {
                 file = (SimpleFile) obj;
+            } else {
+                assert(false);
             }
 
             MessageDigest md = MessageDigest.getInstance("MD5");
             byte[] thedigest = md.digest(file.getData());
-            String etag = new String(Hex.encodeHex(thedigest));
+            String etag = Hex.encodeHex(thedigest);
 
             ResponseBuilder resp = Response.accepted().status(200);
 
@@ -128,8 +128,8 @@ public class FakeBucket {
 
             Map<String, String> md1 = file.getMetadata();
 
-            for (String i : md1.keySet()) {
-                System.err.println("metadata: " + i + " -> " + md1.get(i));
+            for (Map.Entry<String, String> i : md1.entrySet()) {
+                System.err.println("metadata: " + i.getKey() + " -> " + i.getValue());
             }
 
             if (md1.get("uid") != null) {

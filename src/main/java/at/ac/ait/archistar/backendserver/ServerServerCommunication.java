@@ -21,6 +21,7 @@ import javax.net.ssl.SSLEngine;
 
 import at.ac.ait.archistar.trustmanager.SSLContextFactory;
 import at.archistar.bft.messages.AbstractCommand;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * This class is responsible for sending messages to all replicas currently
@@ -31,7 +32,7 @@ import at.archistar.bft.messages.AbstractCommand;
 public class ServerServerCommunication {
 
     /**
-     * mapping from replica id -> port. Note: currently only connnections to localhost are supported
+     * mapping from replica id -> port. Note: currently only connections to localhost are supported
      */
     private final Map<Integer, Integer> serverList;
 
@@ -56,10 +57,11 @@ public class ServerServerCommunication {
     }
 
     /**
-     * conncets to all replicas
+     * connects to all replicas
      *
      * @throws InterruptedException
      */
+    @SuppressFBWarnings("SIC_INNER_SHOULD_BE_STATIC_ANON")
     public void connect() throws InterruptedException {
         for (Entry<Integer, Integer> e : this.serverList.entrySet()) {
             int replicaId = e.getKey();

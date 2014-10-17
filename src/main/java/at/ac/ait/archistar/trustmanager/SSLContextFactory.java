@@ -1,10 +1,16 @@
 package at.ac.ait.archistar.trustmanager;
 
 import io.netty.handler.ssl.SslHandler;
+import java.io.IOException;
+import java.security.KeyManagementException;
 
 import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.Security;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
 
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.KeyManagerFactory;
@@ -62,7 +68,7 @@ public final class SSLContextFactory {
             // Initialize the SSLContext to work with our key managers.
             serverContext = SSLContext.getInstance(PROTOCOL);
             serverContext.init(kmf.getKeyManagers(), null, null);
-        } catch (Exception e) {
+        } catch (KeyStoreException | IOException | NoSuchAlgorithmException | CertificateException | UnrecoverableKeyException | KeyManagementException e) {
             throw new Error(
                     "Failed to initialize the server-side SSLContext", e);
         }
@@ -70,7 +76,7 @@ public final class SSLContextFactory {
         try {
             clientContext = SSLContext.getInstance(PROTOCOL);
             clientContext.init(null, TrustManagerFactory.getTrustManagers(), null);
-        } catch (Exception e) {
+        } catch (NoSuchAlgorithmException | KeyManagementException e) {
             throw new Error(
                     "Failed to initialize the client-side SSLContext", e);
         }

@@ -1,9 +1,8 @@
 package at.ac.ait.archistar.engine.dataobjects;
 
+import at.archistar.crypto.exceptions.ReconstructionException;
 import java.util.Map;
 import java.util.Set;
-
-import at.ac.ait.archistar.engine.crypto.DecryptionException;
 
 /**
  * this is the end-user API interface that Archistar implementations should use
@@ -25,10 +24,8 @@ public interface SimpleFileInterface {
 
     /**
      * retrieve some object from the servers
-     *
-     * @throws DecryptionException
      */
-    FSObject getObject(String path) throws DecryptionException;
+    FSObject getObject(String path) throws ReconstructionException;
 
     /**
      * put some object (file or directory) onto the servers

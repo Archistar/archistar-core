@@ -18,11 +18,12 @@ import org.slf4j.LoggerFactory;
 import at.ac.ait.archistar.backendserver.fragments.Fragment;
 import at.ac.ait.archistar.backendserver.fragments.RemoteFragment;
 import at.ac.ait.archistar.backendserver.storageinterface.StorageServer;
-import at.ac.ait.archistar.engine.crypto.CryptoEngine;
-import at.ac.ait.archistar.engine.crypto.DecryptionException;
+import at.ac.ait.archistar.engine.crypto.ArchistarSMCIntegrator;
 import at.ac.ait.archistar.engine.dataobjects.FSObject;
 import at.ac.ait.archistar.engine.distributor.Distributor;
 import at.ac.ait.archistar.engine.distributor.ServerConfiguration;
+import at.archistar.crypto.CryptoEngine;
+import at.archistar.crypto.exceptions.ReconstructionException;
 
 /**
  * The metadata service is responsible for storing all meta-information about
@@ -40,7 +41,7 @@ public class SimpleMetadataService implements MetadataService {
 
     private final CryptoEngine crypto;
 
-    private Logger logger = LoggerFactory.getLogger(SimpleMetadataService.class);
+    private final Logger logger = LoggerFactory.getLogger(SimpleMetadataService.class);
 
     public SimpleMetadataService(ServerConfiguration servers, Distributor distributor, CryptoEngine crypto) {
         this.distributor = distributor;
@@ -67,23 +68,22 @@ public class SimpleMetadataService implements MetadataService {
     private byte[] serializeDatabase() {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ObjectOutputStream oos = new ObjectOutputStream(baos);
-
-            oos.writeInt(database.size());
-            for (Entry<String, Set<Fragment>> es : database.entrySet()) {
-                oos.writeObject(es.getKey());
-                oos.writeInt(es.getValue().size());
-                for (Fragment f : es.getValue()) {
-                    oos.writeObject(f.getFragmentId());
-                    oos.writeObject(f.getStorageServer().getId());
+            try (ObjectOutputStream oos = new ObjectOutputStream(baos)) {
+                oos.writeInt(database.size());
+                for (Entry<String, Set<Fragment>> es : database.entrySet()) {
+                    oos.writeObject(es.getKey());
+                    oos.writeInt(es.getValue().size());
+                    for (Fragment f : es.getValue()) {
+                        oos.writeObject(f.getFragmentId());
+                        oos.writeObject(f.getStorageServer().getId());
+                    }
                 }
             }
-            oos.close();
             return baos.toByteArray();
         } catch (IOException e) {
             assert (false);
         }
-        return null;
+        return new byte[0];
     }
 
     @Override
@@ -96,11 +96,11 @@ public class SimpleMetadataService implements MetadataService {
 
         /* use crypto engine to retrieve data */
         distributor.getFragmentSet(index);
-        byte[] data = null;
+        byte[] data;
 
         try {
-            data = this.crypto.decrypt(index);
-        } catch (DecryptionException e) {
+            data = ArchistarSMCIntegrator.decrypt(this.crypto, index);
+        } catch (ReconstructionException e) {
             logger.warn("error during decryption");
             data = null;
         }
@@ -117,15 +117,13 @@ public class SimpleMetadataService implements MetadataService {
 
     private Map<String, Set<Fragment>> deserializeDatabase(byte[] readBlob) {
 
-        HashMap<String, Set<Fragment>> database = null;
+        HashMap<String, Set<Fragment>> database = new HashMap<>();
 
         try {
             ByteArrayInputStream door = new ByteArrayInputStream(readBlob);
             ObjectInputStream reader = new ObjectInputStream(door);
 
             int mappingCount = reader.readInt();
-            database = new HashMap<>();
-
             for (int i = 0; i < mappingCount; i++) {
                 String filename = (String) reader.readObject();
                 int fragmentCount = reader.readInt();
@@ -137,8 +135,8 @@ public class SimpleMetadataService implements MetadataService {
                 }
                 database.put(filename, map);
             }
-        } catch (Exception e) {
-            assert (false);
+        } catch (IOException | ClassNotFoundException e) {
+            logger.warn("could not de-serialize database!");
         }
         return database;
     }
@@ -179,7 +177,7 @@ public class SimpleMetadataService implements MetadataService {
         Set<Fragment> index = getNewDistributionSet("index");
         byte[] data = serializeDatabase();
 
-        this.crypto.encrypt(data, index);
+        ArchistarSMCIntegrator.encrypt(this.crypto, data, index);
         distributor.putFragmentSet(index);
 
         return 0;

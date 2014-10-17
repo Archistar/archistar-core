@@ -24,8 +24,7 @@ public class CustomSerializer implements Serializer {
 
             return bos.toByteArray();
         } catch (IOException e) {
-            e.printStackTrace();
-            return null;
+            return new byte[0];
         }
     }
 
@@ -39,7 +38,7 @@ public class CustomSerializer implements Serializer {
         try (ObjectInputStream reader = new ObjectInputStream(new ByteArrayInputStream(data))){
             return (FSObject) reader.readObject();
         } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
+            assert(false);
         }
         return null;
     }

@@ -1,5 +1,6 @@
 package at.ac.ait.archistar.engine.userinterface;
 
+import at.archistar.crypto.exceptions.ReconstructionException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 
@@ -15,7 +16,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.xml.parsers.ParserConfigurationException;
 
-import at.ac.ait.archistar.engine.crypto.DecryptionException;
 /**
  * this is the fake root-level of our S3 server. For now it just returns a list
  * of supported buckets
@@ -40,7 +40,7 @@ public class FakeRoot {
             @QueryParam("delimiter") String delim,
             @QueryParam("prefix") String prefix,
             @QueryParam("max-keys") int maxKeysInt,
-            @HeaderParam("X-Bucket") String bucket) throws DecryptionException {
+            @HeaderParam("X-Bucket") String bucket) throws ReconstructionException {
 
         if (bucket.isEmpty()) {
             /* list all buckets */
@@ -67,7 +67,7 @@ public class FakeRoot {
     @Produces("text/plain")
     public Response getById(@PathParam("id") String id,
             @HeaderParam("X-Bucket") String bucket
-    ) throws DecryptionException, NoSuchAlgorithmException {
+    ) throws ReconstructionException, NoSuchAlgorithmException {
 
         System.out.println("getById: bucket: " + bucket + " path: " + id);
 
@@ -88,7 +88,7 @@ public class FakeRoot {
     @Produces("text/plain")
     public Response getStatById(@PathParam("id") String id,
             @HeaderParam("X-Bucket") String bucket
-    ) throws DecryptionException, NoSuchAlgorithmException {
+    ) throws ReconstructionException, NoSuchAlgorithmException {
 
         if (!this.buckets.containsKey(bucket)) {
             return Response.accepted().status(404).entity(bucketNotFound(bucket)).build();
@@ -106,7 +106,7 @@ public class FakeRoot {
             @HeaderParam("x-amz-meta-uid") String uid,
             @HeaderParam("x-amz-meta-mode") String mode,
             @HeaderParam("X-Bucket") String bucket,
-            byte[] input) throws NoSuchAlgorithmException, DecryptionException {
+            byte[] input) throws NoSuchAlgorithmException, ReconstructionException {
 
         if (!this.buckets.containsKey(bucket)) {
             return Response.accepted().status(404).entity(bucketNotFound(bucket)).build();
@@ -120,7 +120,7 @@ public class FakeRoot {
     @Produces("text/plain")
     public Response deleteById(@PathParam("id") String id,
             @HeaderParam("X-Bucket") String bucket
-    ) throws DecryptionException {
+    ) throws ReconstructionException {
 
         if (!this.buckets.containsKey(bucket)) {
             return Response.accepted().status(404).entity(bucketNotFound(bucket)).build();

@@ -1,6 +1,8 @@
 package at.ac.ait.archistar.backendserver.storageinterface;
 
+import java.io.Serializable;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -59,7 +61,7 @@ public class MemoryStorage implements StorageServer {
         }
 
         if (!this.data.containsKey(path)) {
-            return null;
+            return new byte[0];
         }
 
         return this.data.get(path);

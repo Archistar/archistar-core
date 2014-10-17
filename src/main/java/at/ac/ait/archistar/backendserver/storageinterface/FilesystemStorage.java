@@ -2,8 +2,11 @@ package at.ac.ait.archistar.backendserver.storageinterface;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.apache.commons.io.IOUtils;
 
@@ -51,13 +54,9 @@ public class FilesystemStorage implements StorageServer {
 
         /* store data */
         File new_file = new File(baseFp, id);
-        FileOutputStream out;
-        try {
-            out = new FileOutputStream(new_file);
+        try (FileOutputStream out = new FileOutputStream(new_file)) {
             out.write(blob);
-            out.close();
         } catch (IOException e) {
-            e.printStackTrace();
             assert (false);
         }
         return blob;
@@ -87,7 +86,7 @@ public class FilesystemStorage implements StorageServer {
         validateOnline();
 
         if (!checkExistenceOfId(id)) {
-            return null;
+            return new byte[0];
         }
 
         /* receive data */
@@ -97,12 +96,11 @@ public class FilesystemStorage implements StorageServer {
 
         try (FileInputStream in = new FileInputStream(new_file)) {
             return IOUtils.toByteArray(in);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (IOException ex) {
             assert (false);
         }
 
-        return null;
+        return new byte[0];
     }
 
     @Override
@@ -113,7 +111,6 @@ public class FilesystemStorage implements StorageServer {
     @Override
     public int getFragmentCount() throws DisconnectedException {
         validateOnline();
-
         return baseFp.list().length;
     }
 

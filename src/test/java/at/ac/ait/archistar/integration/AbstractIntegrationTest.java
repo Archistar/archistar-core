@@ -11,10 +11,10 @@ import org.junit.Test;
 import at.ac.ait.archistar.backendserver.storageinterface.DisconnectedException;
 import at.ac.ait.archistar.backendserver.storageinterface.StorageServer;
 import at.ac.ait.archistar.engine.TestEngine;
-import at.ac.ait.archistar.engine.crypto.DecryptionException;
 import at.ac.ait.archistar.engine.dataobjects.FSObject;
 import at.ac.ait.archistar.engine.dataobjects.SimpleFile;
 import at.ac.ait.archistar.engine.distributor.TestServerConfiguration;
+import at.archistar.crypto.exceptions.ReconstructionException;
 
 public abstract class AbstractIntegrationTest {
 
@@ -57,8 +57,11 @@ public abstract class AbstractIntegrationTest {
             for (Map.Entry<String, Integer> m : serverConfig.getStorageFragmentCounts().entrySet()) {
                 int oldValue = fragCount.get(m.getKey());
 
-                if (m.getValue() == (oldValue + 1)) {
+                /* if index was newly created count goes from 0 -> 2, otherweise from n to n+1 */
+                if (m.getValue() == (oldValue + 1) || m.getValue() == 2) {
                     increaseCount++;
+                } else {
+                    fail("count wasnt old_count+1 " + m.getValue() + " vs " + oldValue);
                 }
             }
             assertThat(increaseCount).isGreaterThanOrEqualTo(2);
@@ -68,20 +71,17 @@ public abstract class AbstractIntegrationTest {
     }
 
     @Test
-    public void testStoreAndRetrieveOperation() {
+    public void testStoreAndRetrieveOperation() throws ReconstructionException {
         SimpleFile testObject = new SimpleFile(randomTestFilename(), testData, new HashMap<String, String>());
         String path = testObject.getPath();
 
         engine.connect();
         assertThat(engine.putObject(testObject)).isEqualTo(true);
         assertThat(testObject.getPath()).isEqualTo(path);
-        try {
-            FSObject retrObject = engine.getObject(path);
-            assertThat(retrObject).isNotNull().isInstanceOf(SimpleFile.class);
-            assertThat(path).isEqualTo(retrObject.getPath());
-            assertThat(((SimpleFile) retrObject).getData()).isEqualTo(testData);
-        } catch (DecryptionException e) {
-            fail("could not decrypt fragments", e);
-        }
+
+        FSObject retrObject = engine.getObject(path);
+        assertThat(retrObject).isNotNull().isInstanceOf(SimpleFile.class);
+        assertThat(path).isEqualTo(retrObject.getPath());
+        assertThat(((SimpleFile) retrObject).getData()).isEqualTo(testData);
     }
 }

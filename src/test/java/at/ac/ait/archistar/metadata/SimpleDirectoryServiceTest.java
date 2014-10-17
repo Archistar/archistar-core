@@ -12,12 +12,12 @@ import org.junit.Test;
 
 import at.ac.ait.archistar.backendserver.fragments.Fragment;
 import at.ac.ait.archistar.backendserver.storageinterface.StorageServer;
-import at.ac.ait.archistar.engine.crypto.CryptoEngine;
 import at.ac.ait.archistar.engine.crypto.PseudoMirrorCryptoEngine;
 import at.ac.ait.archistar.engine.distributor.Distributor;
 import at.ac.ait.archistar.engine.distributor.ServerConfiguration;
 import at.ac.ait.archistar.engine.metadata.MetadataService;
 import at.ac.ait.archistar.engine.metadata.SimpleMetadataService;
+import at.archistar.crypto.CryptoEngine;
 
 public class SimpleDirectoryServiceTest {
 
@@ -42,7 +42,7 @@ public class SimpleDirectoryServiceTest {
         when(server2.isConnected()).thenReturn(true);
         servers.add(server2);
 
-        CryptoEngine crypto = new PseudoMirrorCryptoEngine();
+        CryptoEngine crypto = new PseudoMirrorCryptoEngine(2);
 
         Set<Fragment> result = new HashSet<>();
         Fragment frag1 = mock(Fragment.class);

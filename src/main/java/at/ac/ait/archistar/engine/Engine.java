@@ -5,14 +5,15 @@ import java.util.Set;
 
 import static org.fest.assertions.api.Assertions.*;
 import at.ac.ait.archistar.backendserver.fragments.Fragment;
-import at.ac.ait.archistar.engine.crypto.CryptoEngine;
-import at.ac.ait.archistar.engine.crypto.DecryptionException;
+import at.ac.ait.archistar.engine.crypto.ArchistarSMCIntegrator;
 import at.ac.ait.archistar.engine.dataobjects.CustomSerializer;
 import at.ac.ait.archistar.engine.dataobjects.FSObject;
 import at.ac.ait.archistar.engine.dataobjects.SimpleFileInterface;
 import at.ac.ait.archistar.engine.distributor.Distributor;
 import at.ac.ait.archistar.engine.distributor.ServerConfiguration;
 import at.ac.ait.archistar.engine.metadata.MetadataService;
+import at.archistar.crypto.CryptoEngine;
+import at.archistar.crypto.exceptions.ReconstructionException;
 
 /**
  * As most Archistar instances look kinda the same this class tries to capture
@@ -80,7 +81,7 @@ public class Engine implements SimpleFileInterface {
     }
 
     @Override
-    public synchronized FSObject getObject(String path) throws DecryptionException {
+    public synchronized FSObject getObject(String path) throws ReconstructionException {
 
         Set<Fragment> fragments = this.metadataService.getDistributionFor(path);
 
@@ -89,8 +90,7 @@ public class Engine implements SimpleFileInterface {
 
         // TODO: just assert that nothing went wrong..
         assertThat(result).isEqualTo(true);
-        byte[] decrypted = this.crypto.decrypt(fragments);
-
+        byte[] decrypted = ArchistarSMCIntegrator.decrypt(this.crypto, fragments);
         return this.serializer.deserialize(decrypted);
     }
 
@@ -104,7 +104,7 @@ public class Engine implements SimpleFileInterface {
         byte[] serialized = this.serializer.serialize(obj);
 
         // encrypt the fragments
-        Set<Fragment> encryptedData = this.crypto.encrypt(serialized, fragments);
+        Set<Fragment> encryptedData = ArchistarSMCIntegrator.encrypt(this.crypto, serialized, fragments);
 
         return this.distributor.putFragmentSet(encryptedData);
     }

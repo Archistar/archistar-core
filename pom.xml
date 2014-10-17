@@ -4,7 +4,7 @@
     <groupId>at.ac.ait.archistar</groupId>
     <artifactId>archistar</artifactId>
     <packaging>jar</packaging>
-    <version>0.0.1</version>
+    <version>0.0.2-wip</version>
     <name>archistar</name>
     <url>http://maven.apache.org</url>
     <repositories>
@@ -39,6 +39,12 @@
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
             <version>1.8.4</version>
+        </dependency>
+        <!-- for findbugs annotations -->
+        <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>annotations</artifactId>
+            <version>3.0.0</version>
         </dependency>
         <!-- for fluent assertions -->
         <dependency>
@@ -92,11 +98,31 @@
         <dependency>
             <groupId>at.archistar</groupId>
             <artifactId>archistar-smc</artifactId>
-            <version>0.0.3-snapshot</version>
+            <version>0.2-wip</version>
         </dependency>
     </dependencies>
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>findbugs-maven-plugin</artifactId>
+                <version>3.0.0</version>
+                <configuration>
+                    <effort>Max</effort>
+                    <threshold>Low</threshold>
+                    <xmlOutput>true</xmlOutput>
+                    <findbugsXmlOutputDirectory>${project.build.directory}/findbugs</findbugsXmlOutputDirectory>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>analyze-compile</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>

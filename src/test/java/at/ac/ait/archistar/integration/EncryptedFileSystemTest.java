@@ -18,9 +18,6 @@ import org.junit.Test;
 import at.ac.ait.archistar.backendserver.storageinterface.FilesystemStorage;
 import at.ac.ait.archistar.backendserver.storageinterface.StorageServer;
 import at.ac.ait.archistar.engine.TestEngine;
-import at.ac.ait.archistar.engine.crypto.CryptoEngine;
-import at.ac.ait.archistar.engine.crypto.DecryptionException;
-import at.ac.ait.archistar.engine.crypto.SecretSharingCryptoEngine;
 import at.ac.ait.archistar.engine.dataobjects.FSObject;
 import at.ac.ait.archistar.engine.dataobjects.SimpleFile;
 import at.ac.ait.archistar.engine.distributor.BFTDistributor;
@@ -28,9 +25,13 @@ import at.ac.ait.archistar.engine.distributor.Distributor;
 import at.ac.ait.archistar.engine.distributor.TestServerConfiguration;
 import at.ac.ait.archistar.engine.metadata.MetadataService;
 import at.ac.ait.archistar.engine.metadata.SimpleMetadataService;
-import at.archistar.crypto.KrawczykCSS;
+import at.archistar.crypto.CryptoEngine;
+import at.archistar.crypto.RabinBenOrEngine;
+import at.archistar.crypto.exceptions.ReconstructionException;
+import at.archistar.crypto.exceptions.WeakSecurityException;
 import at.archistar.crypto.random.FakeRandomSource;
 import at.archistar.crypto.random.RandomSource;
+import java.security.NoSuchAlgorithmException;
 
 public class EncryptedFileSystemTest extends AbstractIntegrationTest {
 
@@ -56,7 +57,7 @@ public class EncryptedFileSystemTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void testPersistedStoreAndRetrieveOperation() {
+    public void testPersistedStoreAndRetrieveOperation() throws ReconstructionException {
         SimpleFile testObject = new SimpleFile(randomTestFilename(), testData, new HashMap<String, String>());
         String path = testObject.getPath();
 
@@ -70,23 +71,19 @@ public class EncryptedFileSystemTest extends AbstractIntegrationTest {
         assertThat(engine.connect()).isEqualTo(engine.getNumberOfServers());
 
         // THEN the data should still be available
-        try {
-            FSObject retrObject = engine.getObject(path);
-            assertThat(retrObject).isNotNull().isInstanceOf(SimpleFile.class);
-            assertThat(path).isEqualTo(retrObject.getPath());
-            assertThat(((SimpleFile) retrObject).getData()).isEqualTo(testData);
-        } catch (DecryptionException e) {
-            fail("could not decrypt fragment", e);
-        }
+        FSObject retrObject = engine.getObject(path);
+        assertThat(retrObject).isNotNull().isInstanceOf(SimpleFile.class);
+        assertThat(path).isEqualTo(retrObject.getPath());
+        assertThat(((SimpleFile) retrObject).getData()).isEqualTo(testData);
     }
 
     @BeforeClass
-    public static void prepareServer() {
+    public static void prepareServer() throws WeakSecurityException, NoSuchAlgorithmException {
         serverConfig = new TestServerConfiguration(createNewServers());
         serverConfig.setupTestServer(1);
 
         RandomSource rng = new FakeRandomSource();
-        CryptoEngine crypto = new SecretSharingCryptoEngine(new KrawczykCSS(4, 2, rng));
+        CryptoEngine crypto = new RabinBenOrEngine(4, 3, rng);
         Distributor distributor = new BFTDistributor(serverConfig, new NioEventLoopGroup());
         MetadataService metadata = new SimpleMetadataService(serverConfig, distributor, crypto);
         engine = new TestEngine(serverConfig, metadata, distributor, crypto);

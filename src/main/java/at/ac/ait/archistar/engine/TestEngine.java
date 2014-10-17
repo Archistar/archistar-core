@@ -1,9 +1,9 @@
 package at.ac.ait.archistar.engine;
 
-import at.ac.ait.archistar.engine.crypto.CryptoEngine;
 import at.ac.ait.archistar.engine.distributor.Distributor;
 import at.ac.ait.archistar.engine.distributor.ServerConfiguration;
 import at.ac.ait.archistar.engine.metadata.MetadataService;
+import at.archistar.crypto.CryptoEngine;
 
 /**
  * This engine adds some features needed for testing.
