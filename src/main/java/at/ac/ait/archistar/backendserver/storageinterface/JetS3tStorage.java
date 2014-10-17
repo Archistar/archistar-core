@@ -36,6 +36,7 @@ public class JetS3tStorage implements StorageServer {
         awsCredentials = new AWSCredentials(awsAccessKey, awsSecretKey);
         this.bucketId = bucketId;
         this.internalBFTId = bftId;
+        this.s3bucket = null;
     }
 
     @Override
@@ -50,7 +51,6 @@ public class JetS3tStorage implements StorageServer {
             s3service.putObject(s3bucket.getName(), obj);
             return blob;
         } catch (IOException | NoSuchAlgorithmException | ServiceException e) {
-            e.printStackTrace();
             throw new DisconnectedException();
         }
     }
@@ -61,12 +61,11 @@ public class JetS3tStorage implements StorageServer {
 
         try {
             if (!fragmentExists(id)) {
-                return null;
+                return new byte[0];
             }
             S3Object obj = s3service.getObject(s3bucket, id);
             return IOUtils.toByteArray(obj.getDataInputStream());
         } catch (ServiceException | IOException e) {
-            e.printStackTrace();
             throw new DisconnectedException();
         }
     }
@@ -75,7 +74,6 @@ public class JetS3tStorage implements StorageServer {
         try {
             return s3service.isObjectInBucket(s3bucket.getName(), id);
         } catch (ServiceException e) {
-            e.printStackTrace();
             return false;
         }
     }
@@ -92,7 +90,6 @@ public class JetS3tStorage implements StorageServer {
         try {
             return s3service.listObjects(s3bucket).length;
         } catch (S3ServiceException e) {
-            e.printStackTrace();
             throw new DisconnectedException();
         }
     }
@@ -114,7 +111,6 @@ public class JetS3tStorage implements StorageServer {
                 s3bucket = s3service.createBucket(bucketId);
             }
         } catch (S3ServiceException e) {
-            e.printStackTrace();
             return -1;
         }
 
@@ -127,7 +123,6 @@ public class JetS3tStorage implements StorageServer {
         try {
             s3service.shutdown();
         } catch (ServiceException e) {
-            e.printStackTrace();
             return -1;
         }
 

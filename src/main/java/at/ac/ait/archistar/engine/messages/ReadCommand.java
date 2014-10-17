@@ -22,8 +22,9 @@ public class ReadCommand extends ClientFragmentCommand {
         return getClientSequence() + ": read";
     }
 
+    /* should this even happen? */
     @Override
     public byte[] getPayload() {
-        return null;
+        return new byte[0];
     }
 }

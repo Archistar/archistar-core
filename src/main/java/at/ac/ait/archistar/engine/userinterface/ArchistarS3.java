@@ -27,12 +27,12 @@ import at.ac.ait.archistar.engine.metadata.SimpleMetadataService;
 import at.archistar.crypto.RabinBenOrEngine;
 import at.archistar.crypto.exceptions.WeakSecurityException;
 import at.archistar.crypto.random.FakeRandomSource;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.security.NoSuchAlgorithmException;
-import java.util.logging.Level;
 
 /**
  * this bootstrap a local S3 archistar instance containing one archistar
- * director with an client-side S3/HTTP/Rest inteface and four backend-storage
+ * director with an client-side S3/HTTP/Rest interface and four backend-storage
  * servers utilizing filesystem based storage.
  * 
  * Note: maybe we should exchange the filesystem based storage with a pure
@@ -74,25 +74,31 @@ public class ArchistarS3 {
         netty = createServer(deployment);
         netty.start();
     }
-
+    
+    @SuppressFBWarnings("DMI_HARDCODED_ABSOLUTE_FILENAME")
+    private static final String BASE_PATH = "/var/spool/archistar/test-s3/";
+    
+    private static void createDir(Set<StorageServer> servers, File baseDir, int subdir) {
+        File dir1 = new File(baseDir, Integer.toString(subdir + 1));
+        if (!dir1.exists()) {
+            assert(dir1.mkdir());
+        }
+        servers.add(new FilesystemStorage(subdir, dir1));
+    }
+    
+    @SuppressFBWarnings("DMI_HARDCODED_ABSOLUTE_FILENAME")
     private static Set<StorageServer> createNewServers() {
-        File baseDir = new File("/var/spool/archistar/test-s3/");
-        baseDir.mkdirs();
-
-        File dir1 = new File(baseDir, "1");
-        dir1.mkdir();
-        File dir2 = new File(baseDir, "2");
-        dir2.mkdir();
-        File dir3 = new File(baseDir, "3");
-        dir3.mkdir();
-        File dir4 = new File(baseDir, "4");
-        dir4.mkdir();
+        File baseDir = new File(BASE_PATH);
+        
+        if (!baseDir.exists()) {
+            assert(baseDir.mkdirs());
+        }
 
         HashSet<StorageServer> servers = new HashSet<>();
-        servers.add(new FilesystemStorage(0, dir1));
-        servers.add(new FilesystemStorage(1, dir2));
-        servers.add(new FilesystemStorage(2, dir3));
-        servers.add(new FilesystemStorage(3, dir4));
+        
+        for (int i=0; i < 4; i++) {
+            createDir(servers, baseDir, i);
+        }
         return servers;
     }
 

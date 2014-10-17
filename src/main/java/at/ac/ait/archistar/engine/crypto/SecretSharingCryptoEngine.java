@@ -36,7 +36,7 @@ public class SecretSharingCryptoEngine implements ArchistarCryptoEngine {
 
         int i = 0;
         for (Fragment f : input) {
-            if (f.getData() != null) {
+            if (f.getData() != null && f.getData().length != 0) {
                 try {
                     shares[i++] = SerializableShare.deserialize(f.getData());
                 } catch (IOException | WeakSecurityException | InvalidParametersException ex) {
@@ -46,18 +46,17 @@ public class SecretSharingCryptoEngine implements ArchistarCryptoEngine {
         }
 
         if (i == 0) {
-            return null;
+            return new byte[0];
         } else if (i != input.size()) {
             shares = Arrays.copyOf(shares, i);
         }
 
-        byte[] combined = null;
         try {
-            combined = this.sharingAlgorithm.reconstruct(shares);
+            return this.sharingAlgorithm.reconstruct(shares);
         } catch (ReconstructionException ex) {
             assert(false);
         }
-        return combined;
+        return new byte[0];
     }
 
     @Override
@@ -65,7 +64,7 @@ public class SecretSharingCryptoEngine implements ArchistarCryptoEngine {
 
         try {
             Share[] shares = this.sharingAlgorithm.share(originalContent);
-            Fragment[] fs = fragments.toArray(new Fragment[0]);
+            Fragment[] fs = fragments.toArray(new Fragment[fragments.size()]);
             assertThat(fs.length == shares.length);
             assertThat(fragments.size() == 4);
 

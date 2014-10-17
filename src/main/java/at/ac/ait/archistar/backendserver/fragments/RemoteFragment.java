@@ -1,8 +1,7 @@
 package at.ac.ait.archistar.backendserver.fragments;
 
-import java.io.Serializable;
-
 import at.ac.ait.archistar.backendserver.storageinterface.StorageServer;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * minimal implementation of the Fragment interface for use with the Archistar
@@ -10,9 +9,7 @@ import at.ac.ait.archistar.backendserver.storageinterface.StorageServer;
  *
  * @author andy
  */
-public class RemoteFragment implements Fragment, Serializable {
-
-    private static final long serialVersionUID = 4677966783656257460L;
+public class RemoteFragment implements Fragment {
 
     private String fragmentId;
 
@@ -38,13 +35,15 @@ public class RemoteFragment implements Fragment, Serializable {
     }
 
     @Override
+    @SuppressFBWarnings("EI_EXPOSE_REP")
     public byte[] setData(byte[] data) {
-        this.data = data;
+        this.data = data.clone();
         this.syncedToServer = false;
         return this.data;
     }
 
     @Override
+    @SuppressFBWarnings("EI_EXPOSE_REP")
     public byte[] getData() {
         return this.data;
     }

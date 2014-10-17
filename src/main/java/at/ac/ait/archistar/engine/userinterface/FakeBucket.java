@@ -57,14 +57,12 @@ public class FakeBucket {
     public Response getById(String id) throws DecryptionException, NoSuchAlgorithmException {
 
         FSObject obj = engine.getObject(id);
-        byte[] result = null;
-
         if (obj != null && obj instanceof SimpleFile) {
-            result = ((SimpleFile) obj).getData();
+            byte[] result = ((SimpleFile) obj).getData();
 
             MessageDigest md = MessageDigest.getInstance("MD5");
             byte[] thedigest = md.digest(result);
-            return Response.accepted().entity(result).header("ETag", new String(Hex.encodeHex(thedigest))).build();
+            return Response.accepted().entity(result).header("ETag", Hex.encodeHex(thedigest)).build();
         } else {
             return null;
         }
@@ -85,7 +83,7 @@ public class FakeBucket {
 
         engine.getObject(id);
 
-        return Response.accepted().header("ETag", new String(Hex.encodeHex(thedigest))).build();
+        return Response.accepted().header("ETag", Hex.encodeHex(thedigest)).build();
     }
 
     public Response deleteById(String id) throws DecryptionException {
@@ -112,11 +110,13 @@ public class FakeBucket {
             SimpleFile file = null;
             if (obj instanceof SimpleFile) {
                 file = (SimpleFile) obj;
+            } else {
+                assert(false);
             }
 
             MessageDigest md = MessageDigest.getInstance("MD5");
             byte[] thedigest = md.digest(file.getData());
-            String etag = new String(Hex.encodeHex(thedigest));
+            String etag = Hex.encodeHex(thedigest);
 
             ResponseBuilder resp = Response.accepted().status(200);
 
@@ -128,8 +128,8 @@ public class FakeBucket {
 
             Map<String, String> md1 = file.getMetadata();
 
-            for (String i : md1.keySet()) {
-                System.err.println("metadata: " + i + " -> " + md1.get(i));
+            for (Map.Entry<String, String> i : md1.entrySet()) {
+                System.err.println("metadata: " + i.getKey() + " -> " + i.getValue());
             }
 
             if (md1.get("uid") != null) {

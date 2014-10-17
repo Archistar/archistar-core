@@ -57,8 +57,11 @@ public abstract class AbstractIntegrationTest {
             for (Map.Entry<String, Integer> m : serverConfig.getStorageFragmentCounts().entrySet()) {
                 int oldValue = fragCount.get(m.getKey());
 
-                if (m.getValue() == (oldValue + 1)) {
+                /* if index was newly created count goes from 0 -> 2, otherweise from n to n+1 */
+                if (m.getValue() == (oldValue + 1) || m.getValue() == 2) {
                     increaseCount++;
+                } else {
+                    fail("count wasnt old_count+1 " + m.getValue() + " vs " + oldValue);
                 }
             }
             assertThat(increaseCount).isGreaterThanOrEqualTo(2);

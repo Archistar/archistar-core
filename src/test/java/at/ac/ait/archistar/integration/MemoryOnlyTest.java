@@ -24,10 +24,9 @@ public class MemoryOnlyTest extends AbstractIntegrationTest {
     public static void prepareServer() {
         /* test configuration */
         HashSet<StorageServer> servers = new HashSet<>();
-        servers.add(new MemoryStorage(0));
-        servers.add(new MemoryStorage(1));
-        servers.add(new MemoryStorage(2));
-        servers.add(new MemoryStorage(3));
+        for(int i = 0; i < 4; i++) {
+            servers.add(new MemoryStorage(i));
+        }
         serverConfig = new TestServerConfiguration(servers);
         serverConfig.setupTestServer(1);
 

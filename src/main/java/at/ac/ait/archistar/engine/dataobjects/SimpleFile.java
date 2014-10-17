@@ -1,5 +1,6 @@
 package at.ac.ait.archistar.engine.dataobjects;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.Serializable;
 import java.util.Map;
 
@@ -20,7 +21,7 @@ public class SimpleFile implements Serializable, FSObject {
 
     public SimpleFile(String path, byte[] data, Map<String, String> metadata) {
         this.path = path;
-        this.data = data;
+        this.data = data.clone();
         this.metadata = metadata;
     }
 
@@ -34,6 +35,7 @@ public class SimpleFile implements Serializable, FSObject {
         return this.metadata.put(key, value);
     }
 
+    @SuppressFBWarnings("EI_EXPOSE_REP")
     public byte[] getData() {
         return this.data;
     }

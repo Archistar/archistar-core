@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 @PreMatching
 public class RedirectorFilter implements ContainerRequestFilter {
 
-    private Logger logger = LoggerFactory.getLogger(RedirectorFilter.class);
+    private final Logger logger = LoggerFactory.getLogger(RedirectorFilter.class);
 
     @Override
     public void filter(ContainerRequestContext requestContext) {
@@ -67,21 +67,20 @@ public class RedirectorFilter implements ContainerRequestFilter {
             if (m.find() && m.groupCount() == 2) {
                 bucket = m.group(1);
                 path = m.group(2);
-                bucketString = bucket + ".s3.amazonaws.com";
+                bucketString = bucket.concat(".s3.amazonaws.com");
             } else {
                 throw new RuntimeException();
             }
         }
 
         /* nothing found, try query params */
-        if (bucket != null && path != null && uri != null && uri.getQuery() != null && bucket.equalsIgnoreCase("") && path.equalsIgnoreCase("/") && !uri.getQuery().isEmpty()) {
+        if (path != null && uri.getQuery() != null && bucket.equalsIgnoreCase("") && path.equalsIgnoreCase("/") && !uri.getQuery().isEmpty()) {
 
-            query = "";
-
+            StringBuilder buffer = new StringBuilder();
             for (String part : uri.getQuery().split("&")) {
 
-                if (!query.isEmpty()) {
-                    query = query + "&";
+                if (buffer.length() != 0) {
+                    buffer.append("&");
                 }
 
                 String key = part.split("=")[0];
@@ -92,17 +91,18 @@ public class RedirectorFilter implements ContainerRequestFilter {
                     Matcher m = p.matcher(value);
 
                     if (m.find()) {
-                        System.err.println("MATCH!");
                         bucket = m.group(1);
                         bucketString = bucket + ".s3.amazonaws.com";
-                        query = query + "prefix=" + m.group(2);
+                        buffer.append("prefix=");
+                        buffer.append(m.group(2));
                     } else {
-                        query = query + part;
+                        buffer.append(part);
                     }
                 } else {
-                    query = query + part;
+                    buffer.append(part);
                 }
             }
+            query = buffer.toString();
         }
 
         logger.debug("redirected: " + uri.toString() + " -> " + bucket + "/" + path + "?" + query);
@@ -111,7 +111,7 @@ public class RedirectorFilter implements ContainerRequestFilter {
         ctx.getHeaders().add("X-Bucket", bucket);
 
         /* set Host */
-        LinkedList<String> list = new LinkedList<String>();
+        LinkedList<String> list = new LinkedList<>();
         list.add(bucketString);
         ctx.getHeaders().put("Host", list);
 
@@ -121,8 +121,7 @@ public class RedirectorFilter implements ContainerRequestFilter {
             logger.info("redirected: " + uri.toString() + " -> " + target.toString());
             ctx.setRequestUri(target);
         } catch (URISyntaxException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            assert(false);
         }
     }
 }

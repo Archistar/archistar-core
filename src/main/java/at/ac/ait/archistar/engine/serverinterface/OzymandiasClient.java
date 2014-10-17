@@ -13,6 +13,7 @@ import at.archistar.bft.client.ResultManager;
 import at.archistar.bft.exceptions.InconsistentResultsException;
 import at.archistar.bft.messages.ClientCommand;
 import at.archistar.bft.messages.TransactionResult;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
@@ -38,9 +39,9 @@ public class OzymandiasClient {
 
     private int f = 1;
 
-    private EventLoopGroup group;
+    private final EventLoopGroup group;
 
-    private ResultManager resultManager;
+    private final ResultManager resultManager;
 
     public OzymandiasClient(Map<Integer, Integer> serverList, int f, NioEventLoopGroup group) {
         this.serverList = serverList;
@@ -85,6 +86,7 @@ public class OzymandiasClient {
         }
     }
 
+    @SuppressFBWarnings("SIC_INNER_SHOULD_BE_STATIC_ANON")
     private Channel connectServer(int port) throws Exception {
 
         final OzymandiasClientHandler handler = new OzymandiasClientHandler(this);

@@ -16,6 +16,7 @@ import at.archistar.bft.messages.IntraReplicaCommand;
 import at.archistar.bft.messages.TransactionResult;
 import at.archistar.bft.server.BftEngine;
 import at.archistar.bft.server.BftEngineCallbacks;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
@@ -65,9 +66,9 @@ public class OzymandiasServer implements Runnable, BftEngineCallbacks {
      */
     private final ExecutionHandler executor;
 
-    private EventLoopGroup bossGroup;
+    private final EventLoopGroup bossGroup;
 
-    private EventLoopGroup workerGroup;
+    private final EventLoopGroup workerGroup;
 
     /**
      * this is the listening server channel (will be configured to use the
@@ -105,6 +106,7 @@ public class OzymandiasServer implements Runnable, BftEngineCallbacks {
      * setup the server listening ports and handler routines
      */
     @Override
+    @SuppressFBWarnings("SIC_INNER_SHOULD_BE_STATIC_ANON")
     public void run() {
         /* start up netty listener */
         final OzymandiasCommandHandler handler = new OzymandiasCommandHandler(this);
@@ -144,6 +146,7 @@ public class OzymandiasServer implements Runnable, BftEngineCallbacks {
 
     /**
      * connect to all configured BFT replicas
+     * @throws java.lang.InterruptedException
      */
     public void connectServers() throws InterruptedException {
         this.servers.connect();
