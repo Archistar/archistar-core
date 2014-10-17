@@ -4,7 +4,7 @@
     <groupId>at.ac.ait.archistar</groupId>
     <artifactId>archistar</artifactId>
     <packaging>jar</packaging>
-    <version>0.0.1</version>
+    <version>0.0.2-wip</version>
     <name>archistar</name>
     <url>http://maven.apache.org</url>
     <repositories>
@@ -92,7 +92,7 @@
         <dependency>
             <groupId>at.archistar</groupId>
             <artifactId>archistar-smc</artifactId>
-            <version>0.0.3-snapshot</version>
+            <version>0.2-wip</version>
         </dependency>
     </dependencies>
     <build>

@@ -10,25 +10,22 @@ import org.junit.Test;
 
 import at.ac.ait.archistar.backendserver.fragments.Fragment;
 import at.ac.ait.archistar.backendserver.fragments.RemoteFragment;
-import at.ac.ait.archistar.engine.crypto.CryptoEngine;
+import at.ac.ait.archistar.engine.crypto.ArchistarCryptoEngine;
 import at.ac.ait.archistar.engine.crypto.DecryptionException;
 import at.ac.ait.archistar.engine.crypto.SecretSharingCryptoEngine;
-import at.archistar.crypto.SecretSharing;
-import at.archistar.crypto.ShamirPSS;
+import at.archistar.crypto.RabinBenOrEngine;
+import at.archistar.crypto.exceptions.WeakSecurityException;
 import at.archistar.crypto.random.FakeRandomSource;
+import java.security.NoSuchAlgorithmException;
 
 public class TestSecretSharingCryptoEngine {
 
-    private static CryptoEngine cryptoEngine;
+    private static ArchistarCryptoEngine cryptoEngine;
     private final static byte[] mockSerializedData = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
 
     @BeforeClass
-    public static void onceSetup() {
-
-        SecretSharing alg = new ShamirPSS(5, 3, new FakeRandomSource());
-
-        // GIVEN some test data
-        cryptoEngine = new SecretSharingCryptoEngine(alg);
+    public static void onceSetup() throws WeakSecurityException, NoSuchAlgorithmException {
+        cryptoEngine = new SecretSharingCryptoEngine(new RabinBenOrEngine(4, 3, new FakeRandomSource()));
     }
 
     @Test

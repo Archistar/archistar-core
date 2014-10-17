@@ -11,14 +11,14 @@ import org.junit.Test;
 
 import at.ac.ait.archistar.backendserver.fragments.Fragment;
 import at.ac.ait.archistar.backendserver.storageinterface.StorageServer;
-import at.ac.ait.archistar.engine.crypto.CryptoEngine;
+import at.ac.ait.archistar.engine.crypto.ArchistarCryptoEngine;
 import at.ac.ait.archistar.engine.crypto.DecryptionException;
 import at.ac.ait.archistar.engine.crypto.PseudoMirrorCryptoEngine;
 
 public class MirrorTest {
 
     private static Set<Fragment> distribution;
-    private static CryptoEngine cryptoEngine;
+    private static ArchistarCryptoEngine cryptoEngine;
     private final static byte[] mockSerializedData = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
     private static Fragment frag1;
     private static Fragment frag2;

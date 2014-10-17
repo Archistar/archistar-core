@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
 import at.ac.ait.archistar.backendserver.fragments.Fragment;
 import at.ac.ait.archistar.backendserver.fragments.RemoteFragment;
 import at.ac.ait.archistar.backendserver.storageinterface.StorageServer;
-import at.ac.ait.archistar.engine.crypto.CryptoEngine;
+import at.ac.ait.archistar.engine.crypto.ArchistarCryptoEngine;
 import at.ac.ait.archistar.engine.crypto.DecryptionException;
 import at.ac.ait.archistar.engine.dataobjects.FSObject;
 import at.ac.ait.archistar.engine.distributor.Distributor;
@@ -38,11 +38,11 @@ public class SimpleMetadataService implements MetadataService {
 
     private final ServerConfiguration servers;
 
-    private final CryptoEngine crypto;
+    private final ArchistarCryptoEngine crypto;
 
     private Logger logger = LoggerFactory.getLogger(SimpleMetadataService.class);
 
-    public SimpleMetadataService(ServerConfiguration servers, Distributor distributor, CryptoEngine crypto) {
+    public SimpleMetadataService(ServerConfiguration servers, Distributor distributor, ArchistarCryptoEngine crypto) {
         this.distributor = distributor;
         this.servers = servers;
         this.crypto = crypto;

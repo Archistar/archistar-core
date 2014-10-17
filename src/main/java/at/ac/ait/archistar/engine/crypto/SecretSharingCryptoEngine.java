@@ -1,16 +1,19 @@
 package at.ac.ait.archistar.engine.crypto;
 
-import java.security.GeneralSecurityException;
 import java.util.Arrays;
 import java.util.Set;
 
 import static org.fest.assertions.api.Assertions.*;
 import at.ac.ait.archistar.backendserver.fragments.Fragment;
 import at.ac.ait.archistar.backendserver.fragments.Fragment.EncryptionScheme;
-import at.archistar.crypto.SecretSharing;
-import at.archistar.crypto.WeakSecurityException;
+import at.archistar.crypto.CryptoEngine;
+import at.archistar.crypto.data.InvalidParametersException;
+import at.archistar.crypto.data.SerializableShare;
 import at.archistar.crypto.data.Share;
-import at.archistar.helper.ShareSerializer;
+import at.archistar.crypto.exceptions.ImpossibleException;
+import at.archistar.crypto.exceptions.ReconstructionException;
+import at.archistar.crypto.exceptions.WeakSecurityException;
+import java.io.IOException;
 
 /**
  * wrapper for using an archistar-smc secret-sharing algorithm with the
@@ -18,11 +21,11 @@ import at.archistar.helper.ShareSerializer;
  *
  * @author andy
  */
-public class SecretSharingCryptoEngine implements CryptoEngine {
+public class SecretSharingCryptoEngine implements ArchistarCryptoEngine {
 
-    private final SecretSharing sharingAlgorithm;
+    private final CryptoEngine sharingAlgorithm;
 
-    public SecretSharingCryptoEngine(SecretSharing sharingAlgorithm) {
+    public SecretSharingCryptoEngine(CryptoEngine sharingAlgorithm) {
         this.sharingAlgorithm = sharingAlgorithm;
     }
 
@@ -34,7 +37,11 @@ public class SecretSharingCryptoEngine implements CryptoEngine {
         int i = 0;
         for (Fragment f : input) {
             if (f.getData() != null) {
-                shares[i++] = ShareSerializer.deserializeShare(f.getData());
+                try {
+                    shares[i++] = SerializableShare.deserialize(f.getData());
+                } catch (IOException | WeakSecurityException | InvalidParametersException ex) {
+                    assert(false);
+                }
             }
         }
 
@@ -47,9 +54,8 @@ public class SecretSharingCryptoEngine implements CryptoEngine {
         byte[] combined = null;
         try {
             combined = this.sharingAlgorithm.reconstruct(shares);
-        } catch (GeneralSecurityException e) {
-            e.printStackTrace();
-            assert (false);
+        } catch (ReconstructionException ex) {
+            assert(false);
         }
         return combined;
     }
@@ -67,15 +73,14 @@ public class SecretSharingCryptoEngine implements CryptoEngine {
 
                 Fragment f = fs[i];
 
-                byte[] binData = ShareSerializer.serializeShare(shares[i]);
+                byte[] binData = shares[i].serialize();
                 assert (binData != null);
                 assert (binData.length != 0);
 
                 f.setData(binData);
                 f.setEncryptionScheme(EncryptionScheme.SHAMIR);
             }
-        } catch (WeakSecurityException | GeneralSecurityException e) {
-            e.printStackTrace();
+        } catch (WeakSecurityException | ImpossibleException | IOException e) {
             assert (false);
         }
         return fragments;

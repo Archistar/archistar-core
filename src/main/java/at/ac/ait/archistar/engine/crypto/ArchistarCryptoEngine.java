@@ -13,7 +13,7 @@ import at.ac.ait.archistar.backendserver.fragments.Fragment;
  * @author andy
  *
  */
-public interface CryptoEngine {
+public interface ArchistarCryptoEngine {
 
     /**
      * split and encrypt data into fragments

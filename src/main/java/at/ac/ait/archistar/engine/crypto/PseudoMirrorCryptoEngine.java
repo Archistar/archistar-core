@@ -13,7 +13,7 @@ import at.ac.ait.archistar.backendserver.fragments.Fragment;
  * @author Andreas Happe <andreashappe@snikt.net>
  *
  */
-public class PseudoMirrorCryptoEngine implements CryptoEngine {
+public class PseudoMirrorCryptoEngine implements ArchistarCryptoEngine {
 
     /**
      * checks if data within all fragments is the same and returns the

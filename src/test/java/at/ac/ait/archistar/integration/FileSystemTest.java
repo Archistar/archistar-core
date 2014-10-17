@@ -18,7 +18,7 @@ import static org.fest.assertions.api.Assertions.*;
 import at.ac.ait.archistar.backendserver.storageinterface.FilesystemStorage;
 import at.ac.ait.archistar.backendserver.storageinterface.StorageServer;
 import at.ac.ait.archistar.engine.TestEngine;
-import at.ac.ait.archistar.engine.crypto.CryptoEngine;
+import at.ac.ait.archistar.engine.crypto.ArchistarCryptoEngine;
 import at.ac.ait.archistar.engine.crypto.DecryptionException;
 import at.ac.ait.archistar.engine.crypto.PseudoMirrorCryptoEngine;
 import at.ac.ait.archistar.engine.dataobjects.FSObject;
@@ -59,7 +59,7 @@ public class FileSystemTest extends AbstractIntegrationTest {
         serverConfig = new TestServerConfiguration(createNewServers());
         serverConfig.setupTestServer(1);
 
-        CryptoEngine crypto = new PseudoMirrorCryptoEngine();
+        ArchistarCryptoEngine crypto = new PseudoMirrorCryptoEngine();
         Distributor distributor = new BFTDistributor(serverConfig, new NioEventLoopGroup());
         MetadataService metadata = new SimpleMetadataService(serverConfig, distributor, crypto);
         engine = new TestEngine(serverConfig, metadata, distributor, crypto);

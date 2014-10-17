@@ -17,15 +17,18 @@ import org.slf4j.LoggerFactory;
 import at.ac.ait.archistar.backendserver.storageinterface.FilesystemStorage;
 import at.ac.ait.archistar.backendserver.storageinterface.StorageServer;
 import at.ac.ait.archistar.engine.Engine;
-import at.ac.ait.archistar.engine.crypto.CryptoEngine;
+import at.ac.ait.archistar.engine.crypto.ArchistarCryptoEngine;
 import at.ac.ait.archistar.engine.crypto.SecretSharingCryptoEngine;
 import at.ac.ait.archistar.engine.distributor.BFTDistributor;
 import at.ac.ait.archistar.engine.distributor.Distributor;
 import at.ac.ait.archistar.engine.distributor.TestServerConfiguration;
 import at.ac.ait.archistar.engine.metadata.MetadataService;
 import at.ac.ait.archistar.engine.metadata.SimpleMetadataService;
-import at.archistar.crypto.ShamirPSS;
+import at.archistar.crypto.RabinBenOrEngine;
+import at.archistar.crypto.exceptions.WeakSecurityException;
 import at.archistar.crypto.random.FakeRandomSource;
+import java.security.NoSuchAlgorithmException;
+import java.util.logging.Level;
 
 /**
  * this bootstrap a local S3 archistar instance containing one archistar
@@ -99,10 +102,15 @@ public class ArchistarS3 {
         TestServerConfiguration serverConfig = new TestServerConfiguration(createNewServers(), loopGroup);
 
         serverConfig.setupTestServer(1);
-        CryptoEngine crypto = new SecretSharingCryptoEngine(new ShamirPSS(4, 3, new FakeRandomSource()));
-        Distributor distributor = new BFTDistributor(serverConfig, loopGroup);
-        MetadataService metadata = new SimpleMetadataService(serverConfig, distributor, crypto);
-        return new Engine(serverConfig, metadata, distributor, crypto);
+        try {
+            ArchistarCryptoEngine crypto = new SecretSharingCryptoEngine(new RabinBenOrEngine(4, 3, new FakeRandomSource()));
+            Distributor distributor = new BFTDistributor(serverConfig, loopGroup);
+            MetadataService metadata = new SimpleMetadataService(serverConfig, distributor, crypto);
+            return new Engine(serverConfig, metadata, distributor, crypto);
+        } catch (NoSuchAlgorithmException | WeakSecurityException ex) {
+            assert(false);
+        }
+        return null;
     }
 
     private static NettyJaxrsServer createServer(ResteasyDeployment deployment) throws Exception {

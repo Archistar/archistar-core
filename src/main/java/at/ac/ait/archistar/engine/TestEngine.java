@@ -1,6 +1,6 @@
 package at.ac.ait.archistar.engine;
 
-import at.ac.ait.archistar.engine.crypto.CryptoEngine;
+import at.ac.ait.archistar.engine.crypto.ArchistarCryptoEngine;
 import at.ac.ait.archistar.engine.distributor.Distributor;
 import at.ac.ait.archistar.engine.distributor.ServerConfiguration;
 import at.ac.ait.archistar.engine.metadata.MetadataService;
@@ -14,7 +14,7 @@ import at.ac.ait.archistar.engine.metadata.MetadataService;
  */
 public class TestEngine extends Engine {
 
-    public TestEngine(ServerConfiguration servers, MetadataService naming, Distributor distributor, CryptoEngine crypto) {
+    public TestEngine(ServerConfiguration servers, MetadataService naming, Distributor distributor, ArchistarCryptoEngine crypto) {
         super(servers, naming, distributor, crypto);
     }
 

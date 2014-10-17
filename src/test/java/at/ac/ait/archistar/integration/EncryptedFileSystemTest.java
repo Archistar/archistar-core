@@ -18,7 +18,7 @@ import org.junit.Test;
 import at.ac.ait.archistar.backendserver.storageinterface.FilesystemStorage;
 import at.ac.ait.archistar.backendserver.storageinterface.StorageServer;
 import at.ac.ait.archistar.engine.TestEngine;
-import at.ac.ait.archistar.engine.crypto.CryptoEngine;
+import at.ac.ait.archistar.engine.crypto.ArchistarCryptoEngine;
 import at.ac.ait.archistar.engine.crypto.DecryptionException;
 import at.ac.ait.archistar.engine.crypto.SecretSharingCryptoEngine;
 import at.ac.ait.archistar.engine.dataobjects.FSObject;
@@ -28,9 +28,11 @@ import at.ac.ait.archistar.engine.distributor.Distributor;
 import at.ac.ait.archistar.engine.distributor.TestServerConfiguration;
 import at.ac.ait.archistar.engine.metadata.MetadataService;
 import at.ac.ait.archistar.engine.metadata.SimpleMetadataService;
-import at.archistar.crypto.KrawczykCSS;
+import at.archistar.crypto.RabinBenOrEngine;
+import at.archistar.crypto.exceptions.WeakSecurityException;
 import at.archistar.crypto.random.FakeRandomSource;
 import at.archistar.crypto.random.RandomSource;
+import java.security.NoSuchAlgorithmException;
 
 public class EncryptedFileSystemTest extends AbstractIntegrationTest {
 
@@ -81,12 +83,12 @@ public class EncryptedFileSystemTest extends AbstractIntegrationTest {
     }
 
     @BeforeClass
-    public static void prepareServer() {
+    public static void prepareServer() throws WeakSecurityException, NoSuchAlgorithmException {
         serverConfig = new TestServerConfiguration(createNewServers());
         serverConfig.setupTestServer(1);
 
         RandomSource rng = new FakeRandomSource();
-        CryptoEngine crypto = new SecretSharingCryptoEngine(new KrawczykCSS(4, 2, rng));
+        ArchistarCryptoEngine crypto = new SecretSharingCryptoEngine(new RabinBenOrEngine(4, 3, rng));
         Distributor distributor = new BFTDistributor(serverConfig, new NioEventLoopGroup());
         MetadataService metadata = new SimpleMetadataService(serverConfig, distributor, crypto);
         engine = new TestEngine(serverConfig, metadata, distributor, crypto);

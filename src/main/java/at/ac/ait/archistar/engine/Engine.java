@@ -5,7 +5,7 @@ import java.util.Set;
 
 import static org.fest.assertions.api.Assertions.*;
 import at.ac.ait.archistar.backendserver.fragments.Fragment;
-import at.ac.ait.archistar.engine.crypto.CryptoEngine;
+import at.ac.ait.archistar.engine.crypto.ArchistarCryptoEngine;
 import at.ac.ait.archistar.engine.crypto.DecryptionException;
 import at.ac.ait.archistar.engine.dataobjects.CustomSerializer;
 import at.ac.ait.archistar.engine.dataobjects.FSObject;
@@ -42,7 +42,7 @@ public class Engine implements SimpleFileInterface {
     /**
      * cryptographic directives
      */
-    private final CryptoEngine crypto;
+    private final ArchistarCryptoEngine crypto;
 
     /**
      * the serializer used to tranform objects into byte arrays
@@ -57,7 +57,7 @@ public class Engine implements SimpleFileInterface {
      * @param distributor distribution options to use for storage
      * @param crypto which cryptographic directives to use for security
      */
-    public Engine(ServerConfiguration servers, MetadataService naming, Distributor distributor, CryptoEngine crypto) {
+    public Engine(ServerConfiguration servers, MetadataService naming, Distributor distributor, ArchistarCryptoEngine crypto) {
         this.servers = servers;
         this.distributor = distributor;
         this.metadataService = naming;
