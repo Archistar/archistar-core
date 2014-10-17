@@ -10,13 +10,12 @@ import org.junit.BeforeClass;
 import at.ac.ait.archistar.backendserver.storageinterface.MemoryStorage;
 import at.ac.ait.archistar.backendserver.storageinterface.StorageServer;
 import at.ac.ait.archistar.engine.TestEngine;
-import at.ac.ait.archistar.engine.crypto.ArchistarCryptoEngine;
-import at.ac.ait.archistar.engine.crypto.SecretSharingCryptoEngine;
 import at.ac.ait.archistar.engine.distributor.BFTDistributor;
 import at.ac.ait.archistar.engine.distributor.Distributor;
 import at.ac.ait.archistar.engine.distributor.TestServerConfiguration;
 import at.ac.ait.archistar.engine.metadata.MetadataService;
 import at.ac.ait.archistar.engine.metadata.SimpleMetadataService;
+import at.archistar.crypto.CryptoEngine;
 import at.archistar.crypto.RabinBenOrEngine;
 import at.archistar.crypto.exceptions.WeakSecurityException;
 import at.archistar.crypto.random.FakeRandomSource;
@@ -35,7 +34,7 @@ public class BftTest extends AbstractIntegrationTest {
 
         serverConfig.setupTestServer(1);
 
-        ArchistarCryptoEngine crypto = new SecretSharingCryptoEngine(new RabinBenOrEngine(4, 3, new FakeRandomSource()));
+        CryptoEngine crypto = new RabinBenOrEngine(4, 3, new FakeRandomSource());
         Distributor distributor = new BFTDistributor(serverConfig, new NioEventLoopGroup());
         MetadataService metadata = new SimpleMetadataService(serverConfig, distributor, crypto);
         engine = new TestEngine(serverConfig, metadata, distributor, crypto);

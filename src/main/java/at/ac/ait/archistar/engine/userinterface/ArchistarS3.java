@@ -17,13 +17,12 @@ import org.slf4j.LoggerFactory;
 import at.ac.ait.archistar.backendserver.storageinterface.FilesystemStorage;
 import at.ac.ait.archistar.backendserver.storageinterface.StorageServer;
 import at.ac.ait.archistar.engine.Engine;
-import at.ac.ait.archistar.engine.crypto.ArchistarCryptoEngine;
-import at.ac.ait.archistar.engine.crypto.SecretSharingCryptoEngine;
 import at.ac.ait.archistar.engine.distributor.BFTDistributor;
 import at.ac.ait.archistar.engine.distributor.Distributor;
 import at.ac.ait.archistar.engine.distributor.TestServerConfiguration;
 import at.ac.ait.archistar.engine.metadata.MetadataService;
 import at.ac.ait.archistar.engine.metadata.SimpleMetadataService;
+import at.archistar.crypto.CryptoEngine;
 import at.archistar.crypto.RabinBenOrEngine;
 import at.archistar.crypto.exceptions.WeakSecurityException;
 import at.archistar.crypto.random.FakeRandomSource;
@@ -109,7 +108,7 @@ public class ArchistarS3 {
 
         serverConfig.setupTestServer(1);
         try {
-            ArchistarCryptoEngine crypto = new SecretSharingCryptoEngine(new RabinBenOrEngine(4, 3, new FakeRandomSource()));
+            CryptoEngine crypto = new RabinBenOrEngine(4, 3, new FakeRandomSource());
             Distributor distributor = new BFTDistributor(serverConfig, loopGroup);
             MetadataService metadata = new SimpleMetadataService(serverConfig, distributor, crypto);
             return new Engine(serverConfig, metadata, distributor, crypto);

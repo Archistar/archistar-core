@@ -10,13 +10,13 @@ import org.junit.BeforeClass;
 import at.ac.ait.archistar.backendserver.storageinterface.MemoryStorage;
 import at.ac.ait.archistar.backendserver.storageinterface.StorageServer;
 import at.ac.ait.archistar.engine.TestEngine;
-import at.ac.ait.archistar.engine.crypto.ArchistarCryptoEngine;
 import at.ac.ait.archistar.engine.crypto.PseudoMirrorCryptoEngine;
 import at.ac.ait.archistar.engine.distributor.BFTDistributor;
 import at.ac.ait.archistar.engine.distributor.Distributor;
 import at.ac.ait.archistar.engine.distributor.TestServerConfiguration;
 import at.ac.ait.archistar.engine.metadata.MetadataService;
 import at.ac.ait.archistar.engine.metadata.SimpleMetadataService;
+import at.archistar.crypto.CryptoEngine;
 
 public class MemoryOnlyTest extends AbstractIntegrationTest {
 
@@ -30,7 +30,7 @@ public class MemoryOnlyTest extends AbstractIntegrationTest {
         serverConfig = new TestServerConfiguration(servers);
         serverConfig.setupTestServer(1);
 
-        ArchistarCryptoEngine crypto = new PseudoMirrorCryptoEngine();
+        CryptoEngine crypto = new PseudoMirrorCryptoEngine(4);
         Distributor distributor = new BFTDistributor(serverConfig, new NioEventLoopGroup());
         MetadataService metadata = new SimpleMetadataService(serverConfig, distributor, crypto);
         engine = new TestEngine(serverConfig, metadata, distributor, crypto);

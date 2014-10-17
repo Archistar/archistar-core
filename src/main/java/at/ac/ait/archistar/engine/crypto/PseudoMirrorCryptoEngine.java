@@ -1,9 +1,16 @@
 package at.ac.ait.archistar.engine.crypto;
 
 import java.util.Arrays;
-import java.util.Set;
 
-import at.ac.ait.archistar.backendserver.fragments.Fragment;
+import at.archistar.crypto.CryptoEngine;
+import at.archistar.crypto.data.InvalidParametersException;
+import at.archistar.crypto.data.ShamirShare;
+import at.archistar.crypto.data.Share;
+import at.archistar.crypto.exceptions.ImpossibleException;
+import at.archistar.crypto.exceptions.ReconstructionException;
+import at.archistar.crypto.exceptions.WeakSecurityException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * This just takes a user-supplied FSObject, serializes it (using
@@ -13,27 +20,32 @@ import at.ac.ait.archistar.backendserver.fragments.Fragment;
  * @author Andreas Happe <andreashappe@snikt.net>
  *
  */
-public class PseudoMirrorCryptoEngine implements ArchistarCryptoEngine {
+public class PseudoMirrorCryptoEngine implements CryptoEngine {
 
+    private final int n;
+    
+    public PseudoMirrorCryptoEngine(int n) {
+        this.n = n;
+    }
+    
     /**
      * checks if data within all fragments is the same and returns the
      * encapsulated data
      */
     @Override
-    public byte[] decrypt(Set<Fragment> input) throws DecryptionException {
+    public byte[] reconstruct(Share[] shares) throws ReconstructionException {
+        ShamirShare[] sshares = Arrays.copyOf(shares, shares.length, ShamirShare[].class);
 
         byte[] reference = null;
         boolean first = true;
 
-        for (Fragment f : input) {
-            if (f.isSynchronized()) {
-                if (first) {
-                    /* initialize on first access */
-                    reference = f.getData();
-                } else {
-                    if (!Arrays.equals(reference, f.getData())) {
-                        throw new DecryptionException();
-                    }
+        for (ShamirShare f : sshares) {
+            if (first) {
+                /* initialize on first access */
+                reference = f.getY();
+            } else {
+                if (!Arrays.equals(reference, f.getY())) {
+                    throw new ReconstructionException();
                 }
             }
         }
@@ -46,10 +58,18 @@ public class PseudoMirrorCryptoEngine implements ArchistarCryptoEngine {
      * duplication
      */
     @Override
-    public Set<Fragment> encrypt(byte[] data, Set<Fragment> fragments) {
-        for (Fragment f : fragments) {
-            f.setData(data);
+    public Share[] share(byte[] data) throws WeakSecurityException, ImpossibleException {
+        
+        ShamirShare[] sshares = new ShamirShare[n];
+        
+        for (int i = 0; i < n; i++) {
+            try {
+                sshares[i] = new ShamirShare((byte) (i+1), data);
+            } catch (InvalidParametersException ex) {
+                Logger.getLogger(PseudoMirrorCryptoEngine.class.getName()).log(Level.SEVERE, null, ex);
+                assert(false);
+            }
         }
-        return fragments;
+        return sshares;
     }
 }

@@ -18,8 +18,6 @@ import static org.fest.assertions.api.Assertions.*;
 import at.ac.ait.archistar.backendserver.storageinterface.FilesystemStorage;
 import at.ac.ait.archistar.backendserver.storageinterface.StorageServer;
 import at.ac.ait.archistar.engine.TestEngine;
-import at.ac.ait.archistar.engine.crypto.ArchistarCryptoEngine;
-import at.ac.ait.archistar.engine.crypto.DecryptionException;
 import at.ac.ait.archistar.engine.crypto.PseudoMirrorCryptoEngine;
 import at.ac.ait.archistar.engine.dataobjects.FSObject;
 import at.ac.ait.archistar.engine.dataobjects.SimpleFile;
@@ -28,6 +26,8 @@ import at.ac.ait.archistar.engine.distributor.Distributor;
 import at.ac.ait.archistar.engine.distributor.TestServerConfiguration;
 import at.ac.ait.archistar.engine.metadata.MetadataService;
 import at.ac.ait.archistar.engine.metadata.SimpleMetadataService;
+import at.archistar.crypto.CryptoEngine;
+import at.archistar.crypto.exceptions.ReconstructionException;
 
 public class FileSystemTest extends AbstractIntegrationTest {
 
@@ -59,14 +59,14 @@ public class FileSystemTest extends AbstractIntegrationTest {
         serverConfig = new TestServerConfiguration(createNewServers());
         serverConfig.setupTestServer(1);
 
-        ArchistarCryptoEngine crypto = new PseudoMirrorCryptoEngine();
+        CryptoEngine crypto = new PseudoMirrorCryptoEngine(4);
         Distributor distributor = new BFTDistributor(serverConfig, new NioEventLoopGroup());
         MetadataService metadata = new SimpleMetadataService(serverConfig, distributor, crypto);
         engine = new TestEngine(serverConfig, metadata, distributor, crypto);
     }
 
     @Test
-    public void testPersistedStoreAndRetrieveOperation() {
+    public void testPersistedStoreAndRetrieveOperation() throws ReconstructionException {
 
         logger.info("starting test");
         SimpleFile testObject = new SimpleFile(randomTestFilename(), testData, new HashMap<String, String>());
@@ -83,14 +83,10 @@ public class FileSystemTest extends AbstractIntegrationTest {
         assertThat(engine.connect()).isEqualTo(engine.getNumberOfServers());
 
         // THEN the data should still be available
-        try {
-            FSObject retrObject = engine.getObject(path);
-            assertThat(retrObject).isNotNull().isInstanceOf(SimpleFile.class);
-            assertThat(path).isEqualTo(retrObject.getPath());
-            assertThat(((SimpleFile) retrObject).getData()).isEqualTo(testData);
-        } catch (DecryptionException e) {
-            fail("could not decrypt fragment", e);
-        }
+        FSObject retrObject = engine.getObject(path);
+        assertThat(retrObject).isNotNull().isInstanceOf(SimpleFile.class);
+        assertThat(path).isEqualTo(retrObject.getPath());
+        assertThat(((SimpleFile) retrObject).getData()).isEqualTo(testData);
     }
 
     @AfterClass

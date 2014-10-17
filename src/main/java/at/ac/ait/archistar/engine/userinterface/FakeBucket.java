@@ -13,9 +13,9 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.jboss.resteasy.util.Hex;
 
 import at.ac.ait.archistar.engine.Engine;
-import at.ac.ait.archistar.engine.crypto.DecryptionException;
 import at.ac.ait.archistar.engine.dataobjects.FSObject;
 import at.ac.ait.archistar.engine.dataobjects.SimpleFile;
+import at.archistar.crypto.exceptions.ReconstructionException;
 
 /**
  * this is a fake bucket implementation that forwards all incoming S3 commands
@@ -36,7 +36,7 @@ public class FakeBucket {
     }
 
     /* list all elements within bucket */
-    public String getAll(String bucketName, String delim, String prefix, int maxKeysInt) throws DecryptionException {
+    public String getAll(String bucketName, String delim, String prefix, int maxKeysInt) throws ReconstructionException {
 
         if (prefix != null && (prefix.equals("/") || prefix.equals(""))) {
             prefix = null;
@@ -54,7 +54,7 @@ public class FakeBucket {
         return builder.stringFromDoc(builder.listElements(prefix, bucketName, maxKeysInt, results));
     }
 
-    public Response getById(String id) throws DecryptionException, NoSuchAlgorithmException {
+    public Response getById(String id) throws NoSuchAlgorithmException, ReconstructionException {
 
         FSObject obj = engine.getObject(id);
         if (obj != null && obj instanceof SimpleFile) {
@@ -68,7 +68,7 @@ public class FakeBucket {
         }
     }
 
-    public Response writeById(String id, String gid, String uid, String mode, String serverSideEncryption, byte[] input) throws NoSuchAlgorithmException, DecryptionException {
+    public Response writeById(String id, String gid, String uid, String mode, String serverSideEncryption, byte[] input) throws NoSuchAlgorithmException, ReconstructionException {
 
         SimpleFile obj = new SimpleFile(id, input, new HashMap<String, String>());
 
@@ -86,7 +86,7 @@ public class FakeBucket {
         return Response.accepted().header("ETag", Hex.encodeHex(thedigest)).build();
     }
 
-    public Response deleteById(String id) throws DecryptionException {
+    public Response deleteById(String id) throws ReconstructionException {
 
         FSObject obj = engine.getObject(id);
         engine.deleteObject(obj);
@@ -94,7 +94,7 @@ public class FakeBucket {
         return Response.accepted().status(204).build();
     }
 
-    public Response getStatById(String id) throws DecryptionException, NoSuchAlgorithmException {
+    public Response getStatById(String id) throws ReconstructionException, NoSuchAlgorithmException {
 
         Map<String, String> result = engine.statObject(id);
 
