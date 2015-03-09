@@ -8,11 +8,10 @@ package at.ac.ait.archistar.engine.crypto;
 import at.ac.ait.archistar.backendserver.fragments.Fragment;
 import at.archistar.crypto.CryptoEngine;
 import at.archistar.crypto.data.InvalidParametersException;
-import at.archistar.crypto.data.SerializableShare;
 import at.archistar.crypto.data.Share;
-import at.archistar.crypto.exceptions.ImpossibleException;
-import at.archistar.crypto.exceptions.ReconstructionException;
-import at.archistar.crypto.exceptions.WeakSecurityException;
+import at.archistar.crypto.data.ShareFactory;
+import at.archistar.crypto.secretsharing.ReconstructionException;
+import at.archistar.crypto.secretsharing.WeakSecurityException;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Set;
@@ -49,7 +48,7 @@ public class ArchistarSMCIntegrator {
                 f.setData(binData);
                 f.setEncryptionScheme(Fragment.EncryptionScheme.SHAMIR);
             }
-        } catch (WeakSecurityException | ImpossibleException | IOException e) {
+        } catch (IOException e) {
             assert (false);
         }
         return fragments;
@@ -68,8 +67,8 @@ public class ArchistarSMCIntegrator {
         for (Fragment f : input) {
             if (f.getData() != null && f.getData().length != 0) {
                 try {
-                    shares[i++] = SerializableShare.deserialize(f.getData());
-                } catch (IOException | WeakSecurityException | InvalidParametersException ex) {
+                    shares[i++] = ShareFactory.deserialize(f.getData());
+                } catch (InvalidParametersException ex) {
                     assert(false);
                 }
             }

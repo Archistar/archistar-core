@@ -91,7 +91,8 @@
         <dependency>
             <groupId>at.archistar</groupId>
             <artifactId>archistar-bft</artifactId>
-            <version>0.0.2</version>
+            <version>0.2-wip</version>
+            <type>jar</type>
         </dependency>
 
         <!-- library for secret-sharing -->

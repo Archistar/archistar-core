@@ -23,7 +23,7 @@ import at.ac.ait.archistar.engine.dataobjects.FSObject;
 import at.ac.ait.archistar.engine.distributor.Distributor;
 import at.ac.ait.archistar.engine.distributor.ServerConfiguration;
 import at.archistar.crypto.CryptoEngine;
-import at.archistar.crypto.exceptions.ReconstructionException;
+import at.archistar.crypto.secretsharing.ReconstructionException;
 
 /**
  * The metadata service is responsible for storing all meta-information about

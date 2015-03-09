@@ -24,7 +24,7 @@ import at.ac.ait.archistar.engine.metadata.MetadataService;
 import at.ac.ait.archistar.engine.metadata.SimpleMetadataService;
 import at.archistar.crypto.CryptoEngine;
 import at.archistar.crypto.RabinBenOrEngine;
-import at.archistar.crypto.exceptions.WeakSecurityException;
+import at.archistar.crypto.secretsharing.WeakSecurityException;
 import at.archistar.crypto.random.FakeRandomSource;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.security.NoSuchAlgorithmException;

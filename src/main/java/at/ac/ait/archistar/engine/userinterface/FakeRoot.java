@@ -1,6 +1,6 @@
 package at.ac.ait.archistar.engine.userinterface;
 
-import at.archistar.crypto.exceptions.ReconstructionException;
+import at.archistar.crypto.secretsharing.ReconstructionException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 

@@ -1,6 +1,6 @@
 package at.ac.ait.archistar.engine.dataobjects;
 
-import at.archistar.crypto.exceptions.ReconstructionException;
+import at.archistar.crypto.secretsharing.ReconstructionException;
 import java.util.Map;
 import java.util.Set;
 

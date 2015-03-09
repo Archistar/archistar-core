@@ -15,7 +15,7 @@ import org.jboss.resteasy.util.Hex;
 import at.ac.ait.archistar.engine.Engine;
 import at.ac.ait.archistar.engine.dataobjects.FSObject;
 import at.ac.ait.archistar.engine.dataobjects.SimpleFile;
-import at.archistar.crypto.exceptions.ReconstructionException;
+import at.archistar.crypto.secretsharing.ReconstructionException;
 
 /**
  * this is a fake bucket implementation that forwards all incoming S3 commands

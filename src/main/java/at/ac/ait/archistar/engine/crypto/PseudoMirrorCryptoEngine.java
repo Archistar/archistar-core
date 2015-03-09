@@ -4,11 +4,12 @@ import java.util.Arrays;
 
 import at.archistar.crypto.CryptoEngine;
 import at.archistar.crypto.data.InvalidParametersException;
-import at.archistar.crypto.data.ShamirShare;
 import at.archistar.crypto.data.Share;
-import at.archistar.crypto.exceptions.ImpossibleException;
-import at.archistar.crypto.exceptions.ReconstructionException;
-import at.archistar.crypto.exceptions.WeakSecurityException;
+import static at.archistar.crypto.data.Share.ShareType.SHAMIR_PSS;
+import at.archistar.crypto.data.ShareFactory;
+import at.archistar.crypto.secretsharing.ReconstructionException;
+import at.archistar.crypto.secretsharing.WeakSecurityException;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -34,17 +35,15 @@ public class PseudoMirrorCryptoEngine implements CryptoEngine {
      */
     @Override
     public byte[] reconstruct(Share[] shares) throws ReconstructionException {
-        ShamirShare[] sshares = Arrays.copyOf(shares, shares.length, ShamirShare[].class);
-
         byte[] reference = null;
         boolean first = true;
 
-        for (ShamirShare f : sshares) {
+        for (Share f : shares) {
             if (first) {
                 /* initialize on first access */
-                reference = f.getY();
+                reference = f.getYValues();
             } else {
-                if (!Arrays.equals(reference, f.getY())) {
+                if (!Arrays.equals(reference, f.getYValues())) {
                     throw new ReconstructionException();
                 }
             }
@@ -58,13 +57,13 @@ public class PseudoMirrorCryptoEngine implements CryptoEngine {
      * duplication
      */
     @Override
-    public Share[] share(byte[] data) throws WeakSecurityException, ImpossibleException {
+    public Share[] share(byte[] data) {
         
-        ShamirShare[] sshares = new ShamirShare[n];
+        Share[] sshares = new Share[n];
         
         for (int i = 0; i < n; i++) {
             try {
-                sshares[i] = new ShamirShare((byte) (i+1), data);
+                sshares[i] = ShareFactory.create(SHAMIR_PSS, (byte) (i+1), data, new HashMap<Byte, byte[]>());
             } catch (InvalidParametersException ex) {
                 Logger.getLogger(PseudoMirrorCryptoEngine.class.getName()).log(Level.SEVERE, null, ex);
                 assert(false);

@@ -27,7 +27,7 @@ import at.ac.ait.archistar.engine.distributor.TestServerConfiguration;
 import at.ac.ait.archistar.engine.metadata.MetadataService;
 import at.ac.ait.archistar.engine.metadata.SimpleMetadataService;
 import at.archistar.crypto.CryptoEngine;
-import at.archistar.crypto.exceptions.ReconstructionException;
+import at.archistar.crypto.secretsharing.ReconstructionException;
 
 public class FileSystemTest extends AbstractIntegrationTest {
 

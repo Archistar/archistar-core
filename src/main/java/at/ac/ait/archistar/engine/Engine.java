@@ -13,7 +13,7 @@ import at.ac.ait.archistar.engine.distributor.Distributor;
 import at.ac.ait.archistar.engine.distributor.ServerConfiguration;
 import at.ac.ait.archistar.engine.metadata.MetadataService;
 import at.archistar.crypto.CryptoEngine;
-import at.archistar.crypto.exceptions.ReconstructionException;
+import at.archistar.crypto.secretsharing.ReconstructionException;
 
 /**
  * As most Archistar instances look kinda the same this class tries to capture

@@ -13,8 +13,8 @@ import at.ac.ait.archistar.backendserver.fragments.RemoteFragment;
 import at.ac.ait.archistar.engine.crypto.ArchistarSMCIntegrator;
 import at.archistar.crypto.CryptoEngine;
 import at.archistar.crypto.RabinBenOrEngine;
-import at.archistar.crypto.exceptions.ReconstructionException;
-import at.archistar.crypto.exceptions.WeakSecurityException;
+import at.archistar.crypto.secretsharing.ReconstructionException;
+import at.archistar.crypto.secretsharing.WeakSecurityException;
 import at.archistar.crypto.random.FakeRandomSource;
 import java.security.NoSuchAlgorithmException;
 

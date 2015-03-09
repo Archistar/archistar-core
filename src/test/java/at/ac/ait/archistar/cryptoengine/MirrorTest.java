@@ -7,10 +7,9 @@ import org.junit.Test;
 
 import at.ac.ait.archistar.engine.crypto.PseudoMirrorCryptoEngine;
 import at.archistar.crypto.CryptoEngine;
-import at.archistar.crypto.data.ShamirShare;
 import at.archistar.crypto.data.Share;
-import at.archistar.crypto.exceptions.ReconstructionException;
-import at.archistar.crypto.exceptions.WeakSecurityException;
+import at.archistar.crypto.secretsharing.ReconstructionException;
+import at.archistar.crypto.secretsharing.WeakSecurityException;
 
 public class MirrorTest {
 
@@ -36,8 +35,7 @@ public class MirrorTest {
         Share shares[] = cryptoEngine.share(mockSerializedData);
 
         for(Share s : shares) {
-            assert(s instanceof ShamirShare);
-            assertThat(((ShamirShare)s).getY()).isEqualTo(mockSerializedData);
+            assertThat(s.getYValues()).isEqualTo(mockSerializedData);
         }
     }
 

@@ -14,7 +14,7 @@ import at.ac.ait.archistar.engine.TestEngine;
 import at.ac.ait.archistar.engine.dataobjects.FSObject;
 import at.ac.ait.archistar.engine.dataobjects.SimpleFile;
 import at.ac.ait.archistar.engine.distributor.TestServerConfiguration;
-import at.archistar.crypto.exceptions.ReconstructionException;
+import at.archistar.crypto.secretsharing.ReconstructionException;
 
 public abstract class AbstractIntegrationTest {
 
@@ -61,7 +61,9 @@ public abstract class AbstractIntegrationTest {
                 if (m.getValue() == (oldValue + 1) || m.getValue() == 2) {
                     increaseCount++;
                 } else {
-                    fail("count wasnt old_count+1 " + m.getValue() + " vs " + oldValue);
+                    if (m.getValue() != 0) {
+                        fail("count wasnt old_count+1 " + m.getValue() + " vs " + oldValue);
+                    }
                 }
             }
             assertThat(increaseCount).isGreaterThanOrEqualTo(2);
