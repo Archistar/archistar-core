@@ -1,3 +1,7 @@
+# Note: we're currently focusing our development effort on a new generation of the software which can also be [found on gitlab](http://github.com/Archistar/archistar-akka)
+
+The new version is currently a WIP, we do have an updated secret-sharing library as well as a working prototype of the bft-and-secret-sharing distribution component. Missing is an "usable" end-user interface as well as actually storing data.
+
 # Archistar [![Build Status](https://travis-ci.org/Archistar/archistar-core.png?branch=master)](https://travis-ci.org/Archistar/archistar-core)
 
 _"hackable secure multi-cloud solution (or at least a prototype)"_
